@@ -1,0 +1,7 @@
+# HomeAlert gitignore 
+*.json 
+!package.json 
+panel.html 
+setup_admin.js 
+node_modules/ 
+.env 

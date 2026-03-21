@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HomeAlert — Mi Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --red:#FF2200; --red-dim:rgba(255,34,0,0.1); --red-glow:rgba(255,34,0,0.3);
+  --yellow:#FFB800; --green:#00FF88; --blue:#0088FF;
+  --bg:#070709; --surface:#0E0E12; --surface2:#13131A;
+  --border:#1C1C26; --text:#E8E8F0; --muted:#44445A;
+  --mono:'Share Tech Mono',monospace; --sans:'Rajdhani',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,136,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,136,255,0.02) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.scanline{position:fixed;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,136,255,0.3),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:999;}
+@keyframes scan{from{top:0}to{top:100vh}}
+
+/* LOGIN */
+#loginPage{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.login-box{width:380px;background:var(--surface);border:1px solid var(--border);position:relative;}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.login-header{padding:28px;text-align:center;border-bottom:1px solid var(--border);}
+.login-logo{width:56px;height:56px;border:1.5px solid var(--blue);background:rgba(0,136,255,0.1);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;box-shadow:0 0 16px rgba(0,136,255,0.3);}
+.login-title{font-size:22px;font-weight:700;letter-spacing:4px;margin-bottom:4px;}
+.login-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;}
+.login-body{padding:24px;}
+.field-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:6px;}
+.field{display:flex;align-items:center;background:#080808;border:1px solid var(--border);margin-bottom:14px;}
+.field-icon{padding:0 12px;color:var(--muted);}
+.field input{flex:1;background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:13px;padding:11px 0;outline:none;}
+.field input::placeholder{color:var(--muted);}
+.field:focus-within{border-color:var(--blue);}
+.btn-login{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 20px rgba(0,136,255,0.3);transition:all 0.15s;}
+.btn-login:hover{background:#0066dd;}
+.login-error{background:rgba(255,34,0,0.1);border:1px solid rgba(255,34,0,0.3);padding:8px 12px;margin-bottom:12px;font-family:var(--mono);font-size:11px;color:var(--red);display:none;}
+
+/* TOPBAR */
+.topbar{position:relative;z-index:10;display:flex;align-items:center;gap:14px;padding:0 24px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.logo-mark{width:36px;height:36px;border:1.5px solid var(--blue);background:rgba(0,136,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 10px rgba(0,136,255,0.3);}
+.app-title{font-size:18px;font-weight:700;letter-spacing:3px;}
+.user-badge{background:rgba(0,136,255,0.15);border:1px solid rgba(0,136,255,0.4);color:var(--blue);font-family:var(--mono);font-size:10px;padding:3px 10px;letter-spacing:1px;}
+.codigo-pill{display:flex;align-items:center;gap:6px;background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.25);padding:4px 12px;}
+.codigo-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;}
+.codigo-val{font-family:var(--mono);font-size:13px;color:var(--blue);font-weight:700;letter-spacing:1px;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.sistema-pill{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;padding:5px 14px;border:1px solid var(--border);cursor:pointer;transition:all 0.2s;font-weight:700;}
+.sistema-pill.armado{background:rgba(255,34,0,0.1);border-color:rgba(255,34,0,0.4);color:var(--red);}
+.sistema-pill.desarmado{background:rgba(0,255,136,0.1);border-color:rgba(0,255,136,0.4);color:var(--green);}
+.dot{width:6px;height:6px;border-radius:50%;animation:blink 1.5s ease-in-out infinite;}
+.dot-green{background:var(--green);box-shadow:0 0 6px var(--green);}
+.dot-red{background:var(--red);box-shadow:0 0 6px var(--red);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.time-display{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:2px;}
+.btn-top{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--mono);font-size:10px;padding:5px 12px;cursor:pointer;transition:all 0.15s;letter-spacing:1px;}
+.btn-top:hover{border-color:var(--red);color:var(--red);}
+
+/* MAIN */
+.main{position:relative;z-index:1;flex:1;display:flex;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:210px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;}
+.nav-section{margin-bottom:24px;}
+.nav-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;padding:0 18px;margin-bottom:8px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;font-size:13px;font-weight:600;letter-spacing:1px;color:var(--muted);border-left:2px solid transparent;transition:all 0.15s;}
+.nav-item:hover{color:var(--text);background:rgba(0,136,255,0.06);}
+.nav-item.active{color:var(--blue);border-left-color:var(--blue);background:rgba(0,136,255,0.08);}
+.nav-icon{font-size:15px;width:20px;text-align:center;}
+.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.9;}
+
+/* CONTENT */
+.content{flex:1;display:flex;overflow:hidden;}
+.center-panel{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+.right-panel{width:300px;flex-shrink:0;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);padding:16px;position:relative;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--blue),transparent);}
+.card-title{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stat-card{background:var(--surface2);border:1px solid var(--border);padding:14px;text-align:center;position:relative;overflow:hidden;}
+.stat-value{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;}
+.stat-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1.5px;margin-top:5px;}
+.accent-line{position:absolute;bottom:0;left:0;right:0;height:2px;}
+
+/* SISTEMA */
+.sistema-grande{width:100%;padding:24px;border:2px solid var(--border);background:var(--surface2);cursor:pointer;transition:all 0.2s;text-align:center;font-family:var(--sans);}
+.sistema-grande.armado{border-color:rgba(255,34,0,0.5);background:rgba(255,34,0,0.06);}
+.sistema-grande.desarmado{border-color:rgba(0,255,136,0.5);background:rgba(0,255,136,0.06);}
+
+/* NIVEL */
+.nivel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.nivel-btn{padding:12px 8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center;transition:all 0.15s;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted);}
+.nivel-btn[data-nivel="leve"].selected{background:rgba(0,255,136,0.15);border-color:var(--green);color:var(--green);}
+.nivel-btn[data-nivel="moderado"].selected{background:rgba(255,184,0,0.15);border-color:var(--yellow);color:var(--yellow);}
+.nivel-btn[data-nivel="severo"].selected{background:rgba(255,34,0,0.15);border-color:var(--red);color:var(--red);}
+.nivel-icon{font-size:20px;display:block;margin-bottom:5px;}
+
+/* INPUTS */
+.input-field{width:100%;background:#080808;border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:13px;padding:9px 12px;outline:none;transition:border-color 0.2s;}
+.input-field:focus{border-color:var(--blue);}
+.input-field::placeholder{color:var(--muted);}
+textarea.input-field{resize:none;height:75px;line-height:1.6;}
+.input-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:5px;}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.char-count{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right;margin-top:4px;margin-bottom:12px;}
+
+/* PREVIEW */
+.preview-wrap{background:#080808;border:1px solid var(--border);padding:12px;margin-bottom:14px;}
+.preview-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:8px;}
+.preview-notif{border-left:3px solid var(--blue);padding:9px 12px;background:#000D1A;}
+.preview-title{font-size:12px;font-weight:700;font-family:var(--mono);margin-bottom:3px;color:var(--blue);}
+.preview-body{font-size:11px;font-family:var(--mono);line-height:1.4;color:#AACCFF;}
+
+/* BOTONES */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn{padding:12px;border:none;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1.5px;transition:all 0.15s;}
+.btn-send{grid-column:span 2;padding:14px;background:var(--blue);color:#fff;box-shadow:0 4px 20px rgba(0,136,255,0.3);}
+.btn-send:hover{background:#0066dd;transform:translateY(-1px);}
+.btn-send.loading{background:#001A33;color:var(--muted);box-shadow:none;pointer-events:none;}
+.btn-cancel{background:var(--surface2);color:var(--yellow);border:1px solid rgba(255,184,0,0.3);}
+.btn-cancel:hover{background:rgba(255,184,0,0.1);}
+.btn-danger{background:var(--surface2);color:var(--red);border:1px solid rgba(255,34,0,0.3);}
+.btn-danger:hover{background:rgba(255,34,0,0.1);}
+
+/* CÁMARA */
+.camara-wrap{width:100%;background:#000;border:1px solid var(--border);min-height:280px;display:flex;align-items:center;justify-content:center;}
+
+/* SENSORES / MIEMBROS */
+.lista-item{display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--surface2);border:1px solid var(--border);margin-bottom:8px;transition:border-color 0.15s;}
+.lista-item.online{border-color:rgba(0,255,136,0.25);}
+.lista-item.offline{border-color:rgba(255,34,0,0.25);}
+.lista-item.encasa{border-color:rgba(0,255,136,0.25);}
+.status-badge{font-family:var(--mono);font-size:9px;padding:3px 8px;border:1px solid;font-weight:700;white-space:nowrap;}
+
+/* HISTORIAL */
+.hist-item{background:var(--surface2);border:1px solid var(--border);border-left:3px solid transparent;padding:11px 13px;margin-bottom:7px;animation:fadeIn 0.3s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+.hist-item.leve{border-left-color:var(--green);}
+.hist-item.moderado{border-left-color:var(--yellow);}
+.hist-item.severo{border-left-color:var(--red);}
+
+/* ESCOLTA */
+.escolta-activa{background:rgba(30,58,92,0.3);border:2px solid rgba(0,136,255,0.4);padding:20px;text-align:center;}
+
+/* LOG */
+.right-panel-header{padding:12px 16px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
+.history-list{flex:1;overflow-y:auto;padding:8px;}
+.history-list::-webkit-scrollbar{width:3px;}
+.history-list::-webkit-scrollbar-thumb{background:var(--border);}
+.log-panel{border-top:1px solid var(--border);flex-shrink:0;height:130px;display:flex;flex-direction:column;}
+.log-header{padding:6px 14px;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.log-body{flex:1;overflow-y:auto;padding:5px 14px;font-family:var(--mono);font-size:10px;line-height:1.9;}
+.log-body::-webkit-scrollbar{width:3px;}
+.log-body::-webkit-scrollbar-thumb{background:var(--border);}
+.log-line{display:flex;gap:10px;}
+.log-t{color:var(--muted);min-width:62px;}
+.log-ok{color:var(--green);}.log-err{color:var(--red);}.log-info{color:#4488ff;}.log-warn{color:var(--yellow);}
+.empty-msg{text-align:center;padding:24px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:2;}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-header">
+      <div class="login-logo">🏠</div>
+      <div class="login-title">HOMEALERT</div>
+      <div class="login-sub">PANEL DE CONTROL — MI CUENTA</div>
+    </div>
+    <div class="login-body">
+      <div class="login-error" id="loginError"></div>
+      <div class="field-label">EMAIL</div>
+      <div class="field"><span class="field-icon">✉</span>
+        <input type="email" id="userEmail" placeholder="tu@email.com" autocomplete="email"/>
+      </div>
+      <div class="field-label">CONTRASEÑA</div>
+      <div class="field"><span class="field-icon">🔒</span>
+        <input type="password" id="userPass" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button class="btn-login" id="btnLogin" onclick="doLogin()">ENTRAR A MI PANEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar" id="mainApp" style="display:none">
+  <div class="logo-mark">🏠</div>
+  <span class="app-title">HOMEALERT</span>
+  <span class="user-badge">MI PANEL</span>
+  <div class="codigo-pill">
+    <span class="codigo-label">MI CÓDIGO</span>
+    <span class="codigo-val" id="topCodigo">--</span>
+  </div>
+  <div class="topbar-right">
+    <div class="sistema-pill desarmado" id="sistemaPill" onclick="toggleSistema()" title="Clic para armar/desarmar">
+      <div class="dot dot-green" id="sistemaDot"></div>
+      <span id="sistemaLabel">DESARMADO</span>
+    </div>
+    <div class="time-display" id="clock">00:00:00</div>
+    <button class="btn-top" onclick="doLogout()">SALIR</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainContent" style="display:none">
+  <div class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">MI SISTEMA</div>
+      <div class="nav-item active" onclick="setView('panel',this)"><span class="nav-icon">⚡</span>Panel Principal</div>
+      <div class="nav-item" onclick="setView('alarmas',this)"><span class="nav-icon">🚨</span>Enviar Alarmas</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">MI HOGAR</div>
+      <div class="nav-item" onclick="setView('camara',this)"><span class="nav-icon">📹</span>Mi Cámara</div>
+      <div class="nav-item" onclick="setView('sensores',this)"><span class="nav-icon">📡</span>Mis Sensores</div>
+      <div class="nav-item" onclick="setView('miembros',this)"><span class="nav-icon">👨‍👩‍👧</span>Miembros</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">SEGURIDAD</div>
+      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">🛡️</span>Modo Escolta</div>
+      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">📋</span>Historial</div>
+    </div>
+    <div class="sidebar-footer" id="sidebarInfo">
+      <span id="sidebarEmail">--</span><br>
+      <span id="sidebarDate"></span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="center-panel">
+
+      <!-- ── PANEL PRINCIPAL ── -->
+      <div id="viewPanel">
+        <div class="stats-row" style="margin-bottom:0">
+          <div class="stat-card">
+            <div class="stat-value" id="statAlarmas" style="color:var(--text)">0</div>
+            <div class="stat-label">ALARMAS HOY</div>
+            <div class="accent-line" style="background:var(--blue)"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statSensores" style="color:var(--green)">0</div>
+            <div class="stat-label">SENSORES</div>
+            <div class="accent-line" style="background:var(--green)"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statMiembros" style="color:var(--yellow)">0</div>
+            <div class="stat-label">MIEMBROS</div>
+            <div class="accent-line" style="background:var(--yellow)"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statUltimoNivel" style="color:var(--muted);font-size:14px;padding-top:6px">--</div>
+            <div class="stat-label">ÚLTIMO NIVEL</div>
+            <div class="accent-line" id="ultimoNivelLine" style="background:var(--muted)"></div>
+          </div>
+        </div>
+
+        <!-- Armar/Desarmar grande -->
+        <div class="card" style="padding:0">
+          <button class="sistema-grande desarmado" id="sistemaGrande" onclick="toggleSistema()">
+            <div style="font-size:52px;margin-bottom:10px" id="sistemaIcono">🛡️</div>
+            <div style="font-size:20px;font-weight:900;letter-spacing:2px;margin-bottom:6px" id="sistemaEstado">SISTEMA DESARMADO</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="sistemaSub">Haz clic para armar tu sistema</div>
+          </button>
+        </div>
+
+        <!-- Simulador de presencia -->
+        <div class="card">
+          <div class="card-title">SIMULADOR DE PRESENCIA</div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="font-size:28px;">💡</div>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Luces aleatorias</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">El ESP32 simula presencia humana encendiendo/apagando luces</div>
+            </div>
+            <button id="btnSimulador" onclick="toggleSimulador()"
+              style="padding:9px 18px;background:rgba(0,255,136,0.15);color:var(--green);border:1px solid rgba(0,255,136,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;transition:all 0.15s;">
+              ACTIVAR
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ENVIAR ALARMAS ── -->
+      <div id="viewAlarmas" style="display:none">
+        <div class="card">
+          <div class="card-title">NIVEL DE ALERTA</div>
+          <div class="nivel-grid">
+            <div class="nivel-btn" data-nivel="leve" onclick="setNivel(this)"><span class="nivel-icon">🟢</span>LEVE</div>
+            <div class="nivel-btn selected" data-nivel="moderado" onclick="setNivel(this)"><span class="nivel-icon">🟡</span>MODERADO</div>
+            <div class="nivel-btn" data-nivel="severo" onclick="setNivel(this)"><span class="nivel-icon">🔴</span>SEVERO</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">COMPONER MENSAJE</div>
+          <div class="input-row">
+            <div>
+              <div class="input-label">TÍTULO</div>
+              <input type="text" id="tituloInput" class="input-field" value="Alerta Sísmica" maxlength="50"/>
+            </div>
+            <div>
+              <div class="input-label">NIVEL ACTIVO</div>
+              <input type="text" id="nivelDisplay" class="input-field" value="MODERADO" readonly
+                style="color:var(--yellow);cursor:default"/>
+            </div>
+          </div>
+          <div class="input-label">MENSAJE</div>
+          <textarea id="msgInput" class="input-field" maxlength="200">🚨 ¡ALERTA DE EMERGENCIA!</textarea>
+          <div class="char-count"><span id="charCount">23</span>/200</div>
+
+          <!-- Preview -->
+          <div class="preview-wrap">
+            <div class="preview-label">VISTA PREVIA EN DISPOSITIVO</div>
+            <div class="preview-notif" id="previewNotif">
+              <div class="preview-title" id="previewTitle">🟡 Alerta Sísmica</div>
+              <div class="preview-body"  id="previewMsg">🚨 ¡ALERTA DE EMERGENCIA!</div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-send" id="btnEnviar" onclick="enviarAlarma()">▶  ACTIVAR MI ALARMA</button>
+            <button class="btn btn-cancel" onclick="cancelarAlarma()">⏹ CANCELAR</button>
+            <button class="btn btn-danger" onclick="enviarAOtros()">📤 ALERTAR A OTROS POR CÓDIGO</button>
+          </div>
+        </div>
+
+        <!-- Enviar a otros por código -->
+        <div class="card" id="panelOtros" style="display:none">
+          <div class="card-title">ALERTAR POR CÓDIGO DE USUARIO</div>
+          <div style="display:flex;gap:10px;margin-bottom:12px;">
+            <input type="text" id="codigoInput" class="input-field" placeholder="Ej: 54392-7841-03" style="margin-bottom:0;flex:1;"
+              onkeydown="if(event.key==='Enter')agregarCodigo()"/>
+            <button onclick="agregarCodigo()"
+              style="padding:9px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;">
+              AGREGAR
+            </button>
+          </div>
+          <div id="codigosChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;min-height:20px;"></div>
+          <button onclick="enviarACodigos()" id="btnEnviarCodigos"
+            style="width:100%;padding:12px;background:var(--surface2);color:var(--blue);border:1px solid rgba(0,136,255,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;">
+            ▶  ENVIAR A USUARIOS SELECCIONADOS
+          </button>
+        </div>
+      </div>
+
+      <!-- ── CÁMARA ── -->
+      <div id="viewCamara" style="display:none">
+        <div class="card">
+          <div class="card-title">MI CÁMARA EN VIVO (iVCam)</div>
+          <div style="display:flex;gap:10px;margin-bottom:12px;">
+            <input type="text" id="camaraUrl" class="input-field" placeholder="http://192.168.1.x:8080/video" style="margin-bottom:0;flex:1;"/>
+            <button onclick="guardarCamara()" style="padding:9px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;">GUARDAR</button>
+            <button onclick="recargarCamara()" style="padding:9px 12px;background:var(--surface2);color:var(--green);border:1px solid rgba(0,255,136,0.3);cursor:pointer;font-size:14px;">⟳</button>
+          </div>
+          <div class="camara-wrap" id="camaraContainer">
+            <div style="text-align:center;color:var(--muted);font-family:var(--mono);font-size:11px;line-height:2;">
+              📹<br>Sin stream configurado<br>Instala iVCam en un celular secundario
+            </div>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:rgba(0,136,255,0.06);border:1px solid rgba(0,136,255,0.15);font-family:var(--mono);font-size:10px;color:#4488ff;line-height:1.8;">
+            📱 iVCam Webcam (Play Store) → Abre la app → Conecta al mismo WiFi → Copia la URL
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SENSORES ── -->
+      <div id="viewSensores" style="display:none">
+        <div class="card">
+          <div class="card-title">MIS SENSORES ESP32
+            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">⟳</button>
+          </div>
+          <div id="sensoresLista"><div class="empty-msg">Cargando sensores...</div></div>
+        </div>
+      </div>
+
+      <!-- ── MIEMBROS ── -->
+      <div id="viewMiembros" style="display:none">
+        <div class="card">
+          <div class="card-title">MIEMBROS DEL HOGAR</div>
+          <div id="miembrosLista"><div class="empty-msg">Cargando miembros...</div></div>
+          <div style="margin-top:12px;padding:10px;background:rgba(0,136,255,0.06);border:1px solid rgba(0,136,255,0.15);font-family:var(--mono);font-size:10px;color:#4488ff;line-height:1.8;">
+            📱 Para registrar miembros con reconocimiento facial, usa la app móvil HomeAlert → Seguridad → Miembros del Hogar
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MODO ESCOLTA ── -->
+      <div id="viewEscolta" style="display:none">
+        <div class="card" id="escoltaForm">
+          <div class="card-title">ACTIVAR MODO ESCOLTA</div>
+          <div style="background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.2);padding:12px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:#4488ff;line-height:1.8;">
+            🛡️ Define tu destino y tiempo estimado. Si no llegas, tus contactos recibirán una alerta con tu ubicación.
+          </div>
+          <div class="input-row">
+            <div>
+              <div class="input-label">LATITUD DESTINO</div>
+              <input type="text" id="escDestLat" class="input-field" placeholder="14.6349"/>
+            </div>
+            <div>
+              <div class="input-label">LONGITUD DESTINO</div>
+              <input type="text" id="escDestLng" class="input-field" placeholder="-90.5069"/>
+            </div>
+          </div>
+          <div class="input-row">
+            <div>
+              <div class="input-label">TIEMPO (minutos)</div>
+              <input type="number" id="escMinutos" class="input-field" value="30" min="1" max="480"/>
+            </div>
+            <div>
+              <div class="input-label">PIN DE CANCELACIÓN</div>
+              <input type="password" id="escPin" class="input-field" placeholder="Mínimo 4 dígitos"/>
+            </div>
+          </div>
+          <div style="margin-bottom:14px;padding:10px;background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.2);font-family:var(--mono);font-size:10px;color:var(--yellow);line-height:1.8;">
+            ⚠ PIN de coacción = PIN + "0" → Cancela silenciosamente y envía alerta de robo
+          </div>
+          <button onclick="activarEscolta()"
+            style="width:100%;padding:14px;background:linear-gradient(90deg,#1A3A5C,#2E75B6);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 20px rgba(0,136,255,0.3);">
+            🛡️  ACTIVAR MODO ESCOLTA
+          </button>
+        </div>
+
+        <div class="card" id="escoltaActiva" style="display:none">
+          <div class="escolta-activa">
+            <div style="font-size:52px;margin-bottom:12px;">🛡️</div>
+            <div style="font-size:20px;font-weight:900;letter-spacing:2px;color:var(--blue);margin-bottom:6px;">ESCOLTA ACTIVA</div>
+            <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--text);margin-bottom:16px;" id="escContador">30:00</div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:20px;">Monitoreo de ruta en tiempo real</div>
+            <div style="display:flex;gap:10px;justify-content:center;">
+              <button onclick="mostrarCancelar()" style="padding:10px 20px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(255,184,0,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;">🔐 CANCELAR CON PIN</button>
+              <button onclick="activarAntiRobo()" style="padding:10px 20px;background:rgba(255,34,0,0.15);color:var(--red);border:1px solid rgba(255,34,0,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;">🚨 PÁNICO</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cancelar con PIN -->
+        <div class="card" id="panelCancelar" style="display:none">
+          <div class="card-title">CANCELAR ESCOLTA</div>
+          <input type="password" id="pinCancelar" class="input-field" placeholder="Ingresa tu PIN" style="margin-bottom:12px;text-align:center;letter-spacing:4px;font-size:18px;"/>
+          <button onclick="cancelarEscolta()" style="width:100%;padding:12px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(255,184,0,0.3);cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:1px;">CANCELAR MODO ESCOLTA</button>
+        </div>
+      </div>
+
+      <!-- ── HISTORIAL ── -->
+      <div id="viewHistorial" style="display:none">
+        <div class="card">
+          <div class="card-title">HISTORIAL DE ALARMAS</div>
+          <div id="historialLista"><div class="empty-msg">Sin alarmas registradas.</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PANEL DERECHO -->
+    <div class="right-panel">
+      <div class="right-panel-header">
+        <span>ACTIVIDAD RECIENTE</span>
+        <span id="histCount" style="color:var(--text)">0</span>
+      </div>
+      <div class="history-list" id="actividadLista">
+        <div class="empty-msg">Sin actividad reciente.</div>
+      </div>
+      <div class="log-panel">
+        <div class="log-header"><div class="dot dot-green"></div>SISTEMA</div>
+        <div class="log-body" id="logBody">
+          <div class="log-line"><span class="log-t">--:--:--</span><span class="log-info">Esperando login...</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let sessionUser  = null;
+let sistemaArmado = false;
+let simuladorActivo = false;
+let nivelActual  = 'moderado';
+let codigosSelec = [];
+let escoltaTimer = null;
+let escoltaPin   = '';
+let statsHoy     = { alarmas:0, ok:0, err:0 };
+
+// ── Reloj ──────────────────────────────────────────────────────
+function updateClock() {
+  const t = new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('clock').textContent = t;
+  document.getElementById('sidebarDate').textContent = new Date().toLocaleDateString('es');
+}
+setInterval(updateClock,1000); updateClock();
+
+// ── Log ────────────────────────────────────────────────────────
+function tiempo(){return new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+function log(txt,tipo='info'){
+  const b=document.getElementById('logBody');
+  const d=document.createElement('div');
+  d.className='log-line';
+  d.innerHTML=`<span class="log-t">${tiempo()}</span><span class="log-${tipo}">${txt}</span>`;
+  b.appendChild(d); b.scrollTop=b.scrollHeight;
+}
+
+function addActividad(titulo,msg,nivel){
+  const list=document.getElementById('actividadLista');
+  const empty=list.querySelector('.empty-msg');
+  if(empty) empty.remove();
+  const color=nivel==='leve'?'var(--green)':nivel==='severo'?'var(--red)':'var(--yellow)';
+  const emoji=nivel==='leve'?'🟢':nivel==='severo'?'🔴':'🟡';
+  const div=document.createElement('div');
+  div.className=`hist-item ${nivel}`;
+  div.innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+      <span style="font-family:var(--mono);font-size:9px;font-weight:700;color:${color};">${emoji} ${nivel.toUpperCase()}</span>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--muted);">${tiempo()}</span>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--text);">${titulo}</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${msg.substring(0,60)}</div>`;
+  list.insertBefore(div,list.firstChild);
+  const total=list.querySelectorAll('.hist-item').length;
+  document.getElementById('histCount').textContent=total;
+}
+
+// ── LOGIN ──────────────────────────────────────────────────────
+async function doLogin() {
+  const email=document.getElementById('userEmail').value.trim();
+  const pass=document.getElementById('userPass').value.trim();
+  const btn=document.getElementById('btnLogin');
+  if(!email||!pass){showError('Completa todos los campos.');return;}
+  btn.textContent='VERIFICANDO...'; btn.disabled=true;
+  try {
+    const res=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const data=await res.json();
+    if(res.ok&&data.ok){
+      if(data.isAdmin){showError('Este panel es solo para usuarios. Usa el panel de administrador.');return;}
+      sessionUser=data;
+      document.getElementById('loginPage').style.display='none';
+      document.getElementById('mainApp').style.display='flex';
+      document.getElementById('mainContent').style.display='flex';
+      document.getElementById('topCodigo').textContent=data.codigo||'--';
+      document.getElementById('sidebarEmail').textContent=email;
+      log(`✅ Bienvenido ${email}`,'ok');
+      cargarTodo();
+    } else showError(data.error||'Credenciales incorrectas.');
+  } catch(e){showError('No se pudo conectar con el servidor.');}
+  btn.textContent='ENTRAR A MI PANEL'; btn.disabled=false;
+}
+function showError(msg){const el=document.getElementById('loginError');el.textContent='⚠ '+msg;el.style.display='block';}
+function doLogout(){
+  sessionUser=null;
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('mainContent').style.display='none';
+}
+document.getElementById('userPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// ── CARGAR TODO ────────────────────────────────────────────────
+async function cargarTodo() {
+  await cargarSistema();
+  await cargarSensores();
+  await cargarMiembros();
+  await cargarCamara();
+}
+
+// ── SISTEMA ────────────────────────────────────────────────────
+async function cargarSistema() {
+  try {
+    const res=await fetch('/get-sistema?uid='+sessionUser.uid);
+    const data=await res.json();
+    sistemaArmado=data.armado||false;
+    simuladorActivo=data.simuladorPresencia||false;
+    actualizarUISistema();
+    if(data.camaraUrl) document.getElementById('camaraUrl').value=data.camaraUrl;
+  } catch(e){log('Error cargando sistema','err');}
+}
+
+function actualizarUISistema() {
+  const pill=document.getElementById('sistemaPill');
+  const dot=document.getElementById('sistemaDot');
+  const label=document.getElementById('sistemaLabel');
+  const grande=document.getElementById('sistemaGrande');
+  const icono=document.getElementById('sistemaIcono');
+  const estado=document.getElementById('sistemaEstado');
+  const sub=document.getElementById('sistemaSub');
+  const btnSim=document.getElementById('btnSimulador');
+
+  if(sistemaArmado){
+    pill.className='sistema-pill armado'; dot.className='dot dot-red'; label.textContent='ARMADO';
+    grande.className='sistema-grande armado'; icono.textContent='🔴';
+    estado.textContent='SISTEMA ARMADO'; estado.style.color='var(--red)';
+    sub.textContent='Cualquier movimiento activará la alarma — Clic para desarmar';
+  } else {
+    pill.className='sistema-pill desarmado'; dot.className='dot dot-green'; label.textContent='DESARMADO';
+    grande.className='sistema-grande desarmado'; icono.textContent='🛡️';
+    estado.textContent='SISTEMA DESARMADO'; estado.style.color='var(--green)';
+    sub.textContent='Tu hogar no está protegido — Clic para armar';
+  }
+
+  if(simuladorActivo){
+    btnSim.textContent='DESACTIVAR'; btnSim.style.background='rgba(255,34,0,0.15)';
+    btnSim.style.color='var(--red)'; btnSim.style.borderColor='rgba(255,34,0,0.4)';
+  } else {
+    btnSim.textContent='ACTIVAR'; btnSim.style.background='rgba(0,255,136,0.15)';
+    btnSim.style.color='var(--green)'; btnSim.style.borderColor='rgba(0,255,136,0.4)';
+  }
+}
+
+async function toggleSistema() {
+  if(!sessionUser) return;
+  try {
+    const res=await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({uid:sessionUser.uid,armado:!sistemaArmado})});
+    if(res.ok){sistemaArmado=!sistemaArmado;actualizarUISistema();
+      log(`Sistema ${sistemaArmado?'ARMADO 🔴':'DESARMADO 🟢'}`,sistemaArmado?'warn':'ok');}
+  } catch(e){log('Error: '+e.message,'err');}
+}
+
+async function toggleSimulador() {
+  if(!sessionUser) return;
+  simuladorActivo=!simuladorActivo;
+  try {
+    await fetch('/toggle-simulador',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({activo:simuladorActivo})});
+    actualizarUISistema();
+    log(`Simulador de presencia ${simuladorActivo?'activado':'desactivado'}`,simuladorActivo?'ok':'info');
+  } catch(e){simuladorActivo=!simuladorActivo;log('Error: '+e.message,'err');}
+}
+
+// ── NIVEL Y PREVIEW ────────────────────────────────────────────
+function setNivel(el) {
+  document.querySelectorAll('.nivel-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected'); nivelActual=el.dataset.nivel;
+  const color=nivelActual==='leve'?'var(--green)':nivelActual==='severo'?'var(--red)':'var(--yellow)';
+  const emoji=nivelActual==='leve'?'🟢':nivelActual==='severo'?'🔴':'🟡';
+  document.getElementById('nivelDisplay').value=nivelActual.toUpperCase();
+  document.getElementById('nivelDisplay').style.color=color;
+  updatePreview();
+}
+
+const msgInput=document.getElementById('msgInput');
+const tituloInput=document.getElementById('tituloInput');
+msgInput.addEventListener('input',()=>{document.getElementById('charCount').textContent=msgInput.value.length;updatePreview();});
+tituloInput.addEventListener('input',updatePreview);
+
+function updatePreview(){
+  const emoji=nivelActual==='leve'?'🟢':nivelActual==='severo'?'🔴':'🟡';
+  const color=nivelActual==='leve'?'var(--green)':nivelActual==='severo'?'var(--red)':'var(--yellow)';
+  document.getElementById('previewTitle').textContent=`${emoji} ${tituloInput.value||'Sin título'}`;
+  document.getElementById('previewTitle').style.color=color;
+  document.getElementById('previewMsg').textContent=msgInput.value||'(vacío)';
+  document.getElementById('previewNotif').style.borderLeftColor=color;
+}
+
+// ── ENVIAR ALARMA ──────────────────────────────────────────────
+async function enviarAlarma() {
+  const mensaje=msgInput.value.trim();
+  const titulo=tituloInput.value.trim()||'Alerta';
+  if(!mensaje){log('⚠ Escribe un mensaje.','warn');return;}
+  const btn=document.getElementById('btnEnviar');
+  btn.classList.add('loading'); btn.textContent='⟳ ENVIANDO...';
+  statsHoy.alarmas++;
+  try {
+    const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uid:sessionUser.uid})});
+    if(res.ok){
+      log(`✅ Alarma [${nivelActual.toUpperCase()}] activada en tu dispositivo.`,'ok');
+      statsHoy.ok++;
+      addActividad(titulo,mensaje,nivelActual);
+      actualizarStats();
+    } else {const e=await res.text();log(`❌ Error: ${e}`,'err');statsHoy.err++;}
+  } catch(e){log(`❌ ${e.message}`,'err');statsHoy.err++;}
+  btn.classList.remove('loading'); btn.textContent='▶  ACTIVAR MI ALARMA';
+}
+
+async function cancelarAlarma(){
+  try {
+    await fetch('/cancel-alarm',{method:'POST'});
+    log('⏹ Alarma cancelada.','ok');
+  } catch(e){log('Error: '+e.message,'err');}
+}
+
+function enviarAOtros(){
+  const panel=document.getElementById('panelOtros');
+  panel.style.display=panel.style.display==='none'?'block':'none';
+}
+
+function actualizarStats(){
+  document.getElementById('statAlarmas').textContent=statsHoy.alarmas;
+}
+
+// ── ENVIAR POR CÓDIGO ──────────────────────────────────────────
+function agregarCodigo(){
+  const input=document.getElementById('codigoInput');
+  const codigo=input.value.trim();
+  if(!codigo) return;
+  if(codigo===sessionUser?.codigo){log('⚠ No puedes enviarte a ti mismo.','warn');return;}
+  if(codigosSelec.includes(codigo)){log('⚠ Código ya agregado.','warn');return;}
+  codigosSelec.push(codigo);
+  input.value='';
+  renderChips();
+}
+
+function renderChips(){
+  const cont=document.getElementById('codigosChips');
+  cont.innerHTML=codigosSelec.map(c=>`
+    <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(0,136,255,0.12);border:1px solid rgba(0,136,255,0.4);">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:700;">${c}</span>
+      <span style="cursor:pointer;color:var(--blue);" onclick="quitarCodigo('${c}')">✕</span>
+    </div>`).join('');
+}
+function quitarCodigo(c){codigosSelec=codigosSelec.filter(x=>x!==c);renderChips();}
+
+async function enviarACodigos(){
+  if(!codigosSelec.length){log('⚠ Agrega al menos un código.','warn');return;}
+  const mensaje=msgInput.value.trim()||'🚨 ¡ALERTA!';
+  const titulo=tituloInput.value.trim()||'Alerta';
+  log(`Buscando ${codigosSelec.length} usuario(s)...`,'info');
+  const uids=[];
+  for(const codigo of codigosSelec){
+    try {
+      const res=await fetch('/find-by-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo})});
+      const data=await res.json();
+      if(data.found) uids.push(data.uid);
+      else log(`⚠ Código no encontrado: ${codigo}`,'warn');
+    } catch(e){}
+  }
+  if(!uids.length){log('❌ Ningún código fue encontrado.','err');return;}
+  try {
+    const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uids})});
+    if(res.ok){log(`✅ Alarma enviada a ${uids.length} usuario(s).`,'ok');codigosSelec=[];renderChips();}
+    else log('❌ Error enviando alarmas.','err');
+  } catch(e){log('❌ Error: '+e.message,'err');}
+}
+
+// ── CÁMARA ─────────────────────────────────────────────────────
+async function cargarCamara(){
+  try {
+    const res=await fetch('/get-sistema?uid='+sessionUser.uid);
+    const data=await res.json();
+    if(data.camaraUrl){document.getElementById('camaraUrl').value=data.camaraUrl;mostrarStream(data.camaraUrl);}
+  } catch(e){}
+}
+
+async function guardarCamara(){
+  const url=document.getElementById('camaraUrl').value.trim();
+  if(!url){log('⚠ Ingresa una URL.','warn');return;}
+  try {
+    await fetch('/save-camera-url',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({uid:sessionUser.uid,url})});
+    mostrarStream(url); log('✅ URL guardada.','ok');
+  } catch(e){log('❌ Error: '+e.message,'err');}
+}
+
+function mostrarStream(url){
+  document.getElementById('camaraContainer').innerHTML=
+    `<iframe src="${url}" style="width:100%;height:280px;border:none;" allowfullscreen></iframe>`;
+}
+function recargarCamara(){const url=document.getElementById('camaraUrl').value.trim();if(url)mostrarStream(url);}
+
+// ── SENSORES ───────────────────────────────────────────────────
+async function cargarSensores(){
+  try {
+    const res=await fetch('/get-sensors');
+    const data=await res.json();
+    const lista=data.sensores||[];
+    document.getElementById('statSensores').textContent=lista.length;
+    const cont=document.getElementById('sensoresLista');
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin sensores.<br>Conecta tu ESP32.</div>';return;}
+    cont.innerHTML=lista.map(s=>`
+      <div class="lista-item ${s.online?'online':'offline'}">
+        <div style="font-size:22px;">📡</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${s.nombre}</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${s.tipo} · ${s.ip}</div>
+          <div style="font-family:var(--mono);font-size:10px;color:${s.online?'var(--green)':'var(--red)'};">
+            ${s.online?`✅ Online — heartbeat hace ${s.segundosSinHB}s`:`❌ Sin señal hace ${s.segundosSinHB}s`}
+          </div>
+        </div>
+        <span class="status-badge" style="color:${s.online?'var(--green)':'var(--red)'};border-color:${s.online?'rgba(0,255,136,0.4)':'rgba(255,34,0,0.4)'};">
+          ${s.online?'ONLINE':'OFFLINE'}
+        </span>
+      </div>`).join('');
+  } catch(e){log('Error cargando sensores','err');}
+}
+
+// ── MIEMBROS ───────────────────────────────────────────────────
+async function cargarMiembros(){
+  try {
+    const res=await fetch('/get-miembros?uid='+sessionUser.uid);
+    const data=await res.json();
+    const lista=data.miembros||[];
+    document.getElementById('statMiembros').textContent=lista.length;
+    const cont=document.getElementById('miembrosLista');
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin miembros.<br>Regístralos en la app móvil.</div>';return;}
+    cont.innerHTML=lista.map(m=>`
+      <div class="lista-item ${m.enCasa?'encasa':''}">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,34,0,0.12);border:2px solid rgba(255,34,0,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--red);">
+          ${m.nombre?m.nombre[0].toUpperCase():'?'}
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${m.nombre||'Miembro'}</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${m.cantFotos||0} fotos · Reconocimiento facial</div>
+        </div>
+        <span class="status-badge" style="color:${m.enCasa?'var(--green)':'var(--muted)'};border-color:${m.enCasa?'rgba(0,255,136,0.4)':'rgba(68,68,90,0.4)'};">
+          ${m.enCasa?'EN CASA':'FUERA'}
+        </span>
+      </div>`).join('');
+  } catch(e){log('Error cargando miembros','err');}
+}
+
+// ── ESCOLTA ────────────────────────────────────────────────────
+function activarEscolta(){
+  const lat=parseFloat(document.getElementById('escDestLat').value);
+  const lng=parseFloat(document.getElementById('escDestLng').value);
+  const min=parseInt(document.getElementById('escMinutos').value)||30;
+  const pin=document.getElementById('escPin').value.trim();
+  if(isNaN(lat)||isNaN(lng)){log('⚠ Ingresa las coordenadas del destino.','warn');return;}
+  if(pin.length<4){log('⚠ El PIN debe tener al menos 4 dígitos.','warn');return;}
+
+  escoltaPin=pin;
+  document.getElementById('escoltaForm').style.display='none';
+  document.getElementById('escoltaActiva').style.display='block';
+  document.getElementById('panelCancelar').style.display='none';
+
+  let secs=min*60;
+  escoltaTimer=setInterval(()=>{
+    secs--;
+    const m=String(Math.floor(secs/60)).padLeft2();
+    const s=String(secs%60).padLeft2();
+    document.getElementById('escContador').textContent=`${m}:${s}`;
+    if(secs<=0){clearInterval(escoltaTimer);enviarAlertaEscolta();}
+  },1000);
+
+  log(`🛡️ Modo Escolta activado — ${min} minutos.`,'ok');
+}
+
+String.prototype.padLeft2=function(){return this.padStart(2,'0');}
+
+async function enviarAlertaEscolta(){
+  log('⚠️ Tiempo expirado — Enviando alerta de escolta.','warn');
+  try {
+    await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({uid:sessionUser.uid,message:'⚠️ '+sessionUser.email+' no llegó a su destino a tiempo.',lat:0,lng:0})});
+    log('🚨 Alerta de escolta enviada a contactos.','err');
+    document.getElementById('escContador').textContent='¡ALERTA!';
+    document.getElementById('escContador').style.color='var(--red)';
+  } catch(e){log('Error enviando alerta','err');}
+}
+
+function mostrarCancelar(){
+  document.getElementById('panelCancelar').style.display=
+    document.getElementById('panelCancelar').style.display==='none'?'block':'none';
+}
+
+function cancelarEscolta(){
+  const pin=document.getElementById('pinCancelar').value.trim();
+  if(pin===escoltaPin){
+    clearInterval(escoltaTimer);
+    document.getElementById('escoltaForm').style.display='block';
+    document.getElementById('escoltaActiva').style.display='none';
+    document.getElementById('panelCancelar').style.display='none';
+    document.getElementById('pinCancelar').value='';
+    log('✅ Modo Escolta cancelado.','ok');
+  } else if(pin===escoltaPin+'0'){
+    // PIN coacción
+    clearInterval(escoltaTimer);
+    enviarAlertaEscolta();
+    document.getElementById('escoltaForm').style.display='block';
+    document.getElementById('escoltaActiva').style.display='none';
+    document.getElementById('panelCancelar').style.display='none';
+    log('⚠ PIN de coacción usado — Alerta enviada silenciosamente.','warn');
+  } else {
+    log('❌ PIN incorrecto.','err');
+  }
+}
+
+async function activarAntiRobo(){
+  if(!confirm('¿Activar botón de pánico?')) return;
+  try {
+    await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({uid:sessionUser.uid,message:'🚨 ALERTA ANTI-ROBO: '+sessionUser.email,lat:0,lng:0})});
+    log('🚨 Alerta de robo enviada.','err');
+  } catch(e){log('Error: '+e.message,'err');}
+}
+
+// ── HISTORIAL ──────────────────────────────────────────────────
+async function cargarHistorial(){
+  try {
+    const res=await fetch('/get-historial?uid='+sessionUser.uid);
+    const data=await res.json();
+    const lista=data.historial||[];
+    const cont=document.getElementById('historialLista');
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin alarmas registradas.</div>';return;}
+    cont.innerHTML=lista.map(h=>`
+      <div class="hist-item ${h.nivel||'moderado'}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:${h.nivel==='leve'?'var(--green)':h.nivel==='severo'?'var(--red)':'var(--yellow)'};">
+            ${h.nivel?.toUpperCase()||'MODERADO'}
+          </span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">${h.hora||''}</span>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);">${h.titulo||'Alerta'}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${h.message||''}</div>
+      </div>`).join('');
+  } catch(e){}
+}
+
+// ── NAVEGACIÓN ─────────────────────────────────────────────────
+const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Historial'];
+function setView(view,el){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  vistas.forEach(v=>{const el2=document.getElementById('view'+v);if(el2)el2.style.display=v.toLowerCase()===view?'block':'none';});
+  if(view==='sensores') cargarSensores();
+  if(view==='miembros') cargarMiembros();
+  if(view==='historial') cargarHistorial();
+}
+
+// Auto-refresh cada 15 segundos
+setInterval(()=>{if(sessionUser){cargarSistema();cargarSensores();}},15000);
+</script>
+</body>
+</html>
