@@ -355,26 +355,32 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
 
       <!-- ── CÁMARA ── -->
       <div id="viewCamara" style="display:none">
-        <div class="card">
-          <div class="card-title">MI CÁMARA EN VIVO (iVCam)</div>
-          <div style="display:flex;gap:10px;margin-bottom:12px;">
-            <input type="text" id="camaraUrl" class="input-field" placeholder="http://192.168.1.x:8080/video" style="margin-bottom:0;flex:1;"/>
-            <button onclick="guardarCamara()" style="padding:9px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;">GUARDAR</button>
-            <button onclick="recargarCamara()" style="padding:9px 12px;background:var(--surface2);color:var(--green);border:1px solid rgba(0,255,136,0.3);cursor:pointer;font-size:14px;">⟳</button>
-          </div>
-          <div class="camara-wrap" id="camaraContainer">
-            <div style="text-align:center;color:var(--muted);font-family:var(--mono);font-size:11px;line-height:2;">
-              📹<br>Sin stream configurado<br>Instala iVCam en un celular secundario
-            </div>
-          </div>
-          <div style="margin-top:10px;padding:10px;background:rgba(0,136,255,0.06);border:1px solid rgba(0,136,255,0.15);font-family:var(--mono);font-size:10px;color:#4488ff;line-height:1.8;">
-            📱 iVCam Webcam (Play Store) → Abre la app → Conecta al mismo WiFi → Copia la URL
-          </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="font-size:14px;font-weight:700;color:var(--text-pri)">📹 Mis Cámaras</h3>
+      <button onclick="mostrarDialogoCamara()" style="padding:7px 14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700">+ AGREGAR</button>
+    </div>
+    <!-- Tabs de cámaras -->
+    <div id="camarasTabs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px"></div>
+    <!-- Stream -->
+    <div class="camara-wrap" id="camaraContainer" style="min-height:320px;background:#000;position:relative">
+      <div style="display:flex;align-items:center;justify-content:center;height:320px;color:#666;font-size:13px">Sin cámara seleccionada</div>
+    </div>
+    <!-- Info cámara activa -->
+    <div id="camaraInfo" style="margin-top:8px;display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span id="camaraActivaNombre" style="font-size:12px;color:var(--text-sec)"></span>
+        <div style="display:flex;gap:8px">
+          <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer;font-size:11px">✏️ Editar</button>
+          <button onclick="eliminarCamaraActiva()" style="padding:5px 10px;background:var(--red)22;color:var(--red);border:none;cursor:pointer;font-size:11px">🗑️ Eliminar</button>
+          <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer;font-size:11px">🔄 Recargar</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <!-- ── SENSORES ── -->
-      <div id="viewSensores" style="display:none">
+<div id="viewSensores" style="display:none">
         <div class="card">
           <div class="card-title">MIS SENSORES ESP32
             <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">⟳</button>
@@ -741,29 +747,155 @@ async function enviarACodigos(){
 }
 
 // ── CÁMARA ─────────────────────────────────────────────────────
+// ── CÁMARAS MÚLTIPLES ────────────────────────────────────────
+let camaras = [];
+let camaraActivaIdx = -1;
+let dialogoCamaraEditar = null;
+
 async function cargarCamara(){
+  if(!estado.uid) return;
   try {
-    const res=await fetch('/get-sistema?uid='+sessionUser.uid);
-    const data=await res.json();
-    if(data.camaraUrl){document.getElementById('camaraUrl').value=data.camaraUrl;mostrarStream(data.camaraUrl);}
-  } catch(e){}
+    const res = await fetch('/get-sistema?uid='+estado.uid, headers());
+    const data = await res.json();
+    
+    // Compatibilidad con versión anterior
+    if(data.camaras && data.camaras.length > 0) {
+      camaras = data.camaras;
+    } else if(data.camaraUrl) {
+      camaras = [{ id:'cam_01', nombre:'Cámara Principal', url:data.camaraUrl }];
+    } else {
+      camaras = [];
+    }
+    
+    renderizarTabsCamaras();
+    if(camaras.length > 0) seleccionarCamara(0);
+  } catch(e) { console.error('Error cámaras:', e); }
 }
 
-async function guardarCamara(){
-  const url=document.getElementById('camaraUrl').value.trim();
-  if(!url){log('⚠ Ingresa una URL.','warn');return;}
-  try {
-    await fetch('/save-camera-url',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:sessionUser.uid,url})});
-    mostrarStream(url); log('✅ URL guardada.','ok');
-  } catch(e){log('❌ Error: '+e.message,'err');}
+function renderizarTabsCamaras(){
+  const tabs = document.getElementById('camarasTabs');
+  if(!tabs) return;
+  tabs.innerHTML = camaras.map((cam, i) => `
+    <div onclick="seleccionarCamara(${i})" id="tab_cam_${i}" style="
+      padding:6px 14px;cursor:pointer;font-size:12px;font-weight:600;
+      background:${camaraActivaIdx===i ? 'var(--blue)' : 'var(--surface2)'};
+      color:${camaraActivaIdx===i ? '#fff' : 'var(--text-sec)'};
+      border:1px solid ${camaraActivaIdx===i ? 'var(--blue)' : 'var(--border)'};
+      white-space:nowrap;flex-shrink:0">
+      📹 ${cam.nombre}
+    </div>
+  `).join('') + (camaras.length === 0 ? '<span style="color:var(--text-sec);font-size:12px">Sin cámaras — toca + Agregar</span>' : '');
+}
+
+function seleccionarCamara(idx){
+  camaraActivaIdx = idx;
+  renderizarTabsCamaras();
+  const cam = camaras[idx];
+  if(!cam) return;
+  mostrarStream(cam.url);
+  const info = document.getElementById('camaraInfo');
+  const nombre = document.getElementById('camaraActivaNombre');
+  if(info) info.style.display = 'flex';
+  if(nombre) nombre.textContent = `${cam.nombre}  •  ${cam.url}`;
 }
 
 function mostrarStream(url){
-  document.getElementById('camaraContainer').innerHTML=
-    `<iframe src="${url}" style="width:100%;height:280px;border:none;" allowfullscreen></iframe>`;
+  const c = document.getElementById('camaraContainer');
+  if(!c) return;
+  c.innerHTML = `<iframe src="${url}" style="width:100%;height:100%;min-height:320px;border:none;object-fit:contain" allowfullscreen></iframe>`;
 }
-function recargarCamara(){const url=document.getElementById('camaraUrl').value.trim();if(url)mostrarStream(url);}
+
+function recargarCamaraActiva(){
+  if(camaraActivaIdx >= 0 && camaras[camaraActivaIdx]) {
+    mostrarStream(camaras[camaraActivaIdx].url);
+  }
+}
+
+function editarCamaraActiva(){
+  if(camaraActivaIdx >= 0) mostrarDialogoCamara(camaraActivaIdx);
+}
+
+async function eliminarCamaraActiva(){
+  if(camaraActivaIdx < 0) return;
+  const cam = camaras[camaraActivaIdx];
+  if(!confirm(`¿Eliminar cámara "${cam.nombre}"?`)) return;
+  camaras.splice(camaraActivaIdx, 1);
+  camaraActivaIdx = camaras.length > 0 ? 0 : -1;
+  await guardarCamaras();
+  renderizarTabsCamaras();
+  if(camaraActivaIdx >= 0) seleccionarCamara(0);
+  else {
+    document.getElementById('camaraContainer').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:320px;color:#666;font-size:13px">Sin cámara seleccionada</div>';
+    const info = document.getElementById('camaraInfo');
+    if(info) info.style.display = 'none';
+  }
+  showToast('✅ Cámara eliminada.');
+}
+
+function mostrarDialogoCamara(editarIdx = null){
+  dialogoCamaraEditar = editarIdx;
+  const cam = editarIdx !== null ? camaras[editarIdx] : null;
+  
+  const overlay = document.createElement('div');
+  overlay.id = 'dialogoCamara';
+  overlay.style.cssText = 'position:fixed;inset:0;background:#0008;z-index:1000;display:flex;align-items:center;justify-content:center';
+  overlay.innerHTML = `
+    <div style="background:var(--surface);padding:24px;width:340px;max-width:90vw">
+      <h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam ? '✏️ Editar Cámara' : '📹 Agregar Cámara'}</h3>
+      <div style="margin-bottom:10px">
+        <label style="font-size:12px;color:var(--text-sec)">Nombre</label>
+        <input id="dlg_cam_nombre" type="text" class="input-field" value="${cam?.nombre || ''}" placeholder="Sala, Garaje, Entrada..." style="margin-top:4px">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;color:var(--text-sec)">URL del stream</label>
+        <input id="dlg_cam_url" type="url" class="input-field" value="${cam?.url || ''}" placeholder="http://192.168.1.x:8080/video" style="margin-top:4px">
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="cerrarDialogoCamara()" style="padding:8px 16px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer">Cancelar</button>
+        <button onclick="guardarDialogoCamara()" style="padding:8px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700">Guardar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('dlg_cam_nombre').focus(), 100);
+}
+
+function cerrarDialogoCamara(){
+  const d = document.getElementById('dialogoCamara');
+  if(d) d.remove();
+}
+
+async function guardarDialogoCamara(){
+  const nombre = document.getElementById('dlg_cam_nombre').value.trim();
+  const url = document.getElementById('dlg_cam_url').value.trim();
+  if(!nombre || !url) { alert('Completa todos los campos.'); return; }
+  
+  if(dialogoCamaraEditar !== null) {
+    camaras[dialogoCamaraEditar] = { ...camaras[dialogoCamaraEditar], nombre, url };
+  } else {
+    camaras.push({ id: 'cam_' + Date.now(), nombre, url });
+  }
+  
+  cerrarDialogoCamara();
+  await guardarCamaras();
+  renderizarTabsCamaras();
+  const newIdx = dialogoCamaraEditar !== null ? dialogoCamaraEditar : camaras.length - 1;
+  seleccionarCamara(newIdx);
+  showToast('✅ Cámara guardada.');
+}
+
+async function guardarCamaras(){
+  if(!estado.uid) return;
+  await fetch('/save-camera-url', {
+    method:'POST',
+    headers:{'Content-Type':'application/json', ...headers()},
+    body: JSON.stringify({
+      uid: estado.uid,
+      camaraUrl: camaras.length > 0 ? camaras[0].url : '',
+      camaras: camaras
+    })
+  });
+}
+
 
 // ── SENSORES ───────────────────────────────────────────────────
 async function cargarSensores(){
