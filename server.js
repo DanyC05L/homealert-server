@@ -398,6 +398,95 @@ const server = http.createServer(async (req, res) => {
   // ── Google Assistant webhook ──
   if (req.url === '/assistant') return assistantHandler(req, res, db, admin);
 
+  // ── Endpoints GET para Google Home Routines ──────────────────
+  // Uso: https://homealert-server.onrender.com/cmd/armar?uid=UID&key=HOMEALERT2025
+  if (req.method === 'GET' && req.url.startsWith('/cmd/')) {
+    const url  = new URL(req.url, 'http://localhost');
+    const uid  = url.searchParams.get('uid');
+    const key  = url.searchParams.get('key');
+    const cmd  = url.pathname.replace('/cmd/', '');
+
+    if (key !== 'HOMEALERT2025') {
+      res.writeHead(401, {'Content-Type': 'text/plain'});
+      return res.end('Unauthorized');
+    }
+    if (!uid) {
+      res.writeHead(400, {'Content-Type': 'text/plain'});
+      return res.end('Falta uid');
+    }
+
+    try {
+      const db = admin.firestore();
+      let respuesta = 'OK';
+
+      if (cmd === 'armar') {
+        await db.collection('sistema').doc(uid)
+          .set({ armado: true }, { merge: true });
+        respuesta = 'Sistema armado ✅';
+      }
+      else if (cmd === 'desarmar') {
+        await db.collection('sistema').doc(uid)
+          .set({ armado: false }, { merge: true });
+        respuesta = 'Sistema desarmado ✅';
+      }
+      else if (cmd === 'alarma') {
+        const nivel = url.searchParams.get('nivel') || 'moderado';
+        await db.collection('alerts').doc(uid).set({
+          active: true, nivel,
+          titulo: nivel === 'severo' ? '🚨 ALERTA SEVERA' : '⚠️ Alerta',
+          message: 'Alerta activada por Google Home',
+          timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+        await admin.messaging().send({
+          topic: `user_${uid}`,
+          data: { tipo: 'alarma', nivel, titulo: 'Alerta', message: 'Google Home' },
+          android: { priority: 'high', notification: { channelId: 'homealert_alarm' } }
+        });
+        respuesta = `Alarma ${nivel} enviada 🚨`;
+      }
+      else if (cmd === 'cancelar') {
+        await db.collection('alerts').doc(uid)
+          .set({ active: false }, { merge: true });
+        respuesta = 'Alarma cancelada ✅';
+      }
+      else if (cmd === 'simulador/on') {
+        await db.collection('sistema').doc(uid)
+          .set({ simuladorPresencia: true }, { merge: true });
+        respuesta = 'Simulador activado 💡';
+      }
+      else if (cmd === 'noche/on') {
+        await db.collection('sistema').doc(uid).set({
+          modoNoche: true, ignorarGPS: true, armado: true
+        }, { merge: true });
+        respuesta = 'Modo Noche activado 🌙';
+      }
+      else if (cmd === 'noche/off') {
+        await db.collection('sistema').doc(uid).set({
+          modoNoche: false, ignorarGPS: false, armado: false
+        }, { merge: true });
+        respuesta = 'Modo Noche desactivado ☀️';
+      }
+      else if (cmd === 'simulador/off') {
+        await db.collection('sistema').doc(uid)
+          .set({ simuladorPresencia: false }, { merge: true });
+        respuesta = 'Simulador desactivado 💡';
+      }
+      else {
+        res.writeHead(404, {'Content-Type': 'text/plain'});
+        return res.end('Comando no reconocido');
+      }
+
+      console.log(`🏠 Google Home [${uid.substring(0,8)}...]: ${cmd} → ${respuesta}`);
+      res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+      return res.end(respuesta);
+
+    } catch(e) {
+      console.error('Error Google Home cmd:', e.message);
+      res.writeHead(500, {'Content-Type': 'text/plain'});
+      return res.end('Error: ' + e.message);
+    }
+  }
+
   res.writeHead(404); res.end('Not found');
 });
 
