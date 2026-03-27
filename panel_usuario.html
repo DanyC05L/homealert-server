@@ -228,6 +228,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
     <div class="nav-section">
       <div class="nav-label">SEGURIDAD</div>
       <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">🛡️</span>Modo Escolta</div>
+      <div class="nav-item" onclick="setView('noche',this)"><span class="nav-icon">🌙</span>Modo Noche</div>
       <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">📋</span>Historial</div>
     </div>
     <div class="sidebar-footer" id="sidebarInfo">
@@ -458,7 +459,70 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
       </div>
 
       <!-- ── HISTORIAL ── -->
-      <div id="viewHistorial" style="display:none">
+      <div id="viewNoche" style="display:none">
+  <div class="card">
+    <h3 style="font-size:14px;font-weight:700;color:#6666FF;margin-bottom:12px">🌙 Modo Noche</h3>
+    <p style="color:var(--text-sec);font-size:12px;margin-bottom:16px">
+      Arma el sistema aunque estés en casa. Ideal para dormir con seguridad.
+      Solo activa la alarma si detecta personas desconocidas.
+    </p>
+    <!-- Estado Modo Noche -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-size:14px;color:var(--text-pri);font-weight:700">Estado Modo Noche</div>
+        <div id="nocheEstadoText" style="font-size:12px;color:#6666FF">Cargando...</div>
+      </div>
+      <button id="btnToggleNoche" onclick="toggleModoNoche()"
+        style="padding:10px 20px;background:#6666FF;color:#fff;border:none;cursor:pointer;font-weight:700;font-size:13px">
+        Activar
+      </button>
+    </div>
+    <!-- Horario -->
+    <div style="border:1px solid var(--border);padding:14px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:13px;color:var(--text-pri);font-weight:700">⏰ Activación automática</span>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="nocheHorarioCheck" onchange="guardarConfigNoche()">
+          <span style="font-size:12px;color:var(--text-sec)">Por horario</span>
+        </label>
+      </div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1">
+          <label style="font-size:11px;color:var(--text-sec)">Inicio</label>
+          <input type="time" id="nocheHoraInicio" value="22:00"
+            onchange="guardarConfigNoche()"
+            style="width:100%;padding:8px;background:var(--bg);border:1px solid #6666FF;color:#6666FF;font-size:16px;font-weight:700">
+        </div>
+        <div style="flex:1">
+          <label style="font-size:11px;color:var(--text-sec)">Fin</label>
+          <input type="time" id="nocheHoraFin" value="06:00"
+            onchange="guardarConfigNoche()"
+            style="width:100%;padding:8px;background:var(--bg);border:1px solid #6666FF;color:#6666FF;font-size:16px;font-weight:700">
+        </div>
+      </div>
+    </div>
+    <!-- Nivel alarma -->
+    <div style="border:1px solid var(--border);padding:14px">
+      <div style="font-size:13px;color:var(--text-pri);font-weight:700;margin-bottom:10px">🔔 Nivel de alarma</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="setNivelNoche('leve')" id="nocheLeve"
+          style="flex:1;padding:8px;background:#00FF8822;color:#00FF88;border:1px solid #00FF88;cursor:pointer;font-size:12px;font-weight:700">
+          🟢 LEVE
+        </button>
+        <button onclick="setNivelNoche('moderado')" id="nocheModera"
+          style="flex:1;padding:8px;background:#FFAA0022;color:#FFAA00;border:1px solid #FFAA00;cursor:pointer;font-size:12px;font-weight:700">
+          🟡 MODERADO
+        </button>
+        <button onclick="setNivelNoche('severo')" id="nocheSevero"
+          style="flex:1;padding:8px;background:#FF220022;color:#FF2200;border:1px solid #FF2200;cursor:pointer;font-size:12px;font-weight:700">
+          🔴 SEVERO
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="viewHistorial" style="display:none">
         <div class="card">
           <div class="card-title">HISTORIAL DE ALARMAS</div>
           <div id="historialLista"><div class="empty-msg">Sin alarmas registradas.</div></div>
@@ -573,6 +637,7 @@ async function cargarTodo() {
   await cargarSensores();
   await cargarMiembros();
   await cargarCamara();
+    await cargarModoNoche();
 }
 
 // ── SISTEMA ────────────────────────────────────────────────────
@@ -747,6 +812,91 @@ async function enviarACodigos(){
 }
 
 // ── CÁMARA ─────────────────────────────────────────────────────
+// ── MODO NOCHE ─────────────────────────────────────────────────
+let modoNocheActivo = false;
+let nivelNocheActual = 'severo';
+
+async function cargarModoNoche(){
+  if(!sessionUser?.uid) return;
+  try {
+    const res = await fetch('/get-sistema?uid='+sessionUser.uid);
+    const data = await res.json();
+    modoNocheActivo = data.modoNoche || false;
+    nivelNocheActual = data.modoNocheNivel || 'severo';
+    
+    const check = document.getElementById('nocheHorarioCheck');
+    const inicio = document.getElementById('nocheHoraInicio');
+    const fin    = document.getElementById('nocheHoraFin');
+    
+    if(check) check.checked = data.modoNocheHorario || false;
+    if(inicio && data.modoNocheInicio) inicio.value = data.modoNocheInicio;
+    if(fin && data.modoNocheFin) fin.value = data.modoNocheFin;
+    
+    actualizarUINocha();
+    setNivelNoche(nivelNocheActual);
+  } catch(e) { console.error('Error cargando modo noche:', e); }
+}
+
+function actualizarUINocha(){
+  const txt = document.getElementById('nocheEstadoText');
+  const btn = document.getElementById('btnToggleNoche');
+  if(txt) txt.textContent = modoNocheActivo ? '🌙 ACTIVO — Sistema armado' : '☀️ Inactivo';
+  if(btn) {
+    btn.textContent = modoNocheActivo ? 'Desactivar' : 'Activar';
+    btn.style.background = modoNocheActivo ? '#555577' : '#6666FF';
+  }
+}
+
+async function toggleModoNoche(){
+  if(!sessionUser?.uid) return;
+  modoNocheActivo = !modoNocheActivo;
+  await fetch('/toggle-sistema', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      uid: sessionUser.uid,
+      armado: modoNocheActivo,
+      modoNoche: modoNocheActivo,
+      ignorarGPS: modoNocheActivo
+    })
+  });
+  actualizarUINocha();
+  showToast(modoNocheActivo ? '🌙 Modo Noche activado' : '☀️ Modo Noche desactivado');
+}
+
+async function guardarConfigNoche(){
+  if(!sessionUser?.uid) return;
+  const horario = document.getElementById('nocheHorarioCheck')?.checked || false;
+  const inicio  = document.getElementById('nocheHoraInicio')?.value || '22:00';
+  const fin     = document.getElementById('nocheHoraFin')?.value || '06:00';
+  await fetch('/toggle-sistema', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      uid: sessionUser.uid,
+      modoNocheHorario: horario,
+      modoNocheInicio: inicio,
+      modoNocheFin: fin
+    })
+  });
+  showToast('✅ Configuración guardada');
+}
+
+function setNivelNoche(nivel){
+  nivelNocheActual = nivel;
+  ['leve','Modera','Severo'].forEach(n => {
+    const id = 'noche' + n.charAt(0).toUpperCase() + n.slice(1);
+    const btn = document.getElementById(id === 'nocheModera' ? 'nocheModera' : id);
+    if(btn) btn.style.opacity = '0.5';
+  });
+  const map = {leve:'nocheLeve', moderado:'nocheModera', severo:'nocheSevero'};
+  const btn = document.getElementById(map[nivel]);
+  if(btn) btn.style.opacity = '1';
+  // Guardar
+  if(sessionUser?.uid) fetch('/toggle-sistema', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({uid: sessionUser.uid, modoNocheNivel: nivel})
+  });
+}
+
 // ── CÁMARAS MÚLTIPLES ────────────────────────────────────────
 let camaras = [];
 let camaraActivaIdx = -1;
@@ -884,43 +1034,134 @@ async function guardarDialogoCamara(){
 }
 
 async function guardarCamaras(){
-  if(!estado.uid) return;
-  await fetch('/save-camera-url', {
-    method:'POST',
-    headers:{'Content-Type':'application/json', ...headers()},
-    body: JSON.stringify({
-      uid: estado.uid,
-      camaraUrl: camaras.length > 0 ? camaras[0].url : '',
-      camaras: camaras
-    })
-  });
+  if(!sessionUser?.uid) { showToast('❌ No hay sesión activa'); return; }
+  try {
+    const res = await fetch('/save-camera-url', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        uid: sessionUser.uid,
+        camaraUrl: camaras.length > 0 ? camaras[0].url : '',
+        camaras: camaras
+      })
+    });
+    const data = await res.json();
+    if(data.ok) {
+      showToast('✅ Cámara guardada');
+    } else {
+      showToast('❌ Error guardando cámara');
+      console.error('Error:', data);
+    }
+  } catch(e) {
+    console.error('Error guardando cámara:', e);
+    showToast('❌ Error de conexión al servidor');
+  }
 }
 
 
 // ── SENSORES ───────────────────────────────────────────────────
 async function cargarSensores(){
+  if(!sessionUser?.uid) return;
   try {
-    const res=await fetch('/get-sensors');
-    const data=await res.json();
-    const lista=data.sensores||[];
-    document.getElementById('statSensores').textContent=lista.length;
-    const cont=document.getElementById('sensoresLista');
-    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin sensores.<br>Conecta tu ESP32.</div>';return;}
-    cont.innerHTML=lista.map(s=>`
-      <div class="lista-item ${s.online?'online':'offline'}">
-        <div style="font-size:22px;">📡</div>
-        <div style="flex:1;">
-          <div style="font-size:13px;font-weight:700;color:var(--text);">${s.nombre}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${s.tipo} · ${s.ip}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:${s.online?'var(--green)':'var(--red)'};">
-            ${s.online?`✅ Online — heartbeat hace ${s.segundosSinHB}s`:`❌ Sin señal hace ${s.segundosSinHB}s`}
+    // Cargar sensores del usuario específico desde RTDB
+    const res = await fetch('/get-sensors-user?uid=' + sessionUser.uid);
+    const data = await res.json();
+    const lista = data.sensores || [];
+    
+    const statEl = document.getElementById('statSensores');
+    if(statEl) statEl.textContent = lista.length;
+    
+    const cont = document.getElementById('sensoresLista');
+    if(!lista.length){
+      cont.innerHTML='<div class="empty-msg">Sin sensores conectados.<br>Conecta tu ESP32 e ingresa tu código en la pantalla web del sensor.</div>';
+      return;
+    }
+    
+    cont.innerHTML = lista.map(s => {
+      const ahora = Math.floor(Date.now()/1000);
+      const diff  = ahora - (s.ultimoHeartbeat || 0);
+      const online = diff < 15;
+      const comps  = s.componentes ? Object.values(s.componentes) : [];
+      
+      return `<div style="border:1px solid ${online?'#00FF8844':'#FF220044'};padding:14px;margin-bottom:10px;background:var(--surface)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:10px;height:10px;border-radius:50%;background:${online?'#00FF88':'#FF2200'}"></div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:700;color:var(--text-pri)">${s.nombre||'ESP32'}</div>
+            <div style="font-size:11px;color:var(--text-sec)">IP: ${s.ip||'?'} · ID: ${s.sensorId||s.id}</div>
           </div>
+          <span style="font-size:11px;font-weight:700;color:${online?'#00FF88':'#FF2200'};border:1px solid ${online?'#00FF8844':'#FF220044'};padding:3px 8px">
+            ${online?'ONLINE':'OFFLINE'}
+          </span>
         </div>
-        <span class="status-badge" style="color:${s.online?'var(--green)':'var(--red)'};border-color:${s.online?'rgba(0,255,136,0.4)':'rgba(255,34,0,0.4)'};">
-          ${s.online?'ONLINE':'OFFLINE'}
-        </span>
-      </div>`).join('');
-  } catch(e){log('Error cargando sensores','err');}
+        ${comps.length > 0 ? `
+          <div style="font-size:11px;color:var(--text-sec);margin-bottom:6px">Componentes:</div>
+          ${comps.map(c => `
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border)">
+              <span style="font-size:16px">${emojiTipo(c.tipoId)}</span>
+              <span style="flex:1;font-size:12px;color:var(--text-pri)">${c.nombre} — GPIO ${c.pin}</span>
+              ${!c.esEntrada ? `
+                <button onclick="controlarComponente('${s.id}','${c.id}',${!c.activo})"
+                  style="padding:4px 12px;background:${c.activo?'#107C10':'var(--surface2)'};color:${c.activo?'#fff':'var(--text-sec)'};border:none;cursor:pointer;font-size:11px;font-weight:700">
+                  ${c.activo?'ON':'OFF'}
+                </button>
+              ` : `<span style="font-size:10px;color:var(--text-sec)">ENTRADA</span>`}
+            </div>
+          `).join('')}
+        ` : '<div style="font-size:11px;color:var(--text-sec)">Sin componentes registrados</div>'}
+      </div>`;
+    }).join('');
+    
+    // Control manual de salidas
+    renderizarControlesManual(lista);
+    
+  } catch(e){ console.error('Error cargando sensores:', e); }
+}
+
+function emojiTipo(tipoId){
+  const m={pir:'👁️',led:'💡',relay:'⚡',buzzer:'🔊',door:'🚪',smoke:'💨',temp:'🌡️'};
+  return m[tipoId]||'🔌';
+}
+
+async function controlarComponente(sensorId, compId, estado){
+  if(!sessionUser?.uid) return;
+  try {
+    await fetch('/toggle-componente', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({uid: sessionUser.uid, sensorId, compId, estado})
+    });
+    showToast(estado ? '💡 Encendido' : '💡 Apagado');
+    setTimeout(cargarSensores, 500);
+  } catch(e){ showToast('❌ Error controlando componente'); }
+}
+
+function renderizarControlesManual(sensores){
+  const cont = document.getElementById('controlesManual');
+  if(!cont) return;
+  const salidas = [];
+  sensores.forEach(s => {
+    const comps = s.componentes ? Object.values(s.componentes) : [];
+    comps.filter(c => !c.esEntrada).forEach(c => {
+      salidas.push({...c, sensorId: s.id, sensorNombre: s.nombre});
+    });
+  });
+  if(!salidas.length){
+    cont.innerHTML = '<div class="empty-msg">Sin componentes de salida (LED, Relé, Buzzer)</div>';
+    return;
+  }
+  cont.innerHTML = salidas.map(c => `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);margin-bottom:8px;background:var(--surface)">
+      <span style="font-size:24px">${emojiTipo(c.tipoId)}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--text-pri)">${c.nombre}</div>
+        <div style="font-size:11px;color:var(--text-sec)">${c.sensorNombre} · GPIO ${c.pin}</div>
+      </div>
+      <button onclick="controlarComponente('${c.sensorId}','${c.id}',${!c.activo})"
+        style="padding:8px 20px;background:${c.activo?'#107C10':'var(--surface2)'};color:${c.activo?'#fff':'var(--text-sec)'};border:1px solid ${c.activo?'#107C10':'var(--border)'};cursor:pointer;font-size:13px;font-weight:700">
+        ${c.activo ? '💡 ON' : '⚫ OFF'}
+      </button>
+    </div>
+  `).join('');
 }
 
 // ── MIEMBROS ───────────────────────────────────────────────────
@@ -1046,7 +1287,7 @@ async function cargarHistorial(){
 }
 
 // ── NAVEGACIÓN ─────────────────────────────────────────────────
-const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Historial'];
+const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Noche','Historial'];
 function setView(view,el){
   document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');

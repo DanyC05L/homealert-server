@@ -163,6 +163,31 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && req.url === '/ping') return json({ ok:true });
 
   // ── Estado sensores (para el panel) ──
+  // ── Sensores del usuario específico ──
+  if (req.method === 'GET' && req.url.startsWith('/get-sensors-user')) {
+    const url  = new URL(req.url, 'http://localhost');
+    const uid  = url.searchParams.get('uid');
+    if (!uid) return err('Falta uid');
+    try {
+      const snap = await rtdb.ref('sensores/' + uid).get();
+      const sensores = [];
+      if (snap.exists()) {
+        snap.forEach(child => sensores.push({ id: child.key, ...child.val() }));
+      }
+      return json({ sensores });
+    } catch(e) { return err(e.message); }
+  }
+
+  // ── Registrar código de usuario para ESP32 ──
+  if (req.method === 'POST' && req.url === '/registrar-codigo-esp32') {
+    const { uid, codigo } = await parseBody(req);
+    try {
+      // Guardar en RTDB: codigoUsuarios/CODIGO → uid
+      await rtdb.ref('codigoUsuarios/' + codigo.toUpperCase()).set(uid);
+      return json({ ok: true });
+    } catch(e) { return err(e.message); }
+  }
+
   if (req.method === 'GET' && req.url === '/get-sensors') {
     try {
       const snap    = await rtdb.ref('/sensores').get();
@@ -396,6 +421,16 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── Google Assistant webhook ──
+  // ── Control manual de componente (LED/Relé/Buzzer) ──
+  if (req.method === 'POST' && req.url === '/toggle-componente') {
+    const { uid, sensorId, compId, estado } = await parseBody(req);
+    try {
+      // Escribir en RTDB para que el ESP32 lo lea
+      await rtdb.ref(`sensores/${uid}/${sensorId}/componentes/${compId}/activo`).set(estado);
+      return json({ ok: true });
+    } catch(e) { return err(e.message); }
+  }
+
   if (req.url === '/assistant') return assistantHandler(req, res, db, admin);
 
   // ── Endpoints GET para Google Home Routines ──────────────────
