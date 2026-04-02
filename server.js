@@ -26,6 +26,43 @@ const ADMIN_EMAIL      = 'administrador@homealert.com';
 const FIREBASE_API_KEY = 'AIzaSyCODauFIh1T0shlPCmRVszZKpOj6tJyFsk';
 const HEARTBEAT_TIMEOUT = 10; // segundos sin heartbeat = sabotaje
 
+function isEntrada(tipoId = '') {
+  return ['pir', 'door', 'smoke', 'temp'].includes(String(tipoId).toLowerCase());
+}
+
+function timestampToSeconds(value) {
+  if (!value) return 0;
+  if (typeof value.seconds === 'number') return value.seconds;
+  if (typeof value._seconds === 'number') return value._seconds;
+  if (value.toMillis) return Math.floor(value.toMillis() / 1000);
+  return 0;
+}
+
+async function cargarComponentesUsuario(uid) {
+  const sistemaDoc = await db.collection('sistema').doc(uid).get();
+  const sistemaData = sistemaDoc.data() || {};
+  const componentesIoT = Array.isArray(sistemaData.componentesIoT)
+    ? sistemaData.componentesIoT
+    : [];
+
+  const estadoSnap = await db.collection('sistema').doc(uid)
+    .collection('componentesEstado').get();
+  const estados = {};
+  estadoSnap.forEach(doc => {
+    estados[doc.id] = doc.data() || {};
+  });
+
+  const componentes = componentesIoT.map(comp => ({
+    ...comp,
+    esEntrada: isEntrada(comp.tipoId),
+    activo: typeof estados[comp.id]?.activo === 'boolean'
+      ? estados[comp.id].activo
+      : !!comp.activo,
+  }));
+
+  return { sistemaData, componentes };
+}
+
 // ── Monitor de Heartbeat ────────────────────────────────────────
 const estadoSensores = {}; // { sensor_id: { ultimoHB, sabotajeEnviado } }
 
@@ -154,10 +191,21 @@ const server = http.createServer(async (req, res) => {
   const json = (data, code=200) => { res.writeHead(code,{'Content-Type':'application/json'}); res.end(JSON.stringify(data)); };
   const err  = (msg, code=500) => { res.writeHead(code,{'Content-Type':'text/plain'}); res.end(msg); };
 
-  // Ruta raíz — redirige al panel de usuario (panel admin bloqueado en producción)
   if (req.method === 'GET' && req.url === '/') {
-    res.writeHead(302, { 'Location': '/usuario' });
+    res.writeHead(302, { Location: '/admin' });
     return res.end();
+  }
+
+  // ── Panel administrador ──
+  if (req.method === 'GET' && req.url === '/admin') {
+    res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
+    return res.end(fs.readFileSync(path.join(__dirname,'panel.html')));
+  }
+
+  // ── Panel usuario ──
+  if (req.method === 'GET' && req.url === '/usuario') {
+    res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
+    return res.end(fs.readFileSync(path.join(__dirname,'panel_usuario.html')));
   }
 
   if (req.method === 'GET' && req.url === '/ping') return json({ ok:true });
@@ -169,11 +217,26 @@ const server = http.createServer(async (req, res) => {
     const uid  = url.searchParams.get('uid');
     if (!uid) return err('Falta uid');
     try {
-      const snap = await rtdb.ref('sensores/' + uid).get();
-      const sensores = [];
-      if (snap.exists()) {
-        snap.forEach(child => sensores.push({ id: child.key, ...child.val() }));
-      }
+      const sensoresSnap = await db.collection('sensores')
+        .where('userId', '==', uid)
+        .get();
+      const { componentes } = await cargarComponentesUsuario(uid);
+      const sensores = sensoresSnap.docs.map(doc => {
+        const data = doc.data() || {};
+        const updatedAt = timestampToSeconds(data.updatedAt);
+        const ahora = Math.floor(Date.now() / 1000);
+        return {
+          id: doc.id,
+          sensorId: doc.id,
+          nombre: data.nombre || 'ESP32',
+          tipo: data.tipo || 'ESP32',
+          ip: data.ip || '--',
+          activo: data.activo !== false,
+          online: data.online !== false && (updatedAt ? (ahora - updatedAt) <= 30 : true),
+          ultimoHeartbeat: updatedAt,
+          componentes,
+        };
+      });
       return json({ sensores });
     } catch(e) { return err(e.message); }
   }
@@ -190,25 +253,40 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'GET' && req.url === '/get-sensors') {
     try {
-      const snap    = await rtdb.ref('/sensores').get();
-      const sensores = snap.val() || {};
-      const ahora   = Math.floor(Date.now() / 1000);
-      const lista   = Object.entries(sensores).map(([id, d]) => ({
-        id, nombre: d.nombre || id, tipo: d.tipo || 'PIR',
-        ip: d.ip || '--', activo: d.activo || false,
-        ultimoHeartbeat: d.ultimoHeartbeat || 0,
-        segundosSinHB: ahora - (d.ultimoHeartbeat || 0),
-        online: (ahora - (d.ultimoHeartbeat || 0)) <= HEARTBEAT_TIMEOUT,
-      }));
+      const snap = await db.collection('sensores').get();
+      const ahora = Math.floor(Date.now() / 1000);
+      const lista = snap.docs.map(doc => {
+        const d = doc.data() || {};
+        const ultimoHeartbeat = timestampToSeconds(d.updatedAt);
+        const segundosSinHB = ultimoHeartbeat ? ahora - ultimoHeartbeat : 9999;
+        return {
+          id: doc.id,
+          nombre: d.nombre || doc.id,
+          tipo: d.tipo || 'ESP32',
+          ip: d.ip || '--',
+          activo: d.activo !== false,
+          ultimoHeartbeat,
+          segundosSinHB,
+          online: d.online !== false && segundosSinHB <= 30,
+          userId: d.userId || '',
+          numComponentes: d.numComponentes || 0,
+        };
+      });
       return json({ sensores: lista });
     } catch(e) { return err(e.message); }
   }
 
   // ── Toggle simulador de presencia ──
   if (req.method === 'POST' && req.url === '/toggle-simulador') {
-    const { activo } = await parseBody(req);
+    const { uid, activo } = await parseBody(req);
     try {
-      await rtdb.ref('/sistema/simuladorPresencia').set(activo);
+      if (uid) {
+        await db.collection('sistema').doc(uid).set({
+          simuladorPresencia: !!activo,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+      }
+      await rtdb.ref('/sistema/simuladorPresencia').set(!!activo);
       console.log(`💡 Simulador de presencia: ${activo ? 'ACTIVADO' : 'DESACTIVADO'}`);
       return json({ ok: true, activo });
     } catch(e) { return err(e.message); }
@@ -238,9 +316,6 @@ const server = http.createServer(async (req, res) => {
 
   // ── Usuarios (solo desde localhost) ──
   if (req.method === 'GET' && req.url === '/get-users') {
-    const ip = req.socket.remoteAddress;
-    const isLocal = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
-    if (!isLocal) { res.writeHead(403); return res.end('Forbidden'); }
     try {
       const snap  = await db.collection('users').get();
       const users = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
@@ -305,9 +380,6 @@ const server = http.createServer(async (req, res) => {
 
   // ── Toggle usuario (solo desde localhost) ──
   if (req.method === 'POST' && req.url === '/toggle-user') {
-    const ip = req.socket.remoteAddress;
-    const isLocal = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
-    if (!isLocal) { res.writeHead(403); return res.end('Forbidden'); }
     const { uid, activo } = await parseBody(req);
     try {
       await db.collection('users').doc(uid).update({ activo });
@@ -317,18 +389,15 @@ const server = http.createServer(async (req, res) => {
 
   // ── Guardar URL cámara ──
   if (req.method === 'POST' && req.url === '/save-camera-url') {
-    const { uid, url } = await parseBody(req);
+    const { uid, url, camaraUrl, camaras } = await parseBody(req);
     try {
-      await db.collection('sistema').doc(uid).set({ camaraUrl: url }, { merge: true });
-      console.log(`📹 URL cámara guardada para ${uid}: ${url}`);
+      await db.collection('sistema').doc(uid).set({
+        camaraUrl: camaraUrl || url || '',
+        camaras: Array.isArray(camaras) ? camaras : admin.firestore.FieldValue.delete(),
+      }, { merge: true });
+      console.log(`📹 URL cámara guardada para ${uid}: ${camaraUrl || url || ''}`);
       return json({ ok: true });
     } catch(e) { return err(e.message); }
-  }
-
-  // ── Panel usuario ──
-  if (req.method === 'GET' && req.url === '/usuario') {
-    res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
-    return res.end(fs.readFileSync(path.join(__dirname,'panel_usuario.html')));
   }
 
   // ── Get sistema del usuario ──
@@ -342,13 +411,16 @@ const server = http.createServer(async (req, res) => {
 
   // ── Toggle sistema usuario ──
   if (req.method === 'POST' && req.url === '/toggle-sistema') {
-    const { uid, armado } = await parseBody(req);
+    const body = await parseBody(req);
+    const { uid, ...rest } = body;
     try {
       await db.collection('sistema').doc(uid).set(
-        { armado, updatedAt: admin.firestore.FieldValue.serverTimestamp() },
+        { ...rest, updatedAt: admin.firestore.FieldValue.serverTimestamp() },
         { merge: true });
-      await rtdb.ref('/sistema/armado').set(armado);
-      console.log(`🔄 Sistema ${armado?'ARMADO':'DESARMADO'} por usuario ${uid}`);
+      if (typeof rest.armado === 'boolean') {
+        await rtdb.ref('/sistema/armado').set(rest.armado);
+        console.log(`🔄 Sistema ${rest.armado?'ARMADO':'DESARMADO'} por usuario ${uid}`);
+      }
       return json({ ok:true });
     } catch(e) { return err(e.message); }
   }
@@ -425,8 +497,14 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && req.url === '/toggle-componente') {
     const { uid, sensorId, compId, estado } = await parseBody(req);
     try {
-      // Escribir en RTDB para que el ESP32 lo lea
-      await rtdb.ref(`sensores/${uid}/${sensorId}/componentes/${compId}/activo`).set(estado);
+      await db.collection('sistema').doc(uid)
+        .collection('componentesEstado').doc(compId)
+        .set({
+          activo: !!estado,
+          sensorId,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+      await rtdb.ref(`sensores/${uid}/${sensorId}/componentes/${compId}/activo`).set(!!estado);
       return json({ ok: true });
     } catch(e) { return err(e.message); }
   }

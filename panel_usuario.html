@@ -11,7 +11,15 @@
   --yellow:#FFB800; --green:#00FF88; --blue:#0088FF;
   --bg:#070709; --surface:#0E0E12; --surface2:#13131A;
   --border:#1C1C26; --text:#E8E8F0; --muted:#44445A;
+  --text-pri:var(--text); --text-sec:var(--muted);
   --mono:'Share Tech Mono',monospace; --sans:'Rajdhani',sans-serif;
+}
+[data-theme="light"] {
+  --red:#CC1100; --red-dim:rgba(204,17,0,0.08); --red-glow:rgba(204,17,0,0.18);
+  --yellow:#8B6A00; --green:#107C10; --blue:#0062CC;
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface2:#EEF2F7;
+  --border:#DDE1EC; --text:#1A1A2E; --muted:#555577;
+  --text-pri:var(--text); --text-sec:var(--muted);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
@@ -202,6 +210,11 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
     <span class="codigo-val" id="topCodigo">--</span>
   </div>
   <div class="topbar-right">
+    <select id="themeSelect" onchange="changeTheme(this.value)" class="btn-top" style="padding:5px 8px">
+      <option value="system">Sistema</option>
+      <option value="dark">Oscuro</option>
+      <option value="light">Claro</option>
+    </select>
     <div class="sistema-pill desarmado" id="sistemaPill" onclick="toggleSistema()" title="Clic para armar/desarmar">
       <div class="dot dot-green" id="sistemaDot"></div>
       <span id="sistemaLabel">DESARMADO</span>
@@ -388,6 +401,10 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
           </div>
           <div id="sensoresLista"><div class="empty-msg">Cargando sensores...</div></div>
         </div>
+        <div class="card">
+          <div class="card-title">CONTROL MANUAL DE SALIDAS</div>
+          <div id="controlesManual"><div class="empty-msg">Sin componentes de salida.</div></div>
+        </div>
       </div>
 
       <!-- ── MIEMBROS ── -->
@@ -560,6 +577,30 @@ let escoltaTimer = null;
 let escoltaPin   = '';
 let statsHoy     = { alarmas:0, ok:0, err:0 };
 
+function getThemeMode() {
+  return localStorage.getItem('homealert_user_theme') || 'system';
+}
+
+function applyTheme(mode = getThemeMode()) {
+  const resolved = mode === 'system'
+    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : mode;
+  document.documentElement.setAttribute('data-theme', resolved);
+  const select = document.getElementById('themeSelect');
+  if (select) select.value = mode;
+}
+
+function changeTheme(mode) {
+  localStorage.setItem('homealert_user_theme', mode);
+  applyTheme(mode);
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (getThemeMode() === 'system') applyTheme('system');
+});
+
+applyTheme();
+
 // ── Reloj ──────────────────────────────────────────────────────
 function updateClock() {
   const t = new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -648,7 +689,6 @@ async function cargarSistema() {
     sistemaArmado=data.armado||false;
     simuladorActivo=data.simuladorPresencia||false;
     actualizarUISistema();
-    if(data.camaraUrl) document.getElementById('camaraUrl').value=data.camaraUrl;
   } catch(e){log('Error cargando sistema','err');}
 }
 
@@ -698,7 +738,7 @@ async function toggleSimulador() {
   simuladorActivo=!simuladorActivo;
   try {
     await fetch('/toggle-simulador',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({activo:simuladorActivo})});
+      body:JSON.stringify({uid:sessionUser.uid,activo:simuladorActivo})});
     actualizarUISistema();
     log(`Simulador de presencia ${simuladorActivo?'activado':'desactivado'}`,simuladorActivo?'ok':'info');
   } catch(e){simuladorActivo=!simuladorActivo;log('Error: '+e.message,'err');}
@@ -903,9 +943,9 @@ let camaraActivaIdx = -1;
 let dialogoCamaraEditar = null;
 
 async function cargarCamara(){
-  if(!estado.uid) return;
+  if(!sessionUser?.uid) return;
   try {
-    const res = await fetch('/get-sistema?uid='+estado.uid, headers());
+    const res = await fetch('/get-sistema?uid='+sessionUser.uid);
     const data = await res.json();
     
     // Compatibilidad con versión anterior
