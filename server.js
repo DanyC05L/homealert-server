@@ -205,14 +205,14 @@ const server = http.createServer(async (req, res) => {
   const err  = (msg, code=500) => { res.writeHead(code,{'Content-Type':'text/plain'}); res.end(msg); };
 
   if (req.method === 'GET' && req.url === '/') {
-    res.writeHead(302, { Location: '/admin' });
+    res.writeHead(302, { Location: '/usuario' });
     return res.end();
   }
 
   // â”€â”€ Panel administrador â”€â”€
   if (req.method === 'GET' && req.url === '/admin') {
-    res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
-    return res.end(fs.readFileSync(path.join(__dirname,'panel.html')));
+    res.writeHead(403,{'Content-Type':'text/html;charset=utf-8'});
+    return res.end('<!DOCTYPE html><html><head><meta charset=\'utf-8\'><meta name=\'viewport\' content=\'width=device-width,initial-scale=1\'><title>Admin no disponible</title></head><body style=\'font-family:Arial,sans-serif;background:#0b1220;color:#eaf2ff;padding:32px\'><h2>Panel de administrador no disponible en este entorno</h2><p>Este despliegue solo incluye el panel de usuario.</p><p><a href=\'/usuario\' style=\'color:#7cc4ff\'>Ir al panel de usuario</a></p></body></html>');
   }
 
   // â”€â”€ Panel usuario â”€â”€
@@ -689,5 +689,6 @@ server.listen(PORT, () => {
   console.log(`ðŸ‘‘ Admin: ${ADMIN_EMAIL}`);
   iniciarMonitorHeartbeat();
 });
+
 
 
