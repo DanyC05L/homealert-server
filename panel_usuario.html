@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>HomeAlert — Mi Panel</title>
+<title>HomeAlert - Mi Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <style>
 :root {
@@ -138,7 +138,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
 .btn-danger{background:var(--surface2);color:var(--red);border:1px solid rgba(255,34,0,0.3);}
 .btn-danger:hover{background:rgba(255,34,0,0.1);}
 
-/* CÁMARA */
+/* CÃMARA */
 .camara-wrap{width:100%;background:#000;border:1px solid var(--border);min-height:280px;display:flex;align-items:center;justify-content:center;}
 
 /* SENSORES / MIEMBROS */
@@ -181,18 +181,18 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
 <div id="loginPage">
   <div class="login-box">
     <div class="login-header">
-      <div class="login-logo">🏠</div>
+      <div class="login-logo">&#127968;</div>
       <div class="login-title">HOMEALERT</div>
-      <div class="login-sub">PANEL DE CONTROL — MI CUENTA</div>
+      <div class="login-sub">PANEL DE CONTROL - MI CUENTA</div>
     </div>
     <div class="login-body">
       <div class="login-error" id="loginError"></div>
       <div class="field-label">EMAIL</div>
-      <div class="field"><span class="field-icon">✉</span>
+      <div class="field"><span class="field-icon">&#9993;</span>
         <input type="email" id="userEmail" placeholder="tu@email.com" autocomplete="email"/>
       </div>
       <div class="field-label">CONTRASEÑA</div>
-      <div class="field"><span class="field-icon">🔒</span>
+      <div class="field"><span class="field-icon">&#128274;</span>
         <input type="password" id="userPass" placeholder="••••••••" autocomplete="current-password"/>
       </div>
       <button class="btn-login" id="btnLogin" onclick="doLogin()">ENTRAR A MI PANEL</button>
@@ -202,7 +202,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
 
 <!-- TOPBAR -->
 <div class="topbar" id="mainApp" style="display:none">
-  <div class="logo-mark">🏠</div>
+  <div class="logo-mark">&#127968;</div>
   <span class="app-title">HOMEALERT</span>
   <span class="user-badge">MI PANEL</span>
   <div class="codigo-pill">
@@ -210,11 +210,12 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
     <span class="codigo-val" id="topCodigo">--</span>
   </div>
   <div class="topbar-right">
-    <select id="themeSelect" onchange="changeTheme(this.value)" class="btn-top" style="padding:5px 8px">
+    <select id="themeSelect" onchange="changeTheme(this.value)" class="btn-top" style="padding:5px 8px" aria-label="Seleccionar tema visual">
       <option value="system">Sistema</option>
       <option value="dark">Oscuro</option>
       <option value="light">Claro</option>
     </select>
+    <div class="codigo-pill" id="themeModeLabel" style="min-width:160px;justify-content:center;">Tema: Sistema</div>
     <div class="sistema-pill desarmado" id="sistemaPill" onclick="toggleSistema()" title="Clic para armar/desarmar">
       <div class="dot dot-green" id="sistemaDot"></div>
       <span id="sistemaLabel">DESARMADO</span>
@@ -229,20 +230,26 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
   <div class="sidebar">
     <div class="nav-section">
       <div class="nav-label">MI SISTEMA</div>
-      <div class="nav-item active" onclick="setView('panel',this)"><span class="nav-icon">⚡</span>Panel Principal</div>
-      <div class="nav-item" onclick="setView('alarmas',this)"><span class="nav-icon">🚨</span>Enviar Alarmas</div>
+      <div class="nav-item active" onclick="setView('panel',this)"><span class="nav-icon">&#9889;</span>Panel Principal</div>
+      <div class="nav-item" onclick="setView('alarmas',this)"><span class="nav-icon">&#128680;</span>Enviar Alarmas</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">MI HOGAR</div>
-      <div class="nav-item" onclick="setView('camara',this)"><span class="nav-icon">📹</span>Mi Cámara</div>
-      <div class="nav-item" onclick="setView('sensores',this)"><span class="nav-icon">📡</span>Mis Sensores</div>
-      <div class="nav-item" onclick="setView('miembros',this)"><span class="nav-icon">👨‍👩‍👧</span>Miembros</div>
+      <div class="nav-item" onclick="setView('camara',this)"><span class="nav-icon">&#128249;</span>Mi Camara</div>
+      <div class="nav-item" onclick="setView('sensores',this)"><span class="nav-icon">&#128225;</span>Mis Sensores</div>
+      <div class="nav-item" onclick="setView('miembros',this)"><span class="nav-icon">&#128101;</span>Miembros</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">SEGURIDAD</div>
-      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">🛡️</span>Modo Escolta</div>
-      <div class="nav-item" onclick="setView('noche',this)"><span class="nav-icon">🌙</span>Modo Noche</div>
-      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">📋</span>Historial</div>
+      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">&#128737;</span>Modo Escolta</div>
+      <div class="nav-item" onclick="setView('noche',this)"><span class="nav-icon">&#127769;</span>Modo Noche</div>
+      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">&#128203;</span>Historial</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">INTEGRACIONES</div>
+      <div class="nav-item" onclick="setView('esp32',this)"><span class="nav-icon">??</span>Guia ESP32</div>
+      <div class="nav-item" onclick="setView('googlehome',this)"><span class="nav-icon">??</span>Google Home</div>
+      <div class="nav-item" onclick="setView('sonidos',this)"><span class="nav-icon">??</span>Sonidos</div>
     </div>
     <div class="sidebar-footer" id="sidebarInfo">
       <span id="sidebarEmail">--</span><br>
@@ -253,7 +260,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
   <div class="content">
     <div class="center-panel">
 
-      <!-- ── PANEL PRINCIPAL ── -->
+      <!-- ï¿½"?ï¿½"? PANEL PRINCIPAL ï¿½"?ï¿½"? -->
       <div id="viewPanel">
         <div class="stats-row" style="margin-bottom:0">
           <div class="stat-card">
@@ -273,7 +280,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
           </div>
           <div class="stat-card">
             <div class="stat-value" id="statUltimoNivel" style="color:var(--muted);font-size:14px;padding-top:6px">--</div>
-            <div class="stat-label">ÚLTIMO NIVEL</div>
+            <div class="stat-label">ULTIMO NIVEL</div>
             <div class="accent-line" id="ultimoNivelLine" style="background:var(--muted)"></div>
           </div>
         </div>
@@ -281,7 +288,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
         <!-- Armar/Desarmar grande -->
         <div class="card" style="padding:0">
           <button class="sistema-grande desarmado" id="sistemaGrande" onclick="toggleSistema()">
-            <div style="font-size:52px;margin-bottom:10px" id="sistemaIcono">🛡️</div>
+            <div style="font-size:52px;margin-bottom:10px" id="sistemaIcono">&#128737;</div>
             <div style="font-size:20px;font-weight:900;letter-spacing:2px;margin-bottom:6px" id="sistemaEstado">SISTEMA DESARMADO</div>
             <div style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="sistemaSub">Haz clic para armar tu sistema</div>
           </button>
@@ -291,7 +298,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
         <div class="card">
           <div class="card-title">SIMULADOR DE PRESENCIA</div>
           <div style="display:flex;align-items:center;gap:14px;">
-            <div style="font-size:28px;">💡</div>
+            <div style="font-size:28px;">&#128161;</div>
             <div style="flex:1;">
               <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Luces aleatorias</div>
               <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">El ESP32 simula presencia humana encendiendo/apagando luces</div>
@@ -304,14 +311,14 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
         </div>
       </div>
 
-      <!-- ── ENVIAR ALARMAS ── -->
+      <!-- ï¿½"?ï¿½"? ENVIAR ALARMAS ï¿½"?ï¿½"? -->
       <div id="viewAlarmas" style="display:none">
         <div class="card">
           <div class="card-title">NIVEL DE ALERTA</div>
           <div class="nivel-grid">
-            <div class="nivel-btn" data-nivel="leve" onclick="setNivel(this)"><span class="nivel-icon">🟢</span>LEVE</div>
-            <div class="nivel-btn selected" data-nivel="moderado" onclick="setNivel(this)"><span class="nivel-icon">🟡</span>MODERADO</div>
-            <div class="nivel-btn" data-nivel="severo" onclick="setNivel(this)"><span class="nivel-icon">🔴</span>SEVERO</div>
+            <div class="nivel-btn" data-nivel="leve" onclick="setNivel(this)"><span class="nivel-icon">&#128994;</span>LEVE</div>
+            <div class="nivel-btn selected" data-nivel="moderado" onclick="setNivel(this)"><span class="nivel-icon">&#128993;</span>MODERADO</div>
+            <div class="nivel-btn" data-nivel="severo" onclick="setNivel(this)"><span class="nivel-icon">&#128308;</span>SEVERO</div>
           </div>
         </div>
 
@@ -319,8 +326,8 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
           <div class="card-title">COMPONER MENSAJE</div>
           <div class="input-row">
             <div>
-              <div class="input-label">TÍTULO</div>
-              <input type="text" id="tituloInput" class="input-field" value="Alerta Sísmica" maxlength="50"/>
+              <div class="input-label">TÃTULO</div>
+              <input type="text" id="tituloInput" class="input-field" value="Alerta SÃ­smica" maxlength="50"/>
             </div>
             <div>
               <div class="input-label">NIVEL ACTIVO</div>
@@ -329,28 +336,28 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
             </div>
           </div>
           <div class="input-label">MENSAJE</div>
-          <textarea id="msgInput" class="input-field" maxlength="200">🚨 ¡ALERTA DE EMERGENCIA!</textarea>
+          <textarea id="msgInput" class="input-field" maxlength="200">&#128680; ¡ALERTA DE EMERGENCIA!</textarea>
           <div class="char-count"><span id="charCount">23</span>/200</div>
 
           <!-- Preview -->
           <div class="preview-wrap">
             <div class="preview-label">VISTA PREVIA EN DISPOSITIVO</div>
             <div class="preview-notif" id="previewNotif">
-              <div class="preview-title" id="previewTitle">🟡 Alerta Sísmica</div>
-              <div class="preview-body"  id="previewMsg">🚨 ¡ALERTA DE EMERGENCIA!</div>
+              <div class="preview-title" id="previewTitle">&#128993; Alerta Sismica</div>
+              <div class="preview-body"  id="previewMsg">&#128680; ¡ALERTA DE EMERGENCIA!</div>
             </div>
           </div>
 
           <div class="btn-row">
-            <button class="btn btn-send" id="btnEnviar" onclick="enviarAlarma()">▶  ACTIVAR MI ALARMA</button>
-            <button class="btn btn-cancel" onclick="cancelarAlarma()">⏹ CANCELAR</button>
-            <button class="btn btn-danger" onclick="enviarAOtros()">📤 ALERTAR A OTROS POR CÓDIGO</button>
+            <button class="btn btn-send" id="btnEnviar" onclick="enviarAlarma()">ï¿½-ï¿½  ACTIVAR MI ALARMA</button>
+            <button class="btn btn-cancel" onclick="cancelarAlarma()">â¹ CANCELAR</button>
+            <button class="btn btn-danger" onclick="enviarAOtros()">ALERTAR A OTROS POR CODIGO</button>
           </div>
         </div>
 
-        <!-- Enviar a otros por código -->
+        <!-- Enviar a otros por cÃ³digo -->
         <div class="card" id="panelOtros" style="display:none">
-          <div class="card-title">ALERTAR POR CÓDIGO DE USUARIO</div>
+          <div class="card-title">ALERTAR POR Cï¿½"DIGO DE USUARIO</div>
           <div style="display:flex;gap:10px;margin-bottom:12px;">
             <input type="text" id="codigoInput" class="input-field" placeholder="Ej: 54392-7841-03" style="margin-bottom:0;flex:1;"
               onkeydown="if(event.key==='Enter')agregarCodigo()"/>
@@ -362,32 +369,32 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
           <div id="codigosChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;min-height:20px;"></div>
           <button onclick="enviarACodigos()" id="btnEnviarCodigos"
             style="width:100%;padding:12px;background:var(--surface2);color:var(--blue);border:1px solid rgba(0,136,255,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;">
-            ▶  ENVIAR A USUARIOS SELECCIONADOS
+            ï¿½-ï¿½  ENVIAR A USUARIOS SELECCIONADOS
           </button>
         </div>
       </div>
 
-      <!-- ── CÁMARA ── -->
+      <!-- ï¿½"?ï¿½"? CÃMARA ï¿½"?ï¿½"? -->
       <div id="viewCamara" style="display:none">
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <h3 style="font-size:14px;font-weight:700;color:var(--text-pri)">📹 Mis Cámaras</h3>
+      <h3 style="font-size:14px;font-weight:700;color:var(--text-pri)">&#128249; Mis Camaras</h3>
       <button onclick="mostrarDialogoCamara()" style="padding:7px 14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700">+ AGREGAR</button>
     </div>
-    <!-- Tabs de cámaras -->
+    <!-- Tabs de cÃ¡maras -->
     <div id="camarasTabs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px"></div>
     <!-- Stream -->
     <div class="camara-wrap" id="camaraContainer" style="min-height:320px;background:#000;position:relative">
-      <div style="display:flex;align-items:center;justify-content:center;height:320px;color:#666;font-size:13px">Sin cámara seleccionada</div>
+      <div style="display:flex;align-items:center;justify-content:center;height:320px;color:#666;font-size:13px">Sin cÃ¡mara seleccionada</div>
     </div>
-    <!-- Info cámara activa -->
+    <!-- Info cÃ¡mara activa -->
     <div id="camaraInfo" style="margin-top:8px;display:none">
       <div style="display:flex;align-items:center;justify-content:space-between">
         <span id="camaraActivaNombre" style="font-size:12px;color:var(--text-sec)"></span>
         <div style="display:flex;gap:8px">
-          <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer;font-size:11px">✏️ Editar</button>
-          <button onclick="eliminarCamaraActiva()" style="padding:5px 10px;background:var(--red)22;color:var(--red);border:none;cursor:pointer;font-size:11px">🗑️ Eliminar</button>
-          <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer;font-size:11px">🔄 Recargar</button>
+          <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer;font-size:11px">ï¿½oï¿½ï¸ Editar</button>
+          <button onclick="eliminarCamaraActiva()" style="padding:5px 10px;background:var(--red)22;color:var(--red);border:none;cursor:pointer;font-size:11px">ï¿½Y-'ï¸ Eliminar</button>
+          <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer;font-size:11px">ï¿½Y"" Recargar</button>
         </div>
       </div>
     </div>
@@ -397,7 +404,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
 <div id="viewSensores" style="display:none">
         <div class="card">
           <div class="card-title">MIS SENSORES ESP32
-            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">⟳</button>
+            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">ï¿½Yï¿½</button>
           </div>
           <div id="sensoresLista"><div class="empty-msg">Cargando sensores...</div></div>
         </div>
@@ -407,23 +414,23 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
         </div>
       </div>
 
-      <!-- ── MIEMBROS ── -->
+      <!-- ï¿½"?ï¿½"? MIEMBROS ï¿½"?ï¿½"? -->
       <div id="viewMiembros" style="display:none">
         <div class="card">
           <div class="card-title">MIEMBROS DEL HOGAR</div>
           <div id="miembrosLista"><div class="empty-msg">Cargando miembros...</div></div>
           <div style="margin-top:12px;padding:10px;background:rgba(0,136,255,0.06);border:1px solid rgba(0,136,255,0.15);font-family:var(--mono);font-size:10px;color:#4488ff;line-height:1.8;">
-            📱 Para registrar miembros con reconocimiento facial, usa la app móvil HomeAlert → Seguridad → Miembros del Hogar
+            &#128241; Para registrar miembros con reconocimiento facial, usa la app movil HomeAlert > Seguridad > Miembros del Hogar
           </div>
         </div>
       </div>
 
-      <!-- ── MODO ESCOLTA ── -->
+      <!-- ï¿½"?ï¿½"? MODO ESCOLTA ï¿½"?ï¿½"? -->
       <div id="viewEscolta" style="display:none">
         <div class="card" id="escoltaForm">
           <div class="card-title">ACTIVAR MODO ESCOLTA</div>
           <div style="background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.2);padding:12px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:#4488ff;line-height:1.8;">
-            🛡️ Define tu destino y tiempo estimado. Si no llegas, tus contactos recibirán una alerta con tu ubicación.
+            &#128737; Define tu destino y tiempo estimado. Si no llegas, tus contactos recibiran una alerta con tu ubicacion.
           </div>
           <div class="input-row">
             <div>
@@ -441,28 +448,28 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
               <input type="number" id="escMinutos" class="input-field" value="30" min="1" max="480"/>
             </div>
             <div>
-              <div class="input-label">PIN DE CANCELACIÓN</div>
-              <input type="password" id="escPin" class="input-field" placeholder="Mínimo 4 dígitos"/>
+              <div class="input-label">PIN DE CANCELACION</div>
+              <input type="password" id="escPin" class="input-field" placeholder="MÃ­nimo 4 dÃ­gitos"/>
             </div>
           </div>
           <div style="margin-bottom:14px;padding:10px;background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.2);font-family:var(--mono);font-size:10px;color:var(--yellow);line-height:1.8;">
-            ⚠ PIN de coacción = PIN + "0" → Cancela silenciosamente y envía alerta de robo
+            &#9888; PIN de coaccion = PIN + "0" -> Cancela silenciosamente y envia alerta de robo
           </div>
           <button onclick="activarEscolta()"
             style="width:100%;padding:14px;background:linear-gradient(90deg,#1A3A5C,#2E75B6);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 20px rgba(0,136,255,0.3);">
-            🛡️  ACTIVAR MODO ESCOLTA
+            &#128737;  ACTIVAR MODO ESCOLTA
           </button>
         </div>
 
         <div class="card" id="escoltaActiva" style="display:none">
           <div class="escolta-activa">
-            <div style="font-size:52px;margin-bottom:12px;">🛡️</div>
+            <div style="font-size:52px;margin-bottom:12px;">&#128737;</div>
             <div style="font-size:20px;font-weight:900;letter-spacing:2px;color:var(--blue);margin-bottom:6px;">ESCOLTA ACTIVA</div>
             <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--text);margin-bottom:16px;" id="escContador">30:00</div>
             <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:20px;">Monitoreo de ruta en tiempo real</div>
             <div style="display:flex;gap:10px;justify-content:center;">
-              <button onclick="mostrarCancelar()" style="padding:10px 20px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(255,184,0,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;">🔐 CANCELAR CON PIN</button>
-              <button onclick="activarAntiRobo()" style="padding:10px 20px;background:rgba(255,34,0,0.15);color:var(--red);border:1px solid rgba(255,34,0,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;">🚨 PÁNICO</button>
+              <button onclick="mostrarCancelar()" style="padding:10px 20px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(255,184,0,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;">&#128274; CANCELAR CON PIN</button>
+              <button onclick="activarAntiRobo()" style="padding:10px 20px;background:rgba(255,34,0,0.15);color:var(--red);border:1px solid rgba(255,34,0,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;">&#128680; PANICO</button>
             </div>
           </div>
         </div>
@@ -475,12 +482,12 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
         </div>
       </div>
 
-      <!-- ── HISTORIAL ── -->
+      <!-- ï¿½"?ï¿½"? HISTORIAL ï¿½"?ï¿½"? -->
       <div id="viewNoche" style="display:none">
   <div class="card">
-    <h3 style="font-size:14px;font-weight:700;color:#6666FF;margin-bottom:12px">🌙 Modo Noche</h3>
+    <h3 style="font-size:14px;font-weight:700;color:#6666FF;margin-bottom:12px">&#127769; Modo Noche</h3>
     <p style="color:var(--text-sec);font-size:12px;margin-bottom:16px">
-      Arma el sistema aunque estés en casa. Ideal para dormir con seguridad.
+      Arma el sistema aunque estÃ©s en casa. Ideal para dormir con seguridad.
       Solo activa la alarma si detecta personas desconocidas.
     </p>
     <!-- Estado Modo Noche -->
@@ -497,7 +504,7 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
     <!-- Horario -->
     <div style="border:1px solid var(--border);padding:14px;margin-bottom:12px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <span style="font-size:13px;color:var(--text-pri);font-weight:700">⏰ Activación automática</span>
+        <span style="font-size:13px;color:var(--text-pri);font-weight:700">â° ActivaciÃ³n automÃ¡tica</span>
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
           <input type="checkbox" id="nocheHorarioCheck" onchange="guardarConfigNoche()">
           <span style="font-size:12px;color:var(--text-sec)">Por horario</span>
@@ -520,24 +527,117 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
     </div>
     <!-- Nivel alarma -->
     <div style="border:1px solid var(--border);padding:14px">
-      <div style="font-size:13px;color:var(--text-pri);font-weight:700;margin-bottom:10px">🔔 Nivel de alarma</div>
+      <div style="font-size:13px;color:var(--text-pri);font-weight:700;margin-bottom:10px">&#128276; Nivel de alarma</div>
       <div style="display:flex;gap:8px">
         <button onclick="setNivelNoche('leve')" id="nocheLeve"
           style="flex:1;padding:8px;background:#00FF8822;color:#00FF88;border:1px solid #00FF88;cursor:pointer;font-size:12px;font-weight:700">
-          🟢 LEVE
+          &#128994; LEVE
         </button>
         <button onclick="setNivelNoche('moderado')" id="nocheModera"
           style="flex:1;padding:8px;background:#FFAA0022;color:#FFAA00;border:1px solid #FFAA00;cursor:pointer;font-size:12px;font-weight:700">
-          🟡 MODERADO
+          &#128993; MODERADO
         </button>
         <button onclick="setNivelNoche('severo')" id="nocheSevero"
           style="flex:1;padding:8px;background:#FF220022;color:#FF2200;border:1px solid #FF2200;cursor:pointer;font-size:12px;font-weight:700">
-          🔴 SEVERO
+          &#128308; SEVERO
         </button>
       </div>
     </div>
   </div>
 </div>
+
+
+      <div id="viewEsp32" style="display:none">
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">GUIA RAPIDA ESP32</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px;">
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+              <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Codigo para vincular</div>
+              <div id="esp32Codigo" style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--blue)">--</div>
+            </div>
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+              <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">OLED I2C</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">SDA 21 ? SCL 22 ? 3.3V ? GND</div>
+            </div>
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+              <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Pines sugeridos</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">PIR 14 ? Puerta 27 ? Rele 26 ? Buzzer 25</div>
+            </div>
+          </div>
+          <div style="padding:12px;background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.2);font-family:var(--mono);font-size:11px;line-height:1.8;color:#66aaff;">
+            1. Enciende el ESP32 y conectate a su WiFi de configuracion.<br>
+            2. Abre la IP que muestre la pantalla OLED.<br>
+            3. Ingresa tu red WiFi y el codigo de usuario mostrado arriba.<br>
+            4. Guarda y espera a que la OLED muestre la IP final de tu red.<br>
+            5. Regresa a "Mis Sensores" para validar que quedo en linea.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">MAPA DE CONEXION RECOMENDADO</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+              <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Entradas</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">PIR: GPIO14<br>Puerta magnetica: GPIO27<br>Humo/Gas digital: GPIO33<br>Sensor analogico: GPIO34</div>
+            </div>
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+              <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Salidas</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">Rele/Luz: GPIO26<br>Buzzer/Sirena: GPIO25<br>LED extra: GPIO32</div>
+            </div>
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+              <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Consejos</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">Usa fuente estable<br>Comparte GND en todos los modulos<br>No conectes 5V directo a pines de datos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="viewGooglehome" style="display:none">
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">ENLACES PARA GOOGLE HOME</div>
+          <div style="padding:12px;background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.2);font-family:var(--mono);font-size:11px;line-height:1.8;color:#66aaff;margin-bottom:12px;">
+            1. Crea una rutina en Google Home.<br>
+            2. En la accion usa abrir pagina web o tu servicio intermedio.<br>
+            3. Copia uno de estos enlaces con tu usuario y pegalo en la rutina.<br>
+            4. Prueba primero con armar y desarmar.
+          </div>
+          <div id="googleHomeLinks"></div>
+        </div>
+      </div>
+
+      <div id="viewSonidos" style="display:none">
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">SONIDOS DE ALERTA</div>
+          <div style="display:grid;gap:12px;">
+            <div>
+              <div class="input-label">SONIDO LEVE</div>
+              <input type="text" id="sonidoLeveInput" class="input-field" placeholder="sounds/alarma_leve.wav"/>
+            </div>
+            <div>
+              <div class="input-label">SONIDO MODERADO</div>
+              <input type="text" id="sonidoModeradoInput" class="input-field" placeholder="sounds/alarma_moderada.wav"/>
+            </div>
+            <div>
+              <div class="input-label">SONIDO SEVERO</div>
+              <input type="text" id="sonidoSeveroInput" class="input-field" placeholder="sounds/alarma_severa.wav"/>
+            </div>
+            <button onclick="guardarSonidos()" style="padding:12px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;letter-spacing:1px;">GUARDAR SONIDOS</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">ARCHIVOS DISPONIBLES</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:2;">
+            sounds/alarma_leve.wav<br>
+            sounds/alarma_moderada.wav<br>
+            sounds/alarma_severa.wav<br>
+            sounds/sonido1.mp3<br>
+            sounds/sonido2.mp3<br>
+            sounds/sonido3.mp3
+          </div>
+          <div style="margin-top:12px;padding:10px;background:rgba(255,184,0,0.08);border:1px solid rgba(255,184,0,0.2);font-family:var(--mono);font-size:10px;color:var(--yellow);line-height:1.8;">
+            Si subes archivos manualmente al proyecto, escribe aqui exactamente el nombre y la ruta para que la app y la web usen el mismo sonido.
+          </div>
+        </div>
+      </div>
 
 <div id="viewHistorial" style="display:none">
         <div class="card">
@@ -576,18 +676,34 @@ let codigosSelec = [];
 let escoltaTimer = null;
 let escoltaPin   = '';
 let statsHoy     = { alarmas:0, ok:0, err:0 };
+let latestSensors = [];
 
 function getThemeMode() {
   return localStorage.getItem('homealert_user_theme') || 'system';
 }
 
-function applyTheme(mode = getThemeMode()) {
-  const resolved = mode === 'system'
+function getResolvedTheme(mode = getThemeMode()) {
+  return mode === 'system'
     ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     : mode;
+}
+
+function updateThemeLabel(mode, resolved) {
+  const label = document.getElementById('themeModeLabel');
+  if (!label) return;
+  const modeText = mode === 'system'
+    ? `Sistema (${resolved === 'dark' ? 'Oscuro' : 'Claro'})`
+    : (resolved === 'dark' ? 'Oscuro' : 'Claro');
+  label.textContent = `Tema: ${modeText}`;
+}
+
+function applyTheme(mode = getThemeMode()) {
+  const resolved = getResolvedTheme(mode);
   document.documentElement.setAttribute('data-theme', resolved);
+  document.documentElement.style.colorScheme = resolved;
   const select = document.getElementById('themeSelect');
-  if (select) select.value = mode;
+  if (select && select.value !== mode) select.value = mode;
+  updateThemeLabel(mode, resolved);
 }
 
 function changeTheme(mode) {
@@ -595,13 +711,20 @@ function changeTheme(mode) {
   applyTheme(mode);
 }
 
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-  if (getThemeMode() === 'system') applyTheme('system');
-});
+const userThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+if (typeof userThemeMedia.addEventListener === 'function') {
+  userThemeMedia.addEventListener('change', () => {
+    if (getThemeMode() === 'system') applyTheme('system');
+  });
+} else if (typeof userThemeMedia.addListener === 'function') {
+  userThemeMedia.addListener(() => {
+    if (getThemeMode() === 'system') applyTheme('system');
+  });
+}
 
 applyTheme();
 
-// ── Reloj ──────────────────────────────────────────────────────
+// ï¿½"?ï¿½"? Reloj ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 function updateClock() {
   const t = new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   document.getElementById('clock').textContent = t;
@@ -609,7 +732,7 @@ function updateClock() {
 }
 setInterval(updateClock,1000); updateClock();
 
-// ── Log ────────────────────────────────────────────────────────
+// ï¿½"?ï¿½"? Log ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 function tiempo(){return new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 function log(txt,tipo='info'){
   const b=document.getElementById('logBody');
@@ -624,7 +747,7 @@ function addActividad(titulo,msg,nivel){
   const empty=list.querySelector('.empty-msg');
   if(empty) empty.remove();
   const color=nivel==='leve'?'var(--green)':nivel==='severo'?'var(--red)':'var(--yellow)';
-  const emoji=nivel==='leve'?'🟢':nivel==='severo'?'🔴':'🟡';
+  const emoji=nivel==='leve'?'ï¿½YYï¿½':nivel==='severo'?'ï¿½Y"ï¿½':'ï¿½YYï¿½';
   const div=document.createElement('div');
   div.className=`hist-item ${nivel}`;
   div.innerHTML=`
@@ -639,7 +762,7 @@ function addActividad(titulo,msg,nivel){
   document.getElementById('histCount').textContent=total;
 }
 
-// ── LOGIN ──────────────────────────────────────────────────────
+// ï¿½"?ï¿½"? LOGIN ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 async function doLogin() {
   const email=document.getElementById('userEmail').value.trim();
   const pass=document.getElementById('userPass').value.trim();
@@ -657,13 +780,13 @@ async function doLogin() {
       document.getElementById('mainContent').style.display='flex';
       document.getElementById('topCodigo').textContent=data.codigo||'--';
       document.getElementById('sidebarEmail').textContent=email;
-      log(`✅ Bienvenido ${email}`,'ok');
+      log(`ï¿½o. Bienvenido ${email}`,'ok');
       cargarTodo();
     } else showError(data.error||'Credenciales incorrectas.');
   } catch(e){showError('No se pudo conectar con el servidor.');}
   btn.textContent='ENTRAR A MI PANEL'; btn.disabled=false;
 }
-function showError(msg){const el=document.getElementById('loginError');el.textContent='⚠ '+msg;el.style.display='block';}
+function showError(msg){const el=document.getElementById('loginError');el.textContent='Aviso: '+msg;el.style.display='block';}
 function doLogout(){
   sessionUser=null;
   document.getElementById('loginPage').style.display='flex';
@@ -672,23 +795,30 @@ function doLogout(){
 }
 document.getElementById('userPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-// ── CARGAR TODO ────────────────────────────────────────────────
+// ï¿½"?ï¿½"? CARGAR TODO ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 async function cargarTodo() {
   await cargarSistema();
   await cargarSensores();
   await cargarMiembros();
   await cargarCamara();
-    await cargarModoNoche();
+  await cargarModoNoche();
+  await cargarSonidos();
+  renderGoogleHome();
+  renderEsp32Guide();
 }
 
-// ── SISTEMA ────────────────────────────────────────────────────
+// ï¿½"?ï¿½"? SISTEMA ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+let sistemaData = {};
+
 async function cargarSistema() {
   try {
     const res=await fetch('/get-sistema?uid='+sessionUser.uid);
     const data=await res.json();
+    sistemaData=data||{};
     sistemaArmado=data.armado||false;
     simuladorActivo=data.simuladorPresencia||false;
     actualizarUISistema();
+    renderGoogleHome();
   } catch(e){log('Error cargando sistema','err');}
 }
 
@@ -706,12 +836,12 @@ function actualizarUISistema() {
     pill.className='sistema-pill armado'; dot.className='dot dot-red'; label.textContent='ARMADO';
     grande.className='sistema-grande armado'; icono.textContent='🔴';
     estado.textContent='SISTEMA ARMADO'; estado.style.color='var(--red)';
-    sub.textContent='Cualquier movimiento activará la alarma — Clic para desarmar';
+    sub.textContent='Cualquier movimiento activarÃ¡ la alarma ï¿½?" Clic para desarmar';
   } else {
     pill.className='sistema-pill desarmado'; dot.className='dot dot-green'; label.textContent='DESARMADO';
-    grande.className='sistema-grande desarmado'; icono.textContent='🛡️';
+    grande.className='sistema-grande desarmado'; icono.textContent='🛡';
     estado.textContent='SISTEMA DESARMADO'; estado.style.color='var(--green)';
-    sub.textContent='Tu hogar no está protegido — Clic para armar';
+    sub.textContent='Tu hogar no estÃ¡ protegido ï¿½?" Clic para armar';
   }
 
   if(simuladorActivo){
@@ -729,7 +859,7 @@ async function toggleSistema() {
     const res=await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({uid:sessionUser.uid,armado:!sistemaArmado})});
     if(res.ok){sistemaArmado=!sistemaArmado;actualizarUISistema();
-      log(`Sistema ${sistemaArmado?'ARMADO 🔴':'DESARMADO 🟢'}`,sistemaArmado?'warn':'ok');}
+      log(`Sistema ${sistemaArmado?'ARMADO ï¿½Y"ï¿½':'DESARMADO ï¿½YYï¿½'}`,sistemaArmado?'warn':'ok');}
   } catch(e){log('Error: '+e.message,'err');}
 }
 
@@ -744,12 +874,12 @@ async function toggleSimulador() {
   } catch(e){simuladorActivo=!simuladorActivo;log('Error: '+e.message,'err');}
 }
 
-// ── NIVEL Y PREVIEW ────────────────────────────────────────────
+// ï¿½"?ï¿½"? NIVEL Y PREVIEW ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 function setNivel(el) {
   document.querySelectorAll('.nivel-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected'); nivelActual=el.dataset.nivel;
   const color=nivelActual==='leve'?'var(--green)':nivelActual==='severo'?'var(--red)':'var(--yellow)';
-  const emoji=nivelActual==='leve'?'🟢':nivelActual==='severo'?'🔴':'🟡';
+  const emoji=nivelActual==='leve'?'ï¿½YYï¿½':nivelActual==='severo'?'ï¿½Y"ï¿½':'ï¿½YYï¿½';
   document.getElementById('nivelDisplay').value=nivelActual.toUpperCase();
   document.getElementById('nivelDisplay').style.color=color;
   updatePreview();
@@ -761,39 +891,39 @@ msgInput.addEventListener('input',()=>{document.getElementById('charCount').text
 tituloInput.addEventListener('input',updatePreview);
 
 function updatePreview(){
-  const emoji=nivelActual==='leve'?'🟢':nivelActual==='severo'?'🔴':'🟡';
+  const emoji=nivelActual==='leve'?'ï¿½YYï¿½':nivelActual==='severo'?'ï¿½Y"ï¿½':'ï¿½YYï¿½';
   const color=nivelActual==='leve'?'var(--green)':nivelActual==='severo'?'var(--red)':'var(--yellow)';
-  document.getElementById('previewTitle').textContent=`${emoji} ${tituloInput.value||'Sin título'}`;
+  document.getElementById('previewTitle').textContent=`${emoji} ${tituloInput.value||'Sin tÃ­tulo'}`;
   document.getElementById('previewTitle').style.color=color;
-  document.getElementById('previewMsg').textContent=msgInput.value||'(vacío)';
+  document.getElementById('previewMsg').textContent=msgInput.value||'(vacÃ­o)';
   document.getElementById('previewNotif').style.borderLeftColor=color;
 }
 
-// ── ENVIAR ALARMA ──────────────────────────────────────────────
+// ï¿½"?ï¿½"? ENVIAR ALARMA ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 async function enviarAlarma() {
   const mensaje=msgInput.value.trim();
   const titulo=tituloInput.value.trim()||'Alerta';
-  if(!mensaje){log('⚠ Escribe un mensaje.','warn');return;}
+  if(!mensaje){log('Escribe un mensaje.','warn');return;}
   const btn=document.getElementById('btnEnviar');
-  btn.classList.add('loading'); btn.textContent='⟳ ENVIANDO...';
+  btn.classList.add('loading'); btn.textContent='ï¿½Yï¿½ ENVIANDO...';
   statsHoy.alarmas++;
   try {
     const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uid:sessionUser.uid})});
     if(res.ok){
-      log(`✅ Alarma [${nivelActual.toUpperCase()}] activada en tu dispositivo.`,'ok');
+      log(`ï¿½o. Alarma [${nivelActual.toUpperCase()}] activada en tu dispositivo.`,'ok');
       statsHoy.ok++;
       addActividad(titulo,mensaje,nivelActual);
       actualizarStats();
-    } else {const e=await res.text();log(`❌ Error: ${e}`,'err');statsHoy.err++;}
-  } catch(e){log(`❌ ${e.message}`,'err');statsHoy.err++;}
-  btn.classList.remove('loading'); btn.textContent='▶  ACTIVAR MI ALARMA';
+    } else {const e=await res.text();log(`ï¿½O Error: ${e}`,'err');statsHoy.err++;}
+  } catch(e){log(`ï¿½O ${e.message}`,'err');statsHoy.err++;}
+  btn.classList.remove('loading'); btn.textContent='ï¿½-ï¿½  ACTIVAR MI ALARMA';
 }
 
 async function cancelarAlarma(){
   try {
     await fetch('/cancel-alarm',{method:'POST'});
-    log('⏹ Alarma cancelada.','ok');
+    log('â¹ Alarma cancelada.','ok');
   } catch(e){log('Error: '+e.message,'err');}
 }
 
@@ -806,13 +936,13 @@ function actualizarStats(){
   document.getElementById('statAlarmas').textContent=statsHoy.alarmas;
 }
 
-// ── ENVIAR POR CÓDIGO ──────────────────────────────────────────
+// ï¿½"?ï¿½"? ENVIAR POR Cï¿½"DIGO ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 function agregarCodigo(){
   const input=document.getElementById('codigoInput');
   const codigo=input.value.trim();
   if(!codigo) return;
-  if(codigo===sessionUser?.codigo){log('⚠ No puedes enviarte a ti mismo.','warn');return;}
-  if(codigosSelec.includes(codigo)){log('⚠ Código ya agregado.','warn');return;}
+  if(codigo===sessionUser?.codigo){log('ï¿½sï¿½ No puedes enviarte a ti mismo.','warn');return;}
+  if(codigosSelec.includes(codigo)){log('ï¿½sï¿½ CÃ³digo ya agregado.','warn');return;}
   codigosSelec.push(codigo);
   input.value='';
   renderChips();
@@ -823,14 +953,14 @@ function renderChips(){
   cont.innerHTML=codigosSelec.map(c=>`
     <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(0,136,255,0.12);border:1px solid rgba(0,136,255,0.4);">
       <span style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:700;">${c}</span>
-      <span style="cursor:pointer;color:var(--blue);" onclick="quitarCodigo('${c}')">✕</span>
+      <span style="cursor:pointer;color:var(--blue);" onclick="quitarCodigo('${c}')">ï¿½o.</span>
     </div>`).join('');
 }
 function quitarCodigo(c){codigosSelec=codigosSelec.filter(x=>x!==c);renderChips();}
 
 async function enviarACodigos(){
-  if(!codigosSelec.length){log('⚠ Agrega al menos un código.','warn');return;}
-  const mensaje=msgInput.value.trim()||'🚨 ¡ALERTA!';
+  if(!codigosSelec.length){log('Agrega al menos un codigo.','warn');return;}
+  const mensaje=msgInput.value.trim()||'ï¿½Ysï¿½ Â¡ALERTA!';
   const titulo=tituloInput.value.trim()||'Alerta';
   log(`Buscando ${codigosSelec.length} usuario(s)...`,'info');
   const uids=[];
@@ -839,20 +969,20 @@ async function enviarACodigos(){
       const res=await fetch('/find-by-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo})});
       const data=await res.json();
       if(data.found) uids.push(data.uid);
-      else log(`⚠ Código no encontrado: ${codigo}`,'warn');
+      else log(`ï¿½sï¿½ CÃ³digo no encontrado: ${codigo}`,'warn');
     } catch(e){}
   }
-  if(!uids.length){log('❌ Ningún código fue encontrado.','err');return;}
+  if(!uids.length){log('ï¿½O NingÃºn cÃ³digo fue encontrado.','err');return;}
   try {
     const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uids})});
-    if(res.ok){log(`✅ Alarma enviada a ${uids.length} usuario(s).`,'ok');codigosSelec=[];renderChips();}
-    else log('❌ Error enviando alarmas.','err');
-  } catch(e){log('❌ Error: '+e.message,'err');}
+    if(res.ok){log(`ï¿½o. Alarma enviada a ${uids.length} usuario(s).`,'ok');codigosSelec=[];renderChips();}
+    else log('ï¿½O Error enviando alarmas.','err');
+  } catch(e){log('ï¿½O Error: '+e.message,'err');}
 }
 
-// ── CÁMARA ─────────────────────────────────────────────────────
-// ── MODO NOCHE ─────────────────────────────────────────────────
+// ï¿½"?ï¿½"? CÃMARA ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+// ï¿½"?ï¿½"? MODO NOCHE ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 let modoNocheActivo = false;
 let nivelNocheActual = 'severo';
 
@@ -880,7 +1010,7 @@ async function cargarModoNoche(){
 function actualizarUINocha(){
   const txt = document.getElementById('nocheEstadoText');
   const btn = document.getElementById('btnToggleNoche');
-  if(txt) txt.textContent = modoNocheActivo ? '🌙 ACTIVO — Sistema armado' : '☀️ Inactivo';
+  if(txt) txt.textContent = modoNocheActivo ? 'Modo Noche activo - Sistema armado' : 'Inactivo';
   if(btn) {
     btn.textContent = modoNocheActivo ? 'Desactivar' : 'Activar';
     btn.style.background = modoNocheActivo ? '#555577' : '#6666FF';
@@ -900,7 +1030,7 @@ async function toggleModoNoche(){
     })
   });
   actualizarUINocha();
-  showToast(modoNocheActivo ? '🌙 Modo Noche activado' : '☀️ Modo Noche desactivado');
+  showToast(modoNocheActivo ? 'Modo Noche activado' : 'Modo Noche desactivado');
 }
 
 async function guardarConfigNoche(){
@@ -917,7 +1047,7 @@ async function guardarConfigNoche(){
       modoNocheFin: fin
     })
   });
-  showToast('✅ Configuración guardada');
+  showToast('ï¿½o. ConfiguraciÃ³n guardada');
 }
 
 function setNivelNoche(nivel){
@@ -937,7 +1067,7 @@ function setNivelNoche(nivel){
   });
 }
 
-// ── CÁMARAS MÚLTIPLES ────────────────────────────────────────
+// ï¿½"?ï¿½"? CÃMARAS Mï¿½sLTIPLES ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 let camaras = [];
 let camaraActivaIdx = -1;
 let dialogoCamaraEditar = null;
@@ -948,18 +1078,18 @@ async function cargarCamara(){
     const res = await fetch('/get-sistema?uid='+sessionUser.uid);
     const data = await res.json();
     
-    // Compatibilidad con versión anterior
+    // Compatibilidad con versiÃ³n anterior
     if(data.camaras && data.camaras.length > 0) {
       camaras = data.camaras;
     } else if(data.camaraUrl) {
-      camaras = [{ id:'cam_01', nombre:'Cámara Principal', url:data.camaraUrl }];
+      camaras = [{ id:'cam_01', nombre:'CÃ¡mara Principal', url:data.camaraUrl }];
     } else {
       camaras = [];
     }
     
     renderizarTabsCamaras();
     if(camaras.length > 0) seleccionarCamara(0);
-  } catch(e) { console.error('Error cámaras:', e); }
+  } catch(e) { console.error('Error cÃ¡maras:', e); }
 }
 
 function renderizarTabsCamaras(){
@@ -972,9 +1102,9 @@ function renderizarTabsCamaras(){
       color:${camaraActivaIdx===i ? '#fff' : 'var(--text-sec)'};
       border:1px solid ${camaraActivaIdx===i ? 'var(--blue)' : 'var(--border)'};
       white-space:nowrap;flex-shrink:0">
-      📹 ${cam.nombre}
+      ï¿½Y"ï¿½ ${cam.nombre}
     </div>
-  `).join('') + (camaras.length === 0 ? '<span style="color:var(--text-sec);font-size:12px">Sin cámaras — toca + Agregar</span>' : '');
+  `).join('' ) + (camaras.length === 0 ? '<span style="color:var(--text-sec);font-size:12px">Sin cÃ¡maras ï¿½?" toca + Agregar</span>' : '');
 }
 
 function seleccionarCamara(idx){
@@ -986,7 +1116,7 @@ function seleccionarCamara(idx){
   const info = document.getElementById('camaraInfo');
   const nombre = document.getElementById('camaraActivaNombre');
   if(info) info.style.display = 'flex';
-  if(nombre) nombre.textContent = `${cam.nombre}  •  ${cam.url}`;
+  if(nombre) nombre.textContent = `${cam.nombre}  ï¿½?ï¿½  ${cam.url}`;
 }
 
 function mostrarStream(url){
@@ -1008,18 +1138,18 @@ function editarCamaraActiva(){
 async function eliminarCamaraActiva(){
   if(camaraActivaIdx < 0) return;
   const cam = camaras[camaraActivaIdx];
-  if(!confirm(`¿Eliminar cámara "${cam.nombre}"?`)) return;
+  if(!confirm(`Â¿Eliminar cÃ¡mara "${cam.nombre}"?`)) return;
   camaras.splice(camaraActivaIdx, 1);
   camaraActivaIdx = camaras.length > 0 ? 0 : -1;
   await guardarCamaras();
   renderizarTabsCamaras();
   if(camaraActivaIdx >= 0) seleccionarCamara(0);
   else {
-    document.getElementById('camaraContainer').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:320px;color:#666;font-size:13px">Sin cámara seleccionada</div>';
+    document.getElementById('camaraContainer').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:320px;color:#666;font-size:13px">Sin cÃ¡mara seleccionada</div>';
     const info = document.getElementById('camaraInfo');
     if(info) info.style.display = 'none';
   }
-  showToast('✅ Cámara eliminada.');
+  showToast('ï¿½o. CÃ¡mara eliminada.');
 }
 
 function mostrarDialogoCamara(editarIdx = null){
@@ -1031,7 +1161,7 @@ function mostrarDialogoCamara(editarIdx = null){
   overlay.style.cssText = 'position:fixed;inset:0;background:#0008;z-index:1000;display:flex;align-items:center;justify-content:center';
   overlay.innerHTML = `
     <div style="background:var(--surface);padding:24px;width:340px;max-width:90vw">
-      <h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam ? '✏️ Editar Cámara' : '📹 Agregar Cámara'}</h3>
+      <h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam ? 'ï¿½oï¿½ï¸ Editar CÃ¡mara' : 'ï¿½Y"ï¿½ Agregar CÃ¡mara'}</h3>
       <div style="margin-bottom:10px">
         <label style="font-size:12px;color:var(--text-sec)">Nombre</label>
         <input id="dlg_cam_nombre" type="text" class="input-field" value="${cam?.nombre || ''}" placeholder="Sala, Garaje, Entrada..." style="margin-top:4px">
@@ -1070,11 +1200,11 @@ async function guardarDialogoCamara(){
   renderizarTabsCamaras();
   const newIdx = dialogoCamaraEditar !== null ? dialogoCamaraEditar : camaras.length - 1;
   seleccionarCamara(newIdx);
-  showToast('✅ Cámara guardada.');
+  showToast('ï¿½o. CÃ¡mara guardada.');
 }
 
 async function guardarCamaras(){
-  if(!sessionUser?.uid) { showToast('❌ No hay sesión activa'); return; }
+  if(!sessionUser?.uid) { showToast('ï¿½O No hay sesiÃ³n activa'); return; }
   try {
     const res = await fetch('/save-camera-url', {
       method:'POST',
@@ -1087,33 +1217,34 @@ async function guardarCamaras(){
     });
     const data = await res.json();
     if(data.ok) {
-      showToast('✅ Cámara guardada');
+      showToast('ï¿½o. CÃ¡mara guardada');
     } else {
-      showToast('❌ Error guardando cámara');
+      showToast('ï¿½O Error guardando cÃ¡mara');
       console.error('Error:', data);
     }
   } catch(e) {
-    console.error('Error guardando cámara:', e);
-    showToast('❌ Error de conexión al servidor');
+    console.error('Error guardando cÃ¡mara:', e);
+    showToast('ï¿½O Error de conexiÃ³n al servidor');
   }
 }
 
 
-// ── SENSORES ───────────────────────────────────────────────────
+// ï¿½"?ï¿½"? SENSORES ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 async function cargarSensores(){
   if(!sessionUser?.uid) return;
   try {
-    // Cargar sensores del usuario específico desde RTDB
+    // Cargar sensores del usuario especÃ­fico desde RTDB
     const res = await fetch('/get-sensors-user?uid=' + sessionUser.uid);
     const data = await res.json();
     const lista = data.sensores || [];
+    latestSensors = lista;
     
     const statEl = document.getElementById('statSensores');
     if(statEl) statEl.textContent = lista.length;
     
     const cont = document.getElementById('sensoresLista');
     if(!lista.length){
-      cont.innerHTML='<div class="empty-msg">Sin sensores conectados.<br>Conecta tu ESP32 e ingresa tu código en la pantalla web del sensor.</div>';
+      cont.innerHTML='<div class="empty-msg">Sin sensores conectados.<br>Conecta tu ESP32 e ingresa tu cÃ³digo en la pantalla web del sensor.</div>';
       return;
     }
     
@@ -1128,7 +1259,7 @@ async function cargarSensores(){
           <div style="width:10px;height:10px;border-radius:50%;background:${online?'#00FF88':'#FF2200'}"></div>
           <div style="flex:1">
             <div style="font-size:14px;font-weight:700;color:var(--text-pri)">${s.nombre||'ESP32'}</div>
-            <div style="font-size:11px;color:var(--text-sec)">IP: ${s.ip||'?'} · ID: ${s.sensorId||s.id}</div>
+            <div style="font-size:11px;color:var(--text-sec)">IP: ${s.ip||'?'} Â· ID: ${s.sensorId||s.id}</div>
           </div>
           <span style="font-size:11px;font-weight:700;color:${online?'#00FF88':'#FF2200'};border:1px solid ${online?'#00FF8844':'#FF220044'};padding:3px 8px">
             ${online?'ONLINE':'OFFLINE'}
@@ -1139,11 +1270,11 @@ async function cargarSensores(){
           ${comps.map(c => `
             <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border)">
               <span style="font-size:16px">${emojiTipo(c.tipoId)}</span>
-              <span style="flex:1;font-size:12px;color:var(--text-pri)">${c.nombre} — GPIO ${c.pin}</span>
+              <span style="flex:1;font-size:12px;color:var(--text-pri)">${c.nombre} ï¿½?" GPIO ${c.pin}</span>
               ${!c.esEntrada ? `
                 <button onclick="controlarComponente('${s.id}','${c.id}',${!c.activo})"
                   style="padding:4px 12px;background:${c.activo?'#107C10':'var(--surface2)'};color:${c.activo?'#fff':'var(--text-sec)'};border:none;cursor:pointer;font-size:11px;font-weight:700">
-                  ${c.activo?'ON':'OFF'}
+                  ${c.activo ? 'APAGAR' : 'ENCENDER'}
                 </button>
               ` : `<span style="font-size:10px;color:var(--text-sec)">ENTRADA</span>`}
             </div>
@@ -1159,8 +1290,8 @@ async function cargarSensores(){
 }
 
 function emojiTipo(tipoId){
-  const m={pir:'👁️',led:'💡',relay:'⚡',buzzer:'🔊',door:'🚪',smoke:'💨',temp:'🌡️'};
-  return m[tipoId]||'🔌';
+  const m={pir:'\uD83D\uDCE1',led:'\uD83D\uDCA1',relay:'\uD83D\uDD0C',buzzer:'\uD83D\uDD14',door:'\uD83D\uDEAA',smoke:'\uD83D\uDCA8',temp:'\uD83C\uDF21\uFE0F'};
+  return m[tipoId]||'\u2753';
 }
 
 async function controlarComponente(sensorId, compId, estado){
@@ -1170,9 +1301,9 @@ async function controlarComponente(sensorId, compId, estado){
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({uid: sessionUser.uid, sensorId, compId, estado})
     });
-    showToast(estado ? '💡 Encendido' : '💡 Apagado');
+    showToast(estado ? 'Componente encendido' : 'Componente apagado');
     setTimeout(cargarSensores, 500);
-  } catch(e){ showToast('❌ Error controlando componente'); }
+  } catch(e){ showToast('Error controlando componente'); }
 }
 
 function renderizarControlesManual(sensores){
@@ -1186,7 +1317,7 @@ function renderizarControlesManual(sensores){
     });
   });
   if(!salidas.length){
-    cont.innerHTML = '<div class="empty-msg">Sin componentes de salida (LED, Relé, Buzzer)</div>';
+    cont.innerHTML = '<div class="empty-msg">Sin componentes de salida (LED, RelÃ©, Buzzer)</div>';
     return;
   }
   cont.innerHTML = salidas.map(c => `
@@ -1194,17 +1325,17 @@ function renderizarControlesManual(sensores){
       <span style="font-size:24px">${emojiTipo(c.tipoId)}</span>
       <div style="flex:1">
         <div style="font-size:13px;font-weight:700;color:var(--text-pri)">${c.nombre}</div>
-        <div style="font-size:11px;color:var(--text-sec)">${c.sensorNombre} · GPIO ${c.pin}</div>
+        <div style="font-size:11px;color:var(--text-sec)">${c.sensorNombre} Â· GPIO ${c.pin}</div>
       </div>
       <button onclick="controlarComponente('${c.sensorId}','${c.id}',${!c.activo})"
         style="padding:8px 20px;background:${c.activo?'#107C10':'var(--surface2)'};color:${c.activo?'#fff':'var(--text-sec)'};border:1px solid ${c.activo?'#107C10':'var(--border)'};cursor:pointer;font-size:13px;font-weight:700">
-        ${c.activo ? '💡 ON' : '⚫ OFF'}
+        ${c.activo ? 'APAGAR' : 'ENCENDER'}
       </button>
     </div>
   `).join('');
 }
 
-// ── MIEMBROS ───────────────────────────────────────────────────
+// ï¿½"?ï¿½"? MIEMBROS ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 async function cargarMiembros(){
   try {
     const res=await fetch('/get-miembros?uid='+sessionUser.uid);
@@ -1212,7 +1343,7 @@ async function cargarMiembros(){
     const lista=data.miembros||[];
     document.getElementById('statMiembros').textContent=lista.length;
     const cont=document.getElementById('miembrosLista');
-    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin miembros.<br>Regístralos en la app móvil.</div>';return;}
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin miembros.<br>RegÃ­stralos en la app mÃ³vil.</div>';return;}
     cont.innerHTML=lista.map(m=>`
       <div class="lista-item ${m.enCasa?'encasa':''}">
         <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,34,0,0.12);border:2px solid rgba(255,34,0,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--red);">
@@ -1220,7 +1351,7 @@ async function cargarMiembros(){
         </div>
         <div style="flex:1;">
           <div style="font-size:13px;font-weight:700;color:var(--text);">${m.nombre||'Miembro'}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${m.cantFotos||0} fotos · Reconocimiento facial</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${m.cantFotos||0} fotos Â· Reconocimiento facial</div>
         </div>
         <span class="status-badge" style="color:${m.enCasa?'var(--green)':'var(--muted)'};border-color:${m.enCasa?'rgba(0,255,136,0.4)':'rgba(68,68,90,0.4)'};">
           ${m.enCasa?'EN CASA':'FUERA'}
@@ -1229,14 +1360,14 @@ async function cargarMiembros(){
   } catch(e){log('Error cargando miembros','err');}
 }
 
-// ── ESCOLTA ────────────────────────────────────────────────────
+// ï¿½"?ï¿½"? ESCOLTA ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 function activarEscolta(){
   const lat=parseFloat(document.getElementById('escDestLat').value);
   const lng=parseFloat(document.getElementById('escDestLng').value);
   const min=parseInt(document.getElementById('escMinutos').value)||30;
   const pin=document.getElementById('escPin').value.trim();
-  if(isNaN(lat)||isNaN(lng)){log('⚠ Ingresa las coordenadas del destino.','warn');return;}
-  if(pin.length<4){log('⚠ El PIN debe tener al menos 4 dígitos.','warn');return;}
+  if(isNaN(lat)||isNaN(lng)){log('Ingresa las coordenadas del destino.','warn');return;}
+  if(pin.length<4){log('El PIN debe tener al menos 4 digitos.','warn');return;}
 
   escoltaPin=pin;
   document.getElementById('escoltaForm').style.display='none';
@@ -1252,18 +1383,18 @@ function activarEscolta(){
     if(secs<=0){clearInterval(escoltaTimer);enviarAlertaEscolta();}
   },1000);
 
-  log(`🛡️ Modo Escolta activado — ${min} minutos.`,'ok');
+  log(`ï¿½Y>ï¿½ï¸ Modo Escolta activado ï¿½?" ${min} minutos.`,'ok');
 }
 
 String.prototype.padLeft2=function(){return this.padStart(2,'0');}
 
 async function enviarAlertaEscolta(){
-  log('⚠️ Tiempo expirado — Enviando alerta de escolta.','warn');
+  log('ï¿½sï¿½ï¸ Tiempo expirado ï¿½?" Enviando alerta de escolta.','warn');
   try {
     await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:sessionUser.uid,message:'⚠️ '+sessionUser.email+' no llegó a su destino a tiempo.',lat:0,lng:0})});
-    log('🚨 Alerta de escolta enviada a contactos.','err');
-    document.getElementById('escContador').textContent='¡ALERTA!';
+      body:JSON.stringify({uid:sessionUser.uid,message:'ï¿½sï¿½ï¸ '+sessionUser.email+' no llegÃ³ a su destino a tiempo.',lat:0,lng:0})});
+    log('ï¿½Ysï¿½ Alerta de escolta enviada a contactos.','err');
+    document.getElementById('escContador').textContent='Â¡ALERTA!';
     document.getElementById('escContador').style.color='var(--red)';
   } catch(e){log('Error enviando alerta','err');}
 }
@@ -1281,30 +1412,30 @@ function cancelarEscolta(){
     document.getElementById('escoltaActiva').style.display='none';
     document.getElementById('panelCancelar').style.display='none';
     document.getElementById('pinCancelar').value='';
-    log('✅ Modo Escolta cancelado.','ok');
+    log('ï¿½o. Modo Escolta cancelado.','ok');
   } else if(pin===escoltaPin+'0'){
-    // PIN coacción
+    // PIN coacciÃ³n
     clearInterval(escoltaTimer);
     enviarAlertaEscolta();
     document.getElementById('escoltaForm').style.display='block';
     document.getElementById('escoltaActiva').style.display='none';
     document.getElementById('panelCancelar').style.display='none';
-    log('⚠ PIN de coacción usado — Alerta enviada silenciosamente.','warn');
+    log('ï¿½sï¿½ PIN de coacciÃ³n usado ï¿½?" Alerta enviada silenciosamente.','warn');
   } else {
-    log('❌ PIN incorrecto.','err');
+    log('ï¿½O PIN incorrecto.','err');
   }
 }
 
 async function activarAntiRobo(){
-  if(!confirm('¿Activar botón de pánico?')) return;
+  if(!confirm('Â¿Activar botÃ³n de pÃ¡nico?')) return;
   try {
     await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:sessionUser.uid,message:'🚨 ALERTA ANTI-ROBO: '+sessionUser.email,lat:0,lng:0})});
-    log('🚨 Alerta de robo enviada.','err');
+      body:JSON.stringify({uid:sessionUser.uid,message:'ï¿½Ysï¿½ ALERTA ANTI-ROBO: '+sessionUser.email,lat:0,lng:0})});
+    log('ï¿½Ysï¿½ Alerta de robo enviada.','err');
   } catch(e){log('Error: '+e.message,'err');}
 }
 
-// ── HISTORIAL ──────────────────────────────────────────────────
+// ï¿½"?ï¿½"? HISTORIAL ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
 async function cargarHistorial(){
   try {
     const res=await fetch('/get-historial?uid='+sessionUser.uid);
@@ -1326,8 +1457,8 @@ async function cargarHistorial(){
   } catch(e){}
 }
 
-// ── NAVEGACIÓN ─────────────────────────────────────────────────
-const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Noche','Historial'];
+// ï¿½"?ï¿½"? NAVEGACIï¿½"N ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Noche','Esp32','Googlehome','Sonidos','Historial'];
 function setView(view,el){
   document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
@@ -1335,6 +1466,132 @@ function setView(view,el){
   if(view==='sensores') cargarSensores();
   if(view==='miembros') cargarMiembros();
   if(view==='historial') cargarHistorial();
+  if(view==='googlehome') renderGoogleHome();
+  if(view==='sonidos') cargarSonidos();
+  if(view==='esp32') renderEsp32Guide();
+}
+
+async function copiarTexto(texto, etiqueta='Enlace copiado') {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(texto);
+    } else {
+      const input = document.createElement('textarea');
+      input.value = texto;
+      input.setAttribute('readonly', '');
+      input.style.position = 'fixed';
+      input.style.opacity = '0';
+      input.style.pointerEvents = 'none';
+      document.body.appendChild(input);
+      input.focus();
+      input.select();
+      input.setSelectionRange(0, texto.length);
+      const copiado = document.execCommand('copy');
+      document.body.removeChild(input);
+      if (!copiado) throw new Error('copy-fallback-failed');
+    }
+    showToast(etiqueta);
+  } catch (error) {
+    console.error('No se pudo copiar el enlace', error);
+    showToast('No se pudo copiar. Copialo manualmente desde el enlace mostrado.');
+  }
+}
+
+function probarEnlace(url) {
+  try {
+    const nuevaVentana = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!nuevaVentana) {
+      window.location.href = url;
+    }
+    showToast('Abriendo enlace de prueba...');
+  } catch (error) {
+    console.error('No se pudo abrir el enlace de prueba', error);
+    window.location.href = url;
+  }
+}
+
+function renderGoogleHome() {
+  const cont = document.getElementById('googleHomeLinks');
+  if (!cont || !sessionUser?.uid) return;
+  const base = window.location.origin.replace(/\/$/, '') + '/cmd';
+  const uid = sessionUser.uid;
+  const key = 'HOMEALERT2025';
+  const links = [
+    ['Armar sistema', `${base}/armar?uid=${uid}&key=${key}`],
+    ['Desarmar sistema', `${base}/desarmar?uid=${uid}&key=${key}`],
+    ['Alarma moderada', `${base}/alarma?uid=${uid}&key=${key}&nivel=moderado`],
+    ['Alarma severa', `${base}/alarma?uid=${uid}&key=${key}&nivel=severo`],
+    ['Simulador ON', `${base}/simulador/on?uid=${uid}&key=${key}`],
+    ['Simulador OFF', `${base}/simulador/off?uid=${uid}&key=${key}`],
+    ['Modo noche ON', `${base}/noche/on?uid=${uid}&key=${key}`],
+    ['Modo noche OFF', `${base}/noche/off?uid=${uid}&key=${key}`],
+  ];
+
+  const salidas = [];
+  latestSensors.forEach(s => {
+    const comps = Array.isArray(s.componentes) ? s.componentes : Object.values(s.componentes || {});
+    comps.filter(c => !c.esEntrada).forEach(c => {
+      salidas.push({ ...c, sensorId: s.id || s.sensorId || 'esp32_01' });
+    });
+  });
+
+  salidas.forEach(c => {
+    links.push([
+      `Encender ${c.nombre}`,
+      `${base}/componente/on?uid=${uid}&sensorId=${c.sensorId}&compId=${c.id}&key=${key}`,
+    ]);
+    links.push([
+      `Apagar ${c.nombre}`,
+      `${base}/componente/off?uid=${uid}&sensorId=${c.sensorId}&compId=${c.id}&key=${key}`,
+    ]);
+  });
+
+  cont.innerHTML = links.map(([label, url]) => `
+    <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);margin-bottom:10px;">
+      <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:6px;">${label}</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-sec);word-break:break-all;margin-bottom:8px;">${url}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" onclick="copiarTexto(${JSON.stringify(url)}, 'Enlace copiado: ' + ${JSON.stringify(label)})" style="padding:8px 12px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:11px;font-weight:700;">COPIAR</button>
+        <button type="button" onclick="probarEnlace(${JSON.stringify(url)})" style="padding:8px 12px;background:var(--surface);color:var(--text-pri);border:1px solid var(--border);cursor:pointer;font-size:11px;font-weight:700;">PROBAR</button>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" style="padding:8px 12px;background:transparent;color:var(--text-sec);border:1px dashed var(--border);font-size:11px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;">ABRIR DIRECTO</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderEsp32Guide() {
+  const codigo = document.getElementById('esp32Codigo');
+  if (codigo) codigo.textContent = sessionUser?.codigo || '--';
+}
+
+async function cargarSonidos() {
+  if (!sessionUser?.uid) return;
+  try {
+    const res = await fetch('/get-sistema?uid=' + sessionUser.uid);
+    const data = await res.json();
+    sistemaData = { ...sistemaData, ...data };
+    const leve = document.getElementById('sonidoLeveInput');
+    const moderado = document.getElementById('sonidoModeradoInput');
+    const severo = document.getElementById('sonidoSeveroInput');
+    if (leve) leve.value = data.sonidoLeve || 'sounds/alarma_leve.wav';
+    if (moderado) moderado.value = data.sonidoModerado || 'sounds/alarma_moderada.wav';
+    if (severo) severo.value = data.sonidoSevero || 'sounds/alarma_severa.wav';
+  } catch(e) {
+    console.error('Error cargando sonidos:', e);
+  }
+}
+
+async function guardarSonidos() {
+  if (!sessionUser?.uid) return;
+  const sonidoLeve = document.getElementById('sonidoLeveInput')?.value.trim() || 'sounds/alarma_leve.wav';
+  const sonidoModerado = document.getElementById('sonidoModeradoInput')?.value.trim() || 'sounds/alarma_moderada.wav';
+  const sonidoSevero = document.getElementById('sonidoSeveroInput')?.value.trim() || 'sounds/alarma_severa.wav';
+  await fetch('/toggle-sistema', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ uid: sessionUser.uid, sonidoLeve, sonidoModerado, sonidoSevero })
+  });
+  showToast('? Sonidos guardados');
 }
 
 // Auto-refresh cada 15 segundos
@@ -1342,3 +1599,14 @@ setInterval(()=>{if(sessionUser){cargarSistema();cargarSensores();}},15000);
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

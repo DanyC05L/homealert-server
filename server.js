@@ -1,10 +1,10 @@
-const http   = require('http');
+﻿const http   = require('http');
 const fs     = require('fs');
 const path   = require('path');
 const https  = require('https');
 const admin  = require('firebase-admin');
 
-// En producción (Render): usa variable de entorno FIREBASE_CREDENTIALS
+// En producciÃ³n (Render): usa variable de entorno FIREBASE_CREDENTIALS
 // En local: usa el archivo JSON directamente
 let serviceAccount;
 if (process.env.FIREBASE_CREDENTIALS) {
@@ -25,6 +25,13 @@ const auth = admin.auth();
 const ADMIN_EMAIL      = 'administrador@homealert.com';
 const FIREBASE_API_KEY = 'AIzaSyCODauFIh1T0shlPCmRVszZKpOj6tJyFsk';
 const HEARTBEAT_TIMEOUT = 10; // segundos sin heartbeat = sabotaje
+
+function esIdSeguro(value) {
+  return typeof value === 'string'
+    && value.length > 0
+    && value.length < 80
+    && /^[a-zA-Z0-9_-]+$/.test(value);
+}
 
 function isEntrada(tipoId = '') {
   return ['pir', 'door', 'smoke', 'temp'].includes(String(tipoId).toLowerCase());
@@ -63,93 +70,99 @@ async function cargarComponentesUsuario(uid) {
   return { sistemaData, componentes };
 }
 
-// ── Monitor de Heartbeat ────────────────────────────────────────
-const estadoSensores = {}; // { sensor_id: { ultimoHB, sabotajeEnviado } }
+// â”€â”€ Monitor de Heartbeat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const estadoSensores = {}; // { uid:sensorId: { ultimoHB, sabotajeEnviado } }
 
 async function iniciarMonitorHeartbeat() {
-  console.log('💓 Monitor de Heartbeat iniciado...');
-
-  // Escuchar cambios en /sensores desde Realtime Database
-  rtdb.ref('/sensores').on('value', snapshot => {
-    const sensores = snapshot.val();
-    if (!sensores) return;
-
-    Object.entries(sensores).forEach(([id, data]) => {
-      const hbActual = data.ultimoHeartbeat || 0;
-
-      if (!estadoSensores[id]) {
-        estadoSensores[id] = { ultimoHB: hbActual, sabotajeEnviado: false };
-      } else {
-        // Si recibió nuevo heartbeat, resetear sabotaje
-        if (hbActual > estadoSensores[id].ultimoHB) {
-          if (estadoSensores[id].sabotajeEnviado) {
-            console.log(`✅ Sensor '${id}' restaurado — heartbeat recibido`);
-            notificarRestauracion(id, data.nombre || id);
-          }
-          estadoSensores[id].sabotajeEnviado = false;
-          estadoSensores[id].ultimoHB = hbActual;
-        }
-      }
-    });
-  });
+  console.log('ðŸ’“ Monitor de Heartbeat iniciado...');
 
   // Verificar timeouts cada 5 segundos
   setInterval(async () => {
-    const ahora = Math.floor(Date.now() / 1000);
-    for (const [id, estado] of Object.entries(estadoSensores)) {
-      const diff = ahora - estado.ultimoHB;
-      if (diff > HEARTBEAT_TIMEOUT && !estado.sabotajeEnviado) {
-        console.log(`🚨 SABOTAJE detectado en sensor '${id}' — Sin heartbeat por ${diff}s`);
-        estado.sabotajeEnviado = true;
-        await alertarSabotaje(id, diff);
+    try {
+      const ahora = Math.floor(Date.now() / 1000);
+      const snap = await db.collection('sensores').get();
+      for (const doc of snap.docs) {
+        const data = doc.data() || {};
+        const sensorId = doc.id;
+        const userId = data.userId || '';
+        if (!esIdSeguro(sensorId) || !esIdSeguro(userId)) continue;
+
+        const hbActual = timestampToSeconds(data.updatedAt);
+        if (!hbActual) continue;
+
+        const key = `${userId}:${sensorId}`;
+        if (!estadoSensores[key]) {
+          estadoSensores[key] = { ultimoHB: hbActual, sabotajeEnviado: false };
+        } else if (hbActual > estadoSensores[key].ultimoHB) {
+          if (estadoSensores[key].sabotajeEnviado) {
+            console.log(`âœ… Sensor '${sensorId}' restaurado â€” heartbeat recibido`);
+            await notificarRestauracion(userId, sensorId, data.nombre || sensorId);
+          }
+          estadoSensores[key].sabotajeEnviado = false;
+          estadoSensores[key].ultimoHB = hbActual;
+        }
+
+        const diff = ahora - hbActual;
+        if (diff > HEARTBEAT_TIMEOUT && !estadoSensores[key].sabotajeEnviado) {
+          console.log(`ðŸš¨ SABOTAJE detectado en sensor '${sensorId}' del usuario '${userId}' â€” Sin heartbeat por ${diff}s`);
+          estadoSensores[key].sabotajeEnviado = true;
+          await alertarSabotaje(userId, sensorId, data.nombre || sensorId, diff);
+        }
       }
+    } catch (e) {
+      console.error('âŒ Error en monitor heartbeat:', e.message);
     }
   }, 5000);
 }
 
-async function alertarSabotaje(sensorId, segundos) {
+async function alertarSabotaje(userId, sensorId, nombre, segundos) {
   try {
-    const mensaje = `⚠️ Sensor '${sensorId}' desconectado (${segundos}s sin señal). Posible sabotaje o corte de energía.`;
+    const mensaje = `âš ï¸ Sensor '${nombre}' desconectado (${segundos}s sin seÃ±al). Posible sabotaje o corte de energÃ­a.`;
 
-    // Actualizar Firestore
-    await db.collection('alerts').doc('alert1').set({
+    await db.collection('alerts').doc(userId).set({
       active: true, message: mensaje,
-      nivel: 'severo', titulo: '⚠️ ALERTA DE SABOTAJE',
+      nivel: 'severo', titulo: 'âš ï¸ ALERTA DE SABOTAJE',
       sensor_id: sensorId, timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    // Enviar FCM a todos
     await admin.messaging().send({
-      topic: 'alarm', android: { priority: 'high' },
-      data: { alert: 'true', message: mensaje, nivel: 'severo', titulo: '⚠️ ALERTA DE SABOTAJE' },
+      topic: `user_${userId}`, android: { priority: 'high' },
+      data: { alert: 'true', message: mensaje, nivel: 'severo', titulo: 'âš ï¸ ALERTA DE SABOTAJE' },
     });
 
-    // Marcar sensor como offline en RTDB
-    await rtdb.ref(`/sensores/${sensorId}/activo`).set(false);
-    console.log(`✅ Alerta de sabotaje enviada para sensor '${sensorId}'`);
+    await db.collection('sensores').doc(sensorId).set({
+      online: false,
+      activo: false,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    console.log(`âœ… Alerta de sabotaje enviada para sensor '${sensorId}'`);
   } catch(e) {
-    console.error('❌ Error enviando alerta sabotaje:', e.message);
+    console.error('âŒ Error enviando alerta sabotaje:', e.message);
   }
 }
 
-async function notificarRestauracion(sensorId, nombre) {
+async function notificarRestauracion(userId, sensorId, nombre) {
   try {
     await admin.messaging().send({
-      topic: 'alarm', android: { priority: 'high' },
+      topic: `user_${userId}`, android: { priority: 'high' },
       data: {
         alert: 'true',
-        message: `✅ Sensor '${nombre}' restaurado y en línea nuevamente.`,
+        message: `âœ… Sensor '${nombre}' restaurado y en lÃ­nea nuevamente.`,
         nivel: 'leve',
         titulo: 'Sensor Restaurado',
       },
     });
-    await rtdb.ref(`/sensores/${sensorId}/activo`).set(true);
+    await db.collection('sensores').doc(sensorId).set({
+      online: true,
+      activo: true,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
   } catch(e) {
-    console.error('❌ Error notificando restauración:', e.message);
+    console.error('âŒ Error notificando restauraciÃ³n:', e.message);
   }
 }
 
-// ── Firebase Auth REST ──────────────────────────────────────────
+// â”€â”€ Firebase Auth REST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function firebaseSignIn(email, password) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify({ email, password, returnSecureToken: true });
@@ -181,7 +194,7 @@ function parseBody(req) {
   });
 }
 
-// ── Servidor HTTP ───────────────────────────────────────────────
+// â”€â”€ Servidor HTTP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -196,13 +209,13 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // ── Panel administrador ──
+  // â”€â”€ Panel administrador â”€â”€
   if (req.method === 'GET' && req.url === '/admin') {
     res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
     return res.end(fs.readFileSync(path.join(__dirname,'panel.html')));
   }
 
-  // ── Panel usuario ──
+  // â”€â”€ Panel usuario â”€â”€
   if (req.method === 'GET' && req.url === '/usuario') {
     res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
     return res.end(fs.readFileSync(path.join(__dirname,'panel_usuario.html')));
@@ -210,8 +223,8 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'GET' && req.url === '/ping') return json({ ok:true });
 
-  // ── Estado sensores (para el panel) ──
-  // ── Sensores del usuario específico ──
+  // â”€â”€ Estado sensores (para el panel) â”€â”€
+  // â”€â”€ Sensores del usuario especÃ­fico â”€â”€
   if (req.method === 'GET' && req.url.startsWith('/get-sensors-user')) {
     const url  = new URL(req.url, 'http://localhost');
     const uid  = url.searchParams.get('uid');
@@ -241,11 +254,11 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return err(e.message); }
   }
 
-  // ── Registrar código de usuario para ESP32 ──
+  // â”€â”€ Registrar cÃ³digo de usuario para ESP32 â”€â”€
   if (req.method === 'POST' && req.url === '/registrar-codigo-esp32') {
     const { uid, codigo } = await parseBody(req);
     try {
-      // Guardar en RTDB: codigoUsuarios/CODIGO → uid
+      // Guardar en RTDB: codigoUsuarios/CODIGO â†’ uid
       await rtdb.ref('codigoUsuarios/' + codigo.toUpperCase()).set(uid);
       return json({ ok: true });
     } catch(e) { return err(e.message); }
@@ -276,7 +289,7 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return err(e.message); }
   }
 
-  // ── Toggle simulador de presencia ──
+  // â”€â”€ Toggle simulador de presencia â”€â”€
   if (req.method === 'POST' && req.url === '/toggle-simulador') {
     const { uid, activo } = await parseBody(req);
     try {
@@ -285,14 +298,14 @@ const server = http.createServer(async (req, res) => {
           simuladorPresencia: !!activo,
           updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         }, { merge: true });
+        await rtdb.ref(`/usuarios/${uid}/sistema/simuladorPresencia`).set(!!activo);
       }
-      await rtdb.ref('/sistema/simuladorPresencia').set(!!activo);
-      console.log(`💡 Simulador de presencia: ${activo ? 'ACTIVADO' : 'DESACTIVADO'}`);
+      console.log(`ðŸ’¡ Simulador de presencia: ${activo ? 'ACTIVADO' : 'DESACTIVADO'}`);
       return json({ ok: true, activo });
     } catch(e) { return err(e.message); }
   }
 
-  // ── Login ──
+  // â”€â”€ Login â”€â”€
   if (req.method === 'POST' && req.url === '/login') {
     const { email, password } = await parseBody(req);
     if (!email || !password) return json({ ok:false, error:'Completa todos los campos.' }, 400);
@@ -305,25 +318,61 @@ const server = http.createServer(async (req, res) => {
         codigo = doc.data()?.codigo || '';
         if (doc.data()?.activo === false) return json({ ok:false, error:'Cuenta desactivada.' }, 403);
       }
-      console.log(`✅ Login: ${email} (${isAdmin ? 'ADMIN' : 'usuario'})`);
+      console.log(`âœ… Login: ${email} (${isAdmin ? 'ADMIN' : 'usuario'})`);
       return json({ ok:true, uid: result.localId, isAdmin, email, codigo });
     } catch(e) {
       const msg = e.message.includes('INVALID_PASSWORD') || e.message.includes('EMAIL_NOT_FOUND')
-        ? 'Email o contraseña incorrectos.' : 'Error al iniciar sesión.';
+        ? 'Email o contraseÃ±a incorrectos.' : 'Error al iniciar sesiÃ³n.';
       return json({ ok:false, error: msg }, 401);
     }
   }
 
-  // ── Usuarios (solo desde localhost) ──
+  // â”€â”€ Usuarios (solo desde localhost) â”€â”€
   if (req.method === 'GET' && req.url === '/get-users') {
     try {
       const snap  = await db.collection('users').get();
-      const users = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+      const users = [];
+      for (const d of snap.docs) {
+        try {
+          await auth.getUser(d.id);
+          const sistemaDoc = await db.collection('sistema').doc(d.id).get();
+          const sistema = sistemaDoc.data() || {};
+          const sensoresSnap = await db.collection('sensores').where('userId', '==', d.id).get();
+          const ahora = Math.floor(Date.now() / 1000);
+          let sensoresOnline = 0;
+          sensoresSnap.forEach(sdoc => {
+            const sdata = sdoc.data() || {};
+            const updatedAt = timestampToSeconds(sdata.updatedAt);
+            const online = sdata.online !== false && (updatedAt ? (ahora - updatedAt) <= 30 : true);
+            if (online) sensoresOnline += 1;
+          });
+          users.push({ uid: d.id, ...d.data(), resumen: {
+            codigo: d.data().codigo || '',
+            camara: !!(sistema.camaraUrl || (Array.isArray(sistema.camaras) && sistema.camaras.length)),
+            modoNoche: !!sistema.modoNoche,
+            simulador: !!sistema.simuladorPresencia,
+            sensores: sensoresSnap.size,
+            sensoresOnline,
+            sonidoLeve: sistema.sonidoLeve || '',
+          } });
+        } catch (e) {
+          if (e.code === 'auth/user-not-found') {
+            await d.ref.delete().catch(() => {});
+            await db.collection('alerts').doc(d.id).delete().catch(() => {});
+            await db.collection('anti_robo').doc(d.id).delete().catch(() => {});
+            await db.collection('escolta').doc(d.id).delete().catch(() => {});
+            await db.collection('sistema').doc(d.id).delete().catch(() => {});
+            console.log(`ðŸ§¹ Usuario huerfano limpiado del panel: ${d.id}`);
+            continue;
+          }
+          throw e;
+        }
+      }
       return json({ users });
     } catch(e) { return err(e.message); }
   }
 
-  // ── Buscar por código ──
+  // â”€â”€ Buscar por cÃ³digo â”€â”€
   if (req.method === 'POST' && req.url === '/find-by-code') {
     const { codigo } = await parseBody(req);
     try {
@@ -334,12 +383,12 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return err(e.message); }
   }
 
-  // ── Enviar alarma ──
+  // â”€â”€ Enviar alarma â”€â”€
   if (req.method === 'POST' && req.url === '/send-alarm') {
     const { message, nivel, titulo, uid, uids } = await parseBody(req);
-    const msg  = message || '🚨 ¡ALERTA!';
+    const msg  = message || 'ðŸš¨ Â¡ALERTA!';
     const niv  = nivel   || 'moderado';
-    const tit  = titulo  || 'Alerta Sísmica';
+    const tit  = titulo  || 'Alerta SÃ­smica';
     const data = { alert:'true', message: msg, nivel: niv, titulo: tit };
     try {
       if (uids && Array.isArray(uids) && uids.length > 0) {
@@ -366,19 +415,24 @@ const server = http.createServer(async (req, res) => {
         const r = await admin.messaging().send({ topic:'alarm', android:{priority:'high'}, data });
         return json({ ok:true, response: r });
       }
-    } catch(e) { console.error('❌', e.message); return err(e.message); }
+    } catch(e) { console.error('âŒ', e.message); return err(e.message); }
   }
 
-  // ── Cancelar alarma ──
+  // â”€â”€ Cancelar alarma â”€â”€
   if (req.method === 'POST' && req.url === '/cancel-alarm') {
     try {
-      await db.collection('alerts').doc('alert1').update({ active: false });
-      await rtdb.ref('/sistema/cancelar_alarma').set(true);
+      const { uid } = await parseBody(req);
+      if (uid) {
+        await db.collection('alerts').doc(uid).set({ active: false }, { merge: true });
+        await rtdb.ref(`/usuarios/${uid}/sistema/cancelar_alarma`).set(true);
+      } else {
+        await db.collection('alerts').doc('alert1').set({ active: false }, { merge: true });
+      }
       return json({ ok:true });
     } catch(e) { return err(e.message); }
   }
 
-  // ── Toggle usuario (solo desde localhost) ──
+  // â”€â”€ Toggle usuario (solo desde localhost) â”€â”€
   if (req.method === 'POST' && req.url === '/toggle-user') {
     const { uid, activo } = await parseBody(req);
     try {
@@ -387,7 +441,7 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return err(e.message); }
   }
 
-  // ── Guardar URL cámara ──
+  // â”€â”€ Guardar URL cÃ¡mara â”€â”€
   if (req.method === 'POST' && req.url === '/save-camera-url') {
     const { uid, url, camaraUrl, camaras } = await parseBody(req);
     try {
@@ -395,12 +449,12 @@ const server = http.createServer(async (req, res) => {
         camaraUrl: camaraUrl || url || '',
         camaras: Array.isArray(camaras) ? camaras : admin.firestore.FieldValue.delete(),
       }, { merge: true });
-      console.log(`📹 URL cámara guardada para ${uid}: ${camaraUrl || url || ''}`);
+      console.log(`ðŸ“¹ URL cÃ¡mara guardada para ${uid}: ${camaraUrl || url || ''}`);
       return json({ ok: true });
     } catch(e) { return err(e.message); }
   }
 
-  // ── Get sistema del usuario ──
+  // â”€â”€ Get sistema del usuario â”€â”€
   if (req.method === 'GET' && req.url.startsWith('/get-sistema')) {
     const uid = new URL('http://x'+req.url).searchParams.get('uid');
     try {
@@ -409,7 +463,7 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return err(e.message); }
   }
 
-  // ── Toggle sistema usuario ──
+  // â”€â”€ Toggle sistema usuario â”€â”€
   if (req.method === 'POST' && req.url === '/toggle-sistema') {
     const body = await parseBody(req);
     const { uid, ...rest } = body;
@@ -418,14 +472,14 @@ const server = http.createServer(async (req, res) => {
         { ...rest, updatedAt: admin.firestore.FieldValue.serverTimestamp() },
         { merge: true });
       if (typeof rest.armado === 'boolean') {
-        await rtdb.ref('/sistema/armado').set(rest.armado);
-        console.log(`🔄 Sistema ${rest.armado?'ARMADO':'DESARMADO'} por usuario ${uid}`);
+        await rtdb.ref(`/usuarios/${uid}/sistema/armado`).set(rest.armado);
+        console.log(`ðŸ”„ Sistema ${rest.armado?'ARMADO':'DESARMADO'} por usuario ${uid}`);
       }
       return json({ ok:true });
     } catch(e) { return err(e.message); }
   }
 
-  // ── Get miembros del hogar ──
+  // â”€â”€ Get miembros del hogar â”€â”€
   if (req.method === 'GET' && req.url.startsWith('/get-miembros')) {
     const uid = new URL('http://x'+req.url).searchParams.get('uid');
     try {
@@ -435,7 +489,7 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return err(e.message); }
   }
 
-  // ── Get historial de alarmas del usuario ──
+  // â”€â”€ Get historial de alarmas del usuario â”€â”€
   if (req.method === 'GET' && req.url.startsWith('/get-historial')) {
     const uid = new URL('http://x'+req.url).searchParams.get('uid');
     try {
@@ -449,27 +503,27 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return json({ ok:true, historial:[] }); }
   }
 
-  // ── Alerta escolta ──
+  // â”€â”€ Alerta escolta â”€â”€
   if (req.method === 'POST' && req.url === '/escort-alert') {
     const { uid, message, lat, lng } = await parseBody(req);
     try {
       const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
-      const msg = message || `⚠️ Alerta de ruta no completada. Última ubicación: ${mapsUrl}`;
+      const msg = message || `âš ï¸ Alerta de ruta no completada. Ãšltima ubicaciÃ³n: ${mapsUrl}`;
       await db.collection('alerts').doc('alert1').set({
         active: true, message: msg, nivel: 'severo',
-        titulo: '🛡️ ALERTA ESCOLTA',
+        titulo: 'ðŸ›¡ï¸ ALERTA ESCOLTA',
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
       await admin.messaging().send({
         topic: 'alarm', android: { priority: 'high' },
-        data: { alert:'true', message: msg, nivel:'severo', titulo:'🛡️ ALERTA ESCOLTA' },
+        data: { alert:'true', message: msg, nivel:'severo', titulo:'ðŸ›¡ï¸ ALERTA ESCOLTA' },
       });
-      console.log(`🛡️ Alerta escolta enviada para ${uid}`);
+      console.log(`ðŸ›¡ï¸ Alerta escolta enviada para ${uid}`);
       return json({ ok: true });
     } catch(e) { return err(e.message); }
   }
 
-  // ── Get alertas escolta (admin) ──
+  // â”€â”€ Get alertas escolta (admin) â”€â”€
   if (req.method === 'GET' && req.url === '/get-escort-alerts') {
     try {
       const snap = await db.collection('escolta').where('alertaEnviada','==',true).get();
@@ -478,7 +532,7 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return err(e.message); }
   }
 
-  // ── Anti-robo: borrado remoto ──
+  // â”€â”€ Anti-robo: borrado remoto â”€â”€
   if (req.method === 'POST' && req.url === '/remote-wipe') {
     const { uid } = await parseBody(req);
     try {
@@ -487,13 +541,13 @@ const server = http.createServer(async (req, res) => {
         data: { tipo: 'remote_wipe', uid }
       });
       await db.collection('anti_robo').doc(uid).update({ borradoRemoto: true });
-      console.log(`🗑️ Borrado remoto enviado a ${uid}`);
+      console.log(`ðŸ—‘ï¸ Borrado remoto enviado a ${uid}`);
       return json({ ok: true });
     } catch(e) { return err(e.message); }
   }
 
-  // ── Google Assistant webhook ──
-  // ── Control manual de componente (LED/Relé/Buzzer) ──
+  // â”€â”€ Google Assistant webhook â”€â”€
+  // â”€â”€ Control manual de componente (LED/RelÃ©/Buzzer) â”€â”€
   if (req.method === 'POST' && req.url === '/toggle-componente') {
     const { uid, sensorId, compId, estado } = await parseBody(req);
     try {
@@ -504,14 +558,14 @@ const server = http.createServer(async (req, res) => {
           sensorId,
           updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         }, { merge: true });
-      await rtdb.ref(`sensores/${uid}/${sensorId}/componentes/${compId}/activo`).set(!!estado);
+      await rtdb.ref(`usuarios/${uid}/sensores/${sensorId}/componentes/${compId}/activo`).set(!!estado);
       return json({ ok: true });
     } catch(e) { return err(e.message); }
   }
 
   if (req.url === '/assistant') return assistantHandler(req, res, db, admin);
 
-  // ── Endpoints GET para Google Home Routines ──────────────────
+  // â”€â”€ Endpoints GET para Google Home Routines â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Uso: https://homealert-server.onrender.com/cmd/armar?uid=UID&key=HOMEALERT2025
   if (req.method === 'GET' && req.url.startsWith('/cmd/')) {
     const url  = new URL(req.url, 'http://localhost');
@@ -535,18 +589,18 @@ const server = http.createServer(async (req, res) => {
       if (cmd === 'armar') {
         await db.collection('sistema').doc(uid)
           .set({ armado: true }, { merge: true });
-        respuesta = 'Sistema armado ✅';
+        respuesta = 'Sistema armado âœ…';
       }
       else if (cmd === 'desarmar') {
         await db.collection('sistema').doc(uid)
           .set({ armado: false }, { merge: true });
-        respuesta = 'Sistema desarmado ✅';
+        respuesta = 'Sistema desarmado âœ…';
       }
       else if (cmd === 'alarma') {
         const nivel = url.searchParams.get('nivel') || 'moderado';
         await db.collection('alerts').doc(uid).set({
           active: true, nivel,
-          titulo: nivel === 'severo' ? '🚨 ALERTA SEVERA' : '⚠️ Alerta',
+          titulo: nivel === 'severo' ? 'ðŸš¨ ALERTA SEVERA' : 'âš ï¸ Alerta',
           message: 'Alerta activada por Google Home',
           timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
@@ -555,41 +609,67 @@ const server = http.createServer(async (req, res) => {
           data: { tipo: 'alarma', nivel, titulo: 'Alerta', message: 'Google Home' },
           android: { priority: 'high', notification: { channelId: 'homealert_alarm' } }
         });
-        respuesta = `Alarma ${nivel} enviada 🚨`;
+        respuesta = `Alarma ${nivel} enviada ðŸš¨`;
       }
       else if (cmd === 'cancelar') {
         await db.collection('alerts').doc(uid)
           .set({ active: false }, { merge: true });
-        respuesta = 'Alarma cancelada ✅';
+        respuesta = 'Alarma cancelada âœ…';
       }
       else if (cmd === 'simulador/on') {
         await db.collection('sistema').doc(uid)
           .set({ simuladorPresencia: true }, { merge: true });
-        respuesta = 'Simulador activado 💡';
+        respuesta = 'Simulador activado ðŸ’¡';
       }
       else if (cmd === 'noche/on') {
         await db.collection('sistema').doc(uid).set({
           modoNoche: true, ignorarGPS: true, armado: true
         }, { merge: true });
-        respuesta = 'Modo Noche activado 🌙';
+        respuesta = 'Modo Noche activado ðŸŒ™';
       }
       else if (cmd === 'noche/off') {
         await db.collection('sistema').doc(uid).set({
           modoNoche: false, ignorarGPS: false, armado: false
         }, { merge: true });
-        respuesta = 'Modo Noche desactivado ☀️';
+        respuesta = 'Modo Noche desactivado â˜€ï¸';
       }
       else if (cmd === 'simulador/off') {
         await db.collection('sistema').doc(uid)
           .set({ simuladorPresencia: false }, { merge: true });
-        respuesta = 'Simulador desactivado 💡';
+        respuesta = 'Simulador desactivado ðŸ’¡';
+      }
+      else if (cmd === 'componente/on' || cmd === 'componente/off' || cmd === 'toggle-comp') {
+        const compId = url.searchParams.get('compId');
+        const sensorId = url.searchParams.get('sensorId') || 'esp32_01';
+        const estadoParam = url.searchParams.get('estado');
+        if (!compId) {
+          res.writeHead(400, {'Content-Type': 'text/plain'});
+          return res.end('Falta compId');
+        }
+        const estado = cmd === 'componente/on'
+          ? true
+          : cmd === 'componente/off'
+            ? false
+            : estadoParam === null
+              ? true
+              : estadoParam === 'true' || estadoParam === '1' || estadoParam === 'on';
+        await db.collection('sistema').doc(uid)
+          .collection('componentesEstado').doc(compId)
+          .set({
+            activo: estado,
+            estado,
+            sensorId,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          }, { merge: true });
+        await rtdb.ref(`usuarios/${uid}/sensores/${sensorId}/componentes/${compId}/activo`).set(estado);
+        respuesta = `Componente ${compId} ${estado ? 'encendido' : 'apagado'}`;
       }
       else {
         res.writeHead(404, {'Content-Type': 'text/plain'});
         return res.end('Comando no reconocido');
       }
 
-      console.log(`🏠 Google Home [${uid.substring(0,8)}...]: ${cmd} → ${respuesta}`);
+      console.log(`ðŸ  Google Home [${uid.substring(0,8)}...]: ${cmd} â†’ ${respuesta}`);
       res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
       return res.end(respuesta);
 
@@ -605,7 +685,9 @@ const server = http.createServer(async (req, res) => {
 
 const PORT = 3000;
 server.listen(PORT, () => {
-  console.log(`\n🚨 HomeAlert Panel → http://localhost:${PORT}`);
-  console.log(`👑 Admin: ${ADMIN_EMAIL}`);
+  console.log(`\nðŸš¨ HomeAlert Panel â†’ http://localhost:${PORT}`);
+  console.log(`ðŸ‘‘ Admin: ${ADMIN_EMAIL}`);
   iniciarMonitorHeartbeat();
 });
+
+
