@@ -1,17 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>HomeAlert - Mi Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
   --red:#E8281A; --red-dim:rgba(232,40,26,0.10); --red-glow:rgba(232,40,26,0.28);
   --yellow:#F5A623; --green:#22C55E; --blue:#3B82F6; --blue-dim:rgba(59,130,246,0.10); --blue-glow:rgba(59,130,246,0.28); --purple:#8B5CF6;
   --bg:#06060A; --surface:#0F0F16; --surface2:#161620; --surface3:#1C1C28;
   --border:#22222E; --border2:#2E2E3E; --text:#F0F0FA; --muted:#5A5A7A; --muted2:#3A3A55;
-  --mono:'JetBrains Mono',monospace; --sans:'Space Grotesk',sans-serif;
+  --mono:'JetBrains Mono',monospace; --sans:'Nunito',sans-serif;
   --text-pri:var(--text); --text-sec:var(--muted);
   --radius:8px; --transition:0.18s ease;
 }
@@ -326,6 +326,217 @@ body{
   .hero-actions{flex-direction:column;}
   .hero-btn{width:100%;}
 }
+
+/* ====== HOMEALERT VISUAL UPGRADE ====== */
+
+/* Softer, more welcoming color palette */
+:root {
+  --accent: #4F8EF7;
+  --accent-soft: rgba(79,142,247,0.12);
+  --success-soft: rgba(34,197,94,0.10);
+  --warn-soft: rgba(245,166,35,0.10);
+  --danger-soft: rgba(232,40,26,0.10);
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.08);
+  --card-shadow-hover: 0 8px 40px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.10);
+  --transition-smooth: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Better body font rendering */
+body {
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Softer scanline - barely visible */
+.scanline { opacity: 0.3; }
+
+/* Login page - warmer feel */
+.login-wrap { gap: 0; }
+.login-glow {
+  width: 88px; height: 88px; border-radius: 28px;
+  font-size: 40px; margin-bottom: 24px;
+  box-shadow: 0 0 0 8px var(--accent-soft), 0 20px 60px rgba(79,142,247,0.25);
+  animation: loginGlow 4s ease-in-out infinite;
+}
+@keyframes loginGlow {
+  0%,100%{ box-shadow: 0 0 0 8px var(--accent-soft), 0 20px 60px rgba(79,142,247,0.20); }
+  50%{ box-shadow: 0 0 0 16px var(--accent-soft), 0 28px 80px rgba(79,142,247,0.32); }
+}
+.login-brand {
+  font-size: 30px; font-weight: 900; letter-spacing: 8px;
+  background: linear-gradient(135deg, var(--text) 60%, var(--accent));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+.login-sub { letter-spacing: 2.5px; font-size: 11px; margin-bottom: 32px; }
+.login-box {
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  border-color: var(--border2);
+}
+.login-inner { padding: 32px; }
+.field { border-radius: 12px; margin-bottom: 16px; }
+.field-icon { font-size: 16px; }
+.btn-login {
+  border-radius: 12px; padding: 15px;
+  font-size: 15px; font-weight: 800; letter-spacing: 1.5px;
+  background: linear-gradient(135deg, var(--blue), #4F8EF7);
+  box-shadow: 0 8px 28px rgba(79,142,247,0.35);
+  transition: all var(--transition-smooth);
+}
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(79,142,247,0.45);
+}
+
+/* Topbar */
+.topbar {
+  height: 64px !important;
+  backdrop-filter: blur(20px);
+}
+.logo-mark {
+  width: 44px !important; height: 44px !important;
+  border-radius: 14px !important; font-size: 20px !important;
+}
+.app-title { font-size: 17px !important; font-weight: 900 !important; letter-spacing: 3px !important; }
+.badge-user { border-radius: 8px !important; padding: 4px 12px !important; font-size: 10px !important; }
+.sistema-pill { border-radius: 10px !important; padding: 6px 14px !important; font-size: 11px !important; }
+.btn-sm { border-radius: 8px !important; padding: 6px 12px !important; }
+.codigo-pill { border-radius: 10px !important; }
+
+/* Sidebar improvements */
+.sidebar { border-radius: 26px !important; width: 240px !important; }
+.nav-item {
+  border-radius: 12px !important; 
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 10px 14px !important;
+  transition: all var(--transition-smooth) !important;
+}
+.nav-item:hover { transform: translateX(2px); }
+.nav-item.active { font-weight: 800 !important; }
+.nav-icon { font-size: 16px !important; }
+.nav-label { font-size: 9px !important; letter-spacing: 2.5px !important; color: var(--muted2) !important; }
+
+/* Cards - softer, friendlier */
+.card {
+  border-radius: 20px !important;
+  box-shadow: var(--card-shadow) !important;
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth) !important;
+}
+.card:hover { box-shadow: var(--card-shadow-hover) !important; }
+.card-title {
+  font-size: 10px !important; letter-spacing: 2.2px !important;
+  font-weight: 700 !important; margin-bottom: 18px !important;
+}
+
+/* Stats */
+.stat-card { border-radius: 16px !important; }
+.stat-value { font-size: 30px !important; font-weight: 900 !important; }
+.stat-label { font-size: 9px !important; letter-spacing: 1.5px !important; margin-top: 6px !important; }
+
+/* Buttons */
+.btn { border-radius: 10px !important; font-weight: 800 !important; letter-spacing: 1px !important; }
+.btn-send {
+  background: linear-gradient(135deg, var(--blue), #4F8EF7) !important;
+  box-shadow: 0 6px 24px rgba(79,142,247,0.30) !important;
+  transition: all var(--transition-smooth) !important;
+}
+.btn-send:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 36px rgba(79,142,247,0.40) !important;
+}
+.nivel-btn { border-radius: 12px !important; padding: 14px 8px !important; font-size: 11px !important; }
+.nivel-icon { font-size: 22px !important; }
+
+/* Inputs */
+.input-field { border-radius: 10px !important; font-size: 13px !important; padding: 11px 14px !important; }
+.input-label { font-size: 9px !important; letter-spacing: 2px !important; font-weight: 700 !important; }
+
+/* List items */
+.lista-item { border-radius: 12px !important; padding: 12px 14px !important; }
+.status-badge { border-radius: 6px !important; }
+
+/* Historial items */
+.hist-item { border-radius: 12px !important; padding: 12px 14px !important; }
+
+/* Right panel */
+.right-panel { border-radius: 20px !important; }
+.right-panel-header { 
+  padding: 14px 18px !important; font-size: 10px !important; letter-spacing: 2px !important;
+  border-radius: 20px 20px 0 0;
+}
+
+/* Log panel */
+.log-body { font-size: 10.5px !important; line-height: 1.9 !important; }
+.log-header { font-size: 9px !important; letter-spacing: 2px !important; }
+
+/* Toast */
+.toast { border-radius: 14px !important; font-size: 13px !important; padding: 12px 24px !important; }
+
+/* Hero section */
+.hero-banner { border-radius: 24px !important; }
+.hero-btn { 
+  border-radius: 12px !important; font-size: 13px !important; 
+  padding: 13px 18px !important; font-weight: 800 !important;
+  transition: all var(--transition-smooth) !important;
+}
+.hero-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+.hero-btn.primary {
+  box-shadow: 0 8px 28px rgba(79,142,247,0.30) !important;
+}
+.hero-btn.primary:hover {
+  box-shadow: 0 12px 40px rgba(79,142,247,0.42) !important;
+}
+.hero-title { font-size: clamp(24px, 2.8vw, 38px) !important; font-weight: 900 !important; }
+.hero-mini-card { border-radius: 16px !important; }
+.hero-mini-value { font-size: 26px !important; font-weight: 900 !important; }
+
+/* Sistema grande button */
+.sistema-grande { border-radius: 20px !important; min-height: 180px !important; }
+
+/* Info banners */
+.info-banner-blue { border-radius: 12px !important; font-size: 12px !important; line-height: 1.7 !important; }
+.info-banner-yellow { border-radius: 12px !important; font-size: 12px !important; line-height: 1.7 !important; }
+
+/* Escolta */
+.escolta-activa { border-radius: 16px !important; }
+
+/* Empty messages */
+.empty-msg { font-size: 12px !important; color: var(--muted) !important; }
+
+/* Scrollbar nicer */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { border-radius: 6px; background: var(--border2); }
+
+/* Smooth page transitions */
+#viewPanel, #viewAlarmas, #viewCamara, #viewSensores, 
+#viewMiembros, #viewEscolta, #viewNoche, #viewEsp32,
+#viewSonidos, #viewHistorial {
+  animation: fadeSlide 0.25s ease both;
+}
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Panel cluster spacing */
+.panel-cluster { gap: 16px !important; }
+
+/* Better preview notification */
+.preview-notif { border-radius: 10px !important; padding: 13px 16px !important; }
+.preview-title { font-size: 13px !important; font-weight: 800 !important; }
+.preview-body { font-size: 12px !important; }
+
+/* Chips for codes */
+.chip-item {
+  border-radius: 8px !important;
+  font-size: 11px !important;
+  padding: 4px 10px !important;
+}
 </style>
 </head>
 <body>
@@ -335,21 +546,21 @@ body{
 <!-- LOGIN -->
 <div id="loginPage">
   <div class="login-wrap">
-    <div class="login-glow">ðŸ </div>
+    <div class="login-glow">🏠</div>
     <div class="login-brand">HOMEALERT</div>
-    <div class="login-sub">PANEL DE CONTROL Â· MI CUENTA</div>
+    <div class="login-sub">PANEL DE CONTROL · MI CUENTA</div>
     <div class="login-box">
       <div class="login-inner">
         <div class="login-error" id="loginError"></div>
         <div class="field-label">EMAIL</div>
-        <div class="field"><span class="field-icon">âœ‰ï¸</span>
+        <div class="field"><span class="field-icon">✉️</span>
           <input type="email" id="userEmail" placeholder="tu@email.com" autocomplete="email"/>
         </div>
-        <div class="field-label">CONTRASEÃ‘A</div>
-        <div class="field"><span class="field-icon">ðŸ”’</span>
-          <input type="password" id="userPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"/>
+        <div class="field-label">CONTRASEÑA</div>
+        <div class="field"><span class="field-icon">🔒</span>
+          <input type="password" id="userPass" placeholder="�€��€��€��€��€��€��€��€�" autocomplete="current-password"/>
         </div>
-        <button class="btn-login" id="btnLogin" onclick="doLogin()">ðŸ”‘ ENTRAR A MI PANEL</button>
+        <button class="btn-login" id="btnLogin" onclick="doLogin()">🔑 ENTRAR A MI PANEL</button>
       </div>
     </div>
   </div>
@@ -357,12 +568,12 @@ body{
 
 <!-- TOPBAR -->
 <div class="topbar" id="mainApp" style="display:none">
-  <div class="logo-mark">ðŸ”</div>
+  <div class="logo-mark">🔐</div>
   <div class="topbar-stack">
-    <span class="topbar-kicker">ðŸ  Home control view</span>
+    <span class="topbar-kicker">🏠 Home control view</span>
     <span class="app-title">HOMEALERT USER</span>
   </div>
-  <span class="badge badge-user">ðŸ  HOGAR ACTIVO</span>
+  <span class="badge badge-user">🏠 HOGAR ACTIVO</span>
   <div class="codigo-pill">
     <span class="codigo-label">USER CODE</span>
     <span class="codigo-val" id="topCodigo">--</span>
@@ -378,7 +589,7 @@ body{
       <span id="sistemaLabel">DESARMADO</span>
     </div>
     <div class="time-display" id="clock">00:00:00</div>
-    <button class="btn-sm" onclick="doLogout()">ðŸšª SALIR</button>
+    <button class="btn-sm" onclick="doLogout()">🚪 SALIR</button>
   </div>
 </div>
 
@@ -387,28 +598,28 @@ body{
   <div class="sidebar">
     <div class="nav-section">
       <div class="nav-label">Resumen</div>
-      <div class="nav-item active" onclick="setView('panel',this)"><span class="nav-icon">ðŸ </span>Inicio del hogar</div>
-      <div class="nav-item" onclick="setView('alarmas',this)"><span class="nav-icon">ðŸ””</span>Alertas directas</div>
+      <div class="nav-item active" onclick="setView('panel',this)"><span class="nav-icon">🏠</span>Inicio del hogar</div>
+      <div class="nav-item" onclick="setView('alarmas',this)"><span class="nav-icon">🔔</span>Alertas directas</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">Hogar</div>
-      <div class="nav-item" onclick="setView('camara',this)"><span class="nav-icon">ðŸ“·</span>CÃ¡maras</div>
-      <div class="nav-item" onclick="setView('sensores',this)"><span class="nav-icon">ðŸ“¡</span>Sensores y salidas</div>
-      <div class="nav-item" onclick="setView('miembros',this)"><span class="nav-icon">ðŸ‘¥</span>Miembros</div>
+      <div class="nav-item" onclick="setView('camara',this)"><span class="nav-icon">📷</span>Cámaras</div>
+      <div class="nav-item" onclick="setView('sensores',this)"><span class="nav-icon">📡</span>Sensores y salidas</div>
+      <div class="nav-item" onclick="setView('miembros',this)"><span class="nav-icon">👥</span>Miembros</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">Proteccion</div>
-      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">ðŸ›¡ï¸</span>Modo escolta</div>
-      <div class="nav-item" onclick="setView('noche',this)"><span class="nav-icon">ðŸŒ™</span>Modo noche</div>
-      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">ðŸ“‹</span>Historial</div>
+      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">🛡️</span>Modo escolta</div>
+      <div class="nav-item" onclick="setView('noche',this)"><span class="nav-icon">🌙</span>Modo noche</div>
+      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">�‹</span>Historial</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">Integraciones</div>
-      <div class="nav-item" onclick="setView('esp32',this)"><span class="nav-icon">ðŸ”Œ</span>GuÃ­a ESP32</div>
-      <div class="nav-item" onclick="setView('sonidos',this)"><span class="nav-icon">ðŸ”Š</span>ðŸ”Š Sonidos</div>
+      <div class="nav-item" onclick="setView('esp32',this)"><span class="nav-icon">🔌</span>Guía ESP32</div>
+      <div class="nav-item" onclick="setView('sonidos',this)"><span class="nav-icon">🔊</span>🔊 Sonidos</div>
     </div>
     <div class="sidebar-footer" id="sidebarInfo">
-      <strong style="display:block;color:var(--text);margin-bottom:4px;">ðŸ‘¤ Cuenta conectada</strong>
+      <strong style="display:block;color:var(--text);margin-bottom:4px;">👤 Cuenta conectada</strong>
       <span id="sidebarEmail">--</span><br>
       <span id="sidebarDate"></span>
     </div>
@@ -425,9 +636,9 @@ body{
             <div class="hero-title">Tu hogar, claro, visual y facil de usar.</div>
             <div class="hero-text">Esta vista nueva esta pensada para que cualquier persona entienda rapido el estado de seguridad, los dispositivos activos y lo que conviene hacer ahora mismo.</div>
             <div class="hero-actions">
-              <button class="hero-btn primary" onclick="toggleSistema()">ðŸ”’ Cambiar protecciÃ³n</button>
-              <button class="hero-btn" onclick="goUserView('sensores')">ðŸ“¡ Ver dispositivos</button>
-              <button class="hero-btn" onclick="goUserView('camara')">ðŸ“· Abrir cÃ¡maras</button>
+              <button class="hero-btn primary" onclick="toggleSistema()">🔒 Cambiar protección</button>
+              <button class="hero-btn" onclick="goUserView('sensores')">📡 Ver dispositivos</button>
+              <button class="hero-btn" onclick="goUserView('camara')">📷 Abrir cámaras</button>
             </div>
           </div>
           <div class="hero-side">
@@ -458,7 +669,7 @@ body{
         </div>
         <div class="panel-cluster">
           <div class="card">
-            <div class="card-title">ðŸ–¥ï¸ Centro de estado</div>
+            <div class="card-title">🖥️ Centro de estado</div>
             <div id="userStatusHub" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;"></div>
           </div>
           <div class="card" style="padding:0;overflow:hidden;">
@@ -471,43 +682,43 @@ body{
         </div>
         <div class="panel-cluster">
           <div class="card">
-            <div class="card-title">âš¡ Acciones rÃ¡pidas</div>
+            <div class="card-title">⚡ Acciones rápidas</div>
             <div id="userQuickActions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;"></div>
           </div>
           <div class="card">
-            <div class="card-title">âš ï¸ Alertas y recomendaciones</div>
+            <div class="card-title">⚠️ Alertas y recomendaciones</div>
             <div id="userAttentionList" style="display:grid;gap:10px;"></div>
           </div>
         </div>
         <div class="panel-cluster">
           <div class="card">
-            <div class="card-title">ðŸ§ª Centro de pruebas guiadas</div>
+            <div class="card-title">🧪 Centro de pruebas guiadas</div>
             <div id="userTestingHub" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
           </div>
           <div class="card">
-            <div class="card-title">âœ… Checklist de configuraciÃ³n inicial</div>
+            <div class="card-title">✅ Checklist de configuración inicial</div>
             <div id="userSetupChecklist" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
           </div>
         </div>
         <div class="panel-cluster">
           <div class="card">
-            <div class="card-title">ðŸ”— Atajos contextuales</div>
+            <div class="card-title">🔗 Atajos contextuales</div>
             <div id="userContextActions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
           </div>
           <div class="card">
-            <div class="card-title">ðŸŽ¯ Prioridades del hogar</div>
+            <div class="card-title">🎯 Prioridades del hogar</div>
             <div id="userPriorityBoard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
           </div>
         </div>
         <div class="panel-cluster">
           <div class="card">
-            <div class="card-title">ðŸ“Š Resumen diario del hogar</div>
+            <div class="card-title">📊 Resumen diario del hogar</div>
             <div id="userDailySummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
           </div>
           <div class="card">
-            <div class="card-title">ðŸ’¡ Simulador de presencia</div>
+            <div class="card-title">💡 Simulador de presencia</div>
             <div style="display:flex;align-items:center;gap:14px;min-height:170px;">
-              <div style="font-size:38px;">ðŸ </div>
+              <div style="font-size:38px;">🏠</div>
               <div style="flex:1;">
                 <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;">Luces que simulan vida en casa</div>
                 <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;">Usa tus salidas para encender o apagar luces en horarios inteligentes y hacer que la casa se vea activa.</div>
@@ -517,26 +728,26 @@ body{
           </div>
         </div>
         <div class="card">
-          <div class="card-title">ðŸ¤– Resumen inteligente</div>
+          <div class="card-title">🤖 Resumen inteligente</div>
           <div id="userSmartSummary" style="display:grid;gap:10px;"></div>
         </div>
       </div>
 
       <div id="viewAlarmas" style="display:none">
         <div class="card">
-          <div class="card-title">ðŸš¨ Nivel de alerta</div>
+          <div class="card-title">🚨 Nivel de alerta</div>
           <div class="nivel-grid">
-            <div class="nivel-btn" data-nivel="leve" onclick="setNivel(this)"><span class="nivel-icon">ðŸŸ¢</span>LEVE</div>
-            <div class="nivel-btn selected" data-nivel="moderado" onclick="setNivel(this)"><span class="nivel-icon">ðŸŸ¡</span>MODERADO</div>
-            <div class="nivel-btn" data-nivel="severo" onclick="setNivel(this)"><span class="nivel-icon">ðŸ”´</span>SEVERO</div>
+            <div class="nivel-btn" data-nivel="leve" onclick="setNivel(this)"><span class="nivel-icon">🟢</span>LEVE</div>
+            <div class="nivel-btn selected" data-nivel="moderado" onclick="setNivel(this)"><span class="nivel-icon">🟡</span>MODERADO</div>
+            <div class="nivel-btn" data-nivel="severo" onclick="setNivel(this)"><span class="nivel-icon">🔴</span>SEVERO</div>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">âœ‰ï¸ Componer mensaje</div>
+          <div class="card-title">✉️ Componer mensaje</div>
           <div class="input-row">
             <div>
-              <div class="input-label">TÃTULO</div>
-              <input type="text" id="tituloInput" class="input-field" value="Alerta SÃ­smica" maxlength="50"/>
+              <div class="input-label">TÍTULO</div>
+              <input type="text" id="tituloInput" class="input-field" value="Alerta Sísmica" maxlength="50"/>
             </div>
             <div>
               <div class="input-label">NIVEL ACTIVO</div>
@@ -544,23 +755,23 @@ body{
             </div>
           </div>
           <div class="input-label">MENSAJE</div>
-          <textarea id="msgInput" class="input-field" maxlength="200">ðŸš¨ Â¡ALERTA DE EMERGENCIA!</textarea>
+          <textarea id="msgInput" class="input-field" maxlength="200">🚨 ¡ALERTA DE EMERGENCIA!</textarea>
           <div class="char-count"><span id="charCount">23</span>/200</div>
           <div class="preview-wrap">
             <div class="preview-label">Vista previa en dispositivo</div>
             <div class="preview-notif" id="previewNotif">
-              <div class="preview-title" id="previewTitle">ðŸŸ¡ Alerta SÃ­smica</div>
-              <div class="preview-body" id="previewMsg">ðŸš¨ Â¡ALERTA DE EMERGENCIA!</div>
+              <div class="preview-title" id="previewTitle">🟡 Alerta Sísmica</div>
+              <div class="preview-body" id="previewMsg">🚨 ¡ALERTA DE EMERGENCIA!</div>
             </div>
           </div>
           <div class="btn-row">
-            <button class="btn btn-send" id="btnEnviar" onclick="enviarAlarma()">ðŸ”” ACTIVAR MI ALARMA</button>
-            <button class="btn btn-cancel" onclick="cancelarAlarma()">âœ• CANCELAR</button>
-            <button class="btn btn-danger" onclick="enviarAOtros()">ðŸ“¤ ALERTAR A OTROS POR CÃ“DIGO</button>
+            <button class="btn btn-send" id="btnEnviar" onclick="enviarAlarma()">🔔 ACTIVAR MI ALARMA</button>
+            <button class="btn btn-cancel" onclick="cancelarAlarma()">✕ CANCELAR</button>
+            <button class="btn btn-danger" onclick="enviarAOtros()">📤 ALERTAR A OTROS POR CÓDIGO</button>
           </div>
         </div>
         <div class="card" id="panelOtros" style="display:none">
-          <div class="card-title">Alertar por cÃ³digo de usuario</div>
+          <div class="card-title">Alertar por código de usuario</div>
           <div style="display:flex;gap:8px;margin-bottom:12px;">
             <input type="text" id="codigoInput" class="input-field" placeholder="Ej: 54392-7841-03" style="margin-bottom:0;flex:1;" onkeydown="if(event.key==='Enter')agregarCodigo()"/>
             <button onclick="agregarCodigo()" style="padding:9px 14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;border-radius:6px;white-space:nowrap;">+ AGREGAR</button>
@@ -568,29 +779,29 @@ body{
           <div id="codigosChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:20px;"></div>
           <button onclick="enviarACodigos()" id="btnEnviarCodigos"
             style="width:100%;padding:12px;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;border-radius:6px;transition:all 0.18s;">
-            ðŸ“¤ ENVIAR A USUARIOS SELECCIONADOS
+            📤 ENVIAR A USUARIOS SELECCIONADOS
           </button>
         </div>
       </div>
 
-      <!-- CÃMARA -->
+      <!-- CÁMARA -->
       <div id="viewCamara" style="display:none">
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <h3 style="font-size:14px;font-weight:700;color:var(--text-pri)">ðŸ“· Mis CÃ¡maras</h3>
+            <h3 style="font-size:14px;font-weight:700;color:var(--text-pri)">📷 Mis Cámaras</h3>
             <button onclick="mostrarDialogoCamara()" style="padding:7px 14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;border-radius:6px;">+ AGREGAR</button>
           </div>
           <div id="camarasTabs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px"></div>
           <div class="camara-wrap" id="camaraContainer" style="min-height:320px;background:#000;position:relative">
-            <div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--muted);font-size:13px;font-family:var(--mono);">ðŸ“· Sin cÃ¡mara seleccionada</div>
+            <div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--muted);font-size:13px;font-family:var(--mono);">📷 Sin cámara seleccionada</div>
           </div>
           <div id="camaraInfo" style="margin-top:8px;display:none">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
               <span id="camaraActivaNombre" style="font-size:12px;color:var(--text-sec);font-family:var(--mono);"></span>
               <div style="display:flex;gap:6px">
-                <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">âœï¸ Editar</button>
-                <button onclick="eliminarCamaraActiva()" style="padding:5px 10px;background:rgba(232,40,26,0.1);color:var(--red);border:1px solid rgba(232,40,26,0.3);cursor:pointer;font-size:11px;border-radius:4px;">ðŸ—‘ï¸ Eliminar</button>
-                <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">ðŸ”„ Recargar</button>
+                <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">✏️ Editar</button>
+                <button onclick="eliminarCamaraActiva()" style="padding:5px 10px;background:rgba(232,40,26,0.1);color:var(--red);border:1px solid rgba(232,40,26,0.3);cursor:pointer;font-size:11px;border-radius:4px;">🗑️ Eliminar</button>
+                <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">�„ Recargar</button>
               </div>
             </div>
           </div>
@@ -600,13 +811,13 @@ body{
       <!-- SENSORES -->
       <div id="viewSensores" style="display:none">
         <div class="card">
-          <div class="card-title">ðŸ“¡ Mis sensores ESP32
-            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">ðŸ”„</button>
+          <div class="card-title">📡 Mis sensores ESP32
+            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">�„</button>
           </div>
           <div id="sensoresLista"><div class="empty-msg">Cargando sensores...</div></div>
         </div>
         <div class="card">
-          <div class="card-title">ðŸŽ›ï¸ Control manual de salidas</div>
+          <div class="card-title">🎛️ Control manual de salidas</div>
           <div id="controlesManual"><div class="empty-msg">Sin componentes de salida.</div></div>
         </div>
       </div>
@@ -614,10 +825,10 @@ body{
       <!-- MIEMBROS -->
       <div id="viewMiembros" style="display:none">
         <div class="card">
-          <div class="card-title">ðŸ‘¥ Miembros del hogar</div>
+          <div class="card-title">👥 Miembros del hogar</div>
           <div id="miembrosLista"><div class="empty-msg">Cargando miembros...</div></div>
           <div class="info-banner-blue" style="margin-top:12px;">
-            ðŸ“± Para registrar miembros con reconocimiento facial, usa la app mÃ³vil HomeAlert â€º Seguridad â€º Miembros del Hogar
+            📱 Para registrar miembros con reconocimiento facial, usa la app móvil HomeAlert �€� Seguridad �€� Miembros del Hogar
           </div>
         </div>
       </div>
@@ -625,8 +836,8 @@ body{
       <!-- MODO ESCOLTA -->
       <div id="viewEscolta" style="display:none">
         <div class="card" id="escoltaForm">
-          <div class="card-title">ðŸ›¡ï¸ Activar modo escolta</div>
-          <div class="info-banner-blue">ðŸ›¡ï¸ Define tu destino y tiempo estimado. Si no llegas, tus contactos recibirÃ¡n una alerta con tu ubicaciÃ³n.</div>
+          <div class="card-title">🛡️ Activar modo escolta</div>
+          <div class="info-banner-blue">🛡️ Define tu destino y tiempo estimado. Si no llegas, tus contactos recibirán una alerta con tu ubicación.</div>
           <div class="input-row">
             <div>
               <div class="input-label">LATITUD DESTINO</div>
@@ -643,30 +854,30 @@ body{
               <input type="number" id="escMinutos" class="input-field" value="30" min="1" max="480"/>
             </div>
             <div>
-              <div class="input-label">PIN DE CANCELACIÃ“N</div>
-              <input type="password" id="escPin" class="input-field" placeholder="MÃ­nimo 4 dÃ­gitos"/>
+              <div class="input-label">PIN DE CANCELACIÓN</div>
+              <input type="password" id="escPin" class="input-field" placeholder="Mínimo 4 dígitos"/>
             </div>
           </div>
-          <div class="info-banner-yellow">âš ï¸ PIN de coacciÃ³n = PIN + "0" â†’ Cancela silenciosamente y envÃ­a alerta de robo</div>
+          <div class="info-banner-yellow">⚠️ PIN de coacción = PIN + "0" → Cancela silenciosamente y envía alerta de robo</div>
           <button onclick="activarEscolta()"
             style="width:100%;padding:14px;background:linear-gradient(90deg,#1A3A5C,#2563EB);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 20px var(--blue-glow);border-radius:6px;transition:all 0.18s;">
-            ðŸ›¡ï¸ ACTIVAR MODO ESCOLTA
+            🛡️ ACTIVAR MODO ESCOLTA
           </button>
         </div>
         <div class="card" id="escoltaActiva" style="display:none">
           <div class="escolta-activa">
-            <div style="font-size:52px;margin-bottom:12px;">ðŸ›¡ï¸</div>
+            <div style="font-size:52px;margin-bottom:12px;">🛡️</div>
             <div style="font-size:20px;font-weight:900;letter-spacing:2px;color:var(--blue);margin-bottom:6px;">ESCOLTA ACTIVA</div>
             <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--text);margin-bottom:16px;" id="escContador">30:00</div>
             <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:20px;">Monitoreo de ruta en tiempo real</div>
             <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-              <button onclick="mostrarCancelar()" style="padding:10px 20px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(245,166,35,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;border-radius:6px;">ðŸ”’ CANCELAR CON PIN</button>
-              <button onclick="activarAntiRobo()" style="padding:10px 20px;background:rgba(232,40,26,0.12);color:var(--red);border:1px solid rgba(232,40,26,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;border-radius:6px;">ðŸš¨ PÃNICO</button>
+              <button onclick="mostrarCancelar()" style="padding:10px 20px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(245,166,35,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;border-radius:6px;">🔒 CANCELAR CON PIN</button>
+              <button onclick="activarAntiRobo()" style="padding:10px 20px;background:rgba(232,40,26,0.12);color:var(--red);border:1px solid rgba(232,40,26,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;border-radius:6px;">🚨 PÁNICO</button>
             </div>
           </div>
         </div>
         <div class="card" id="panelCancelar" style="display:none">
-          <div class="card-title">ðŸ”“ Cancelar escolta</div>
+          <div class="card-title">🔓 Cancelar escolta</div>
           <input type="password" id="pinCancelar" class="input-field" placeholder="Ingresa tu PIN" style="margin-bottom:12px;text-align:center;letter-spacing:4px;font-size:18px;"/>
           <button onclick="cancelarEscolta()" style="width:100%;padding:12px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(245,166,35,0.3);cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:1px;border-radius:6px;">CANCELAR MODO ESCOLTA</button>
         </div>
@@ -675,8 +886,8 @@ body{
       <!-- MODO NOCHE -->
       <div id="viewNoche" style="display:none">
         <div class="card">
-          <h3 style="font-size:14px;font-weight:700;color:#7C6FF7;margin-bottom:12px">ðŸŒ™ Modo Noche</h3>
-          <p style="color:var(--text-sec);font-size:12px;margin-bottom:16px">Arma el sistema aunque estÃ©s en casa. Ideal para dormir con seguridad. Solo activa la alarma si detecta personas desconocidas.</p>
+          <h3 style="font-size:14px;font-weight:700;color:#7C6FF7;margin-bottom:12px">🌙 Modo Noche</h3>
+          <p style="color:var(--text-sec);font-size:12px;margin-bottom:16px">Arma el sistema aunque estés en casa. Ideal para dormir con seguridad. Solo activa la alarma si detecta personas desconocidas.</p>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
             <div>
               <div style="font-size:14px;color:var(--text-pri);font-weight:700">Estado Modo Noche</div>
@@ -689,7 +900,7 @@ body{
           </div>
           <div style="border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-              <span style="font-size:13px;color:var(--text-pri);font-weight:700">â° ActivaciÃ³n automÃ¡tica</span>
+              <span style="font-size:13px;color:var(--text-pri);font-weight:700">⏰ Activación automática</span>
               <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
                 <input type="checkbox" id="nocheHorarioCheck" onchange="guardarConfigNoche()">
                 <span style="font-size:12px;color:var(--text-sec)">Por horario</span>
@@ -703,11 +914,11 @@ body{
             </div>
           </div>
           <div style="border:1px solid var(--border);border-radius:6px;padding:14px">
-            <div style="font-size:13px;color:var(--text-pri);font-weight:700;margin-bottom:10px">ðŸ”” Nivel de alarma</div>
+            <div style="font-size:13px;color:var(--text-pri);font-weight:700;margin-bottom:10px">🔔 Nivel de alarma</div>
             <div style="display:flex;gap:8px">
-              <button onclick="setNivelNoche('leve')" id="nocheLeve" class="noche-btn" style="background:rgba(34,197,94,0.12);color:var(--green);border:1px solid var(--green);">ðŸŸ¢ LEVE</button>
-              <button onclick="setNivelNoche('moderado')" id="nocheModera" class="noche-btn" style="background:rgba(245,166,35,0.12);color:var(--yellow);border:1px solid var(--yellow);">ðŸŸ¡ MODERADO</button>
-              <button onclick="setNivelNoche('severo')" id="nocheSevero" class="noche-btn" style="background:rgba(232,40,26,0.12);color:var(--red);border:1px solid var(--red);">ðŸ”´ SEVERO</button>
+              <button onclick="setNivelNoche('leve')" id="nocheLeve" class="noche-btn" style="background:rgba(34,197,94,0.12);color:var(--green);border:1px solid var(--green);">🟢 LEVE</button>
+              <button onclick="setNivelNoche('moderado')" id="nocheModera" class="noche-btn" style="background:rgba(245,166,35,0.12);color:var(--yellow);border:1px solid var(--yellow);">🟡 MODERADO</button>
+              <button onclick="setNivelNoche('severo')" id="nocheSevero" class="noche-btn" style="background:rgba(232,40,26,0.12);color:var(--red);border:1px solid var(--red);">🔴 SEVERO</button>
             </div>
           </div>
         </div>
@@ -716,37 +927,37 @@ body{
       <!-- ESP32 -->
       <div id="viewEsp32" style="display:none">
         <div class="card" style="margin-bottom:14px;">
-          <div class="card-title">GuÃ­a rÃ¡pida ESP32</div>
+          <div class="card-title">Guía rápida ESP32</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px;">
             <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
-              <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">CÃ³digo para vincular</div>
+              <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Código para vincular</div>
               <div id="esp32Codigo" style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--blue)">--</div>
             </div>
             <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">OLED I2C</div>
-              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">SDA 21 Â· SCL 22 Â· 3.3V Â· GND</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">SDA 21 · SCL 22 · 3.3V · GND</div>
             </div>
             <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Pines sugeridos</div>
-              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">PIR 14 Â· Puerta 27 Â· RelÃ© 26 Â· Buzzer 25</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">PIR 14 · Puerta 27 · Relé 26 · Buzzer 25</div>
             </div>
           </div>
-          <div class="info-banner-blue">1. Enciende el ESP32 y conÃ©ctate a su WiFi de configuraciÃ³n.<br>2. Abre la IP que muestre la pantalla OLED.<br>3. Ingresa tu red WiFi y el cÃ³digo de usuario mostrado arriba.<br>4. Guarda y espera a que la OLED muestre la IP final de tu red.<br>5. Regresa a "Mis Sensores" para validar que quedÃ³ en lÃ­nea.</div>
+          <div class="info-banner-blue">1. Enciende el ESP32 y conéctate a su WiFi de configuración.<br>2. Abre la IP que muestre la pantalla OLED.<br>3. Ingresa tu red WiFi y el código de usuario mostrado arriba.<br>4. Guarda y espera a que la OLED muestre la IP final de tu red.<br>5. Regresa a "Mis Sensores" para validar que quedó en línea.</div>
         </div>
         <div class="card">
-          <div class="card-title">Mapa de conexiÃ³n recomendado</div>
+          <div class="card-title">Mapa de conexión recomendado</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
             <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Entradas</div>
-              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">PIR: GPIO14<br>Puerta magnÃ©tica: GPIO27<br>Humo/Gas digital: GPIO33<br>Sensor analÃ³gico: GPIO34</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">PIR: GPIO14<br>Puerta magnética: GPIO27<br>Humo/Gas digital: GPIO33<br>Sensor analógico: GPIO34</div>
             </div>
             <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Salidas</div>
-              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">RelÃ©/Luz: GPIO26<br>Buzzer/Sirena: GPIO25<br>LED extra: GPIO32</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">Relé/Luz: GPIO26<br>Buzzer/Sirena: GPIO25<br>LED extra: GPIO32</div>
             </div>
             <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Consejos</div>
-              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">Usa fuente estable<br>Comparte GND en todos los mÃ³dulos<br>No conectes 5V directo a pines de datos</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">Usa fuente estable<br>Comparte GND en todos los módulos<br>No conectes 5V directo a pines de datos</div>
             </div>
           </div>
         </div>
@@ -755,12 +966,12 @@ body{
       <!-- SONIDOS -->
       <div id="viewSonidos" style="display:none">
         <div class="card" style="margin-bottom:14px;">
-          <div class="card-title">ðŸ”Š Sonidos de alerta</div>
+          <div class="card-title">🔊 Sonidos de alerta</div>
           <div style="display:grid;gap:12px;">
             <div><div class="input-label">SONIDO LEVE</div><input type="text" id="sonidoLeveInput" class="input-field" placeholder="sounds/alarma_leve.wav"/></div>
             <div><div class="input-label">SONIDO MODERADO</div><input type="text" id="sonidoModeradoInput" class="input-field" placeholder="sounds/alarma_moderada.wav"/></div>
             <div><div class="input-label">SONIDO SEVERO</div><input type="text" id="sonidoSeveroInput" class="input-field" placeholder="sounds/alarma_severa.wav"/></div>
-            <button onclick="guardarSonidos()" style="padding:12px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;letter-spacing:1px;border-radius:6px;transition:all 0.18s;">ðŸ’¾ GUARDAR SONIDOS</button>
+            <button onclick="guardarSonidos()" style="padding:12px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;letter-spacing:1px;border-radius:6px;transition:all 0.18s;">💾 GUARDAR SONIDOS</button>
           </div>
         </div>
         <div class="card">
@@ -768,7 +979,7 @@ body{
           <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:2;">
             sounds/alarma_leve.wav<br>sounds/alarma_moderada.wav<br>sounds/alarma_severa.wav<br>sounds/sonido1.mp3<br>sounds/sonido2.mp3<br>sounds/sonido3.mp3
           </div>
-          <div class="info-banner-yellow" style="margin-top:12px;">Si subes archivos manualmente al proyecto, escribe aquÃ­ exactamente el nombre y la ruta para que la app y la web usen el mismo sonido.</div>
+          <div class="info-banner-yellow" style="margin-top:12px;">Si subes archivos manualmente al proyecto, escribe aquí exactamente el nombre y la ruta para que la app y la web usen el mismo sonido.</div>
         </div>
       </div>
 
@@ -785,7 +996,7 @@ body{
     <!-- PANEL DERECHO -->
     <div class="right-panel">
       <div class="right-panel-header">
-        <span>ðŸ“‹ ACTIVIDAD RECIENTE</span>
+        <span>�‹ ACTIVIDAD RECIENTE</span>
         <span id="histCount" style="color:var(--text);font-weight:700">0</span>
       </div>
       <div class="history-list" id="actividadLista">
@@ -833,7 +1044,7 @@ function addActividad(titulo,msg,nivel){
   const list=document.getElementById('actividadLista');
   const empty=list.querySelector('.empty-msg');if(empty)empty.remove();
   const color=nivel==='leve'?'var(--green)':nivel==='severo'?'var(--red)':'var(--yellow)';
-  const emoji=nivel==='leve'?'ðŸŸ¢':nivel==='severo'?'ðŸ”´':'ðŸŸ¡';
+  const emoji=nivel==='leve'?'🟢':nivel==='severo'?'🔴':'🟡';
   const div=document.createElement('div');div.className=`hist-item ${nivel}`;
   div.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-family:var(--mono);font-size:9px;font-weight:700;color:${color};">${emoji} ${nivel.toUpperCase()}</span><span style="font-family:var(--mono);font-size:9px;color:var(--muted);">${tiempo()}</span></div><div style="font-size:12px;font-weight:700;color:var(--text);">${titulo}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${msg.substring(0,60)}</div>`;
   list.insertBefore(div,list.firstChild);
@@ -846,25 +1057,25 @@ async function doLogin(){
   const pass=document.getElementById('userPass').value.trim();
   const btn=document.getElementById('btnLogin');
   if(!email||!pass){showError('Completa todos los campos.');return;}
-  btn.textContent='ðŸ”„ VERIFICANDO...';btn.disabled=true;
+  btn.textContent='�„ VERIFICANDO...';btn.disabled=true;
   try {
     const res=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
     const data=await res.json();
     if(res.ok&&data.ok){
-      if(data.isAdmin){showError('Este panel es solo para usuarios. Usa el panel de administrador.');btn.textContent='ðŸ”‘ ENTRAR A MI PANEL';btn.disabled=false;return;}
+      if(data.isAdmin){showError('Este panel es solo para usuarios. Usa el panel de administrador.');btn.textContent='🔑 ENTRAR A MI PANEL';btn.disabled=false;return;}
       sessionUser=data;
       document.getElementById('loginPage').style.display='none';
       document.getElementById('mainApp').style.display='flex';
       document.getElementById('mainContent').style.display='flex';
       document.getElementById('topCodigo').textContent=data.codigo||'--';
       document.getElementById('sidebarEmail').textContent=email;
-      log(`âœ… Bienvenido ${email}`,'ok');
+      log(`✅ Bienvenido ${email}`,'ok');
       cargarTodo();
     } else showError(data.error||'Credenciales incorrectas.');
   } catch(e){showError('No se pudo conectar con el servidor.');}
-  btn.textContent='ðŸ”‘ ENTRAR A MI PANEL';btn.disabled=false;
+  btn.textContent='🔑 ENTRAR A MI PANEL';btn.disabled=false;
 }
-function showError(msg){const el=document.getElementById('loginError');el.textContent='âš ï¸ '+msg;el.style.display='block';}
+function showError(msg){const el=document.getElementById('loginError');el.textContent='⚠️ '+msg;el.style.display='block';}
 function doLogout(){sessionUser=null;document.getElementById('loginPage').style.display='flex';document.getElementById('mainApp').style.display='none';document.getElementById('mainContent').style.display='none';}
 document.getElementById('userPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
@@ -885,12 +1096,12 @@ function actualizarUISistema(){
   const btnSim=document.getElementById('btnSimulador');
   if(sistemaArmado){
     pill.className='sistema-pill armado';dot.className='dot dot-red';label.textContent='ARMADO';
-    grande.className='sistema-grande armado';icono.textContent='ðŸ”´';estado.textContent='SISTEMA ARMADO';estado.style.color='var(--red)';
-    sub.textContent='Cualquier movimiento activarÃ¡ la alarma Â· Clic para desarmar';
+    grande.className='sistema-grande armado';icono.textContent='🔴';estado.textContent='SISTEMA ARMADO';estado.style.color='var(--red)';
+    sub.textContent='Cualquier movimiento activará la alarma · Clic para desarmar';
   } else {
     pill.className='sistema-pill desarmado';dot.className='dot dot-green';label.textContent='DESARMADO';
-    grande.className='sistema-grande desarmado';icono.textContent='ðŸ›¡ï¸';estado.textContent='SISTEMA DESARMADO';estado.style.color='var(--green)';
-    sub.textContent='Tu hogar no estÃ¡ protegido Â· Clic para armar';
+    grande.className='sistema-grande desarmado';icono.textContent='🛡️';estado.textContent='SISTEMA DESARMADO';estado.style.color='var(--green)';
+    sub.textContent='Tu hogar no está protegido · Clic para armar';
   }
   if(simuladorActivo){btnSim.textContent='DESACTIVAR';btnSim.style.background='rgba(232,40,26,0.12)';btnSim.style.color='var(--red)';btnSim.style.borderColor='rgba(232,40,26,0.4)';}
   else{btnSim.textContent='ACTIVAR';btnSim.style.background='rgba(34,197,94,0.12)';btnSim.style.color='var(--green)';btnSim.style.borderColor='rgba(34,197,94,0.4)';}
@@ -900,7 +1111,7 @@ async function toggleSistema(){
   if(!sessionUser)return;
   try {
     const res=await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,armado:!sistemaArmado})});
-    if(res.ok){sistemaArmado=!sistemaArmado;actualizarUISistema();log(`Sistema ${sistemaArmado?'ARMADO ðŸ”´':'DESARMADO ðŸŸ¢'}`,sistemaArmado?'warn':'ok');}
+    if(res.ok){sistemaArmado=!sistemaArmado;actualizarUISistema();log(`Sistema ${sistemaArmado?'ARMADO 🔴':'DESARMADO 🟢'}`,sistemaArmado?'warn':'ok');}
   } catch(e){log('Error: '+e.message,'err');}
 }
 async function toggleSimulador(){
@@ -925,29 +1136,29 @@ const tituloInput=document.getElementById('tituloInput');
 msgInput.addEventListener('input',()=>{document.getElementById('charCount').textContent=msgInput.value.length;updatePreview();});
 tituloInput.addEventListener('input',updatePreview);
 function updatePreview(){
-  const emoji=nivelActual==='leve'?'ðŸŸ¢':nivelActual==='severo'?'ðŸ”´':'ðŸŸ¡';
+  const emoji=nivelActual==='leve'?'🟢':nivelActual==='severo'?'🔴':'🟡';
   const color=nivelActual==='leve'?'var(--green)':nivelActual==='severo'?'var(--red)':'var(--yellow)';
-  document.getElementById('previewTitle').textContent=`${emoji} ${tituloInput.value||'Sin tÃ­tulo'}`;
+  document.getElementById('previewTitle').textContent=`${emoji} ${tituloInput.value||'Sin título'}`;
   document.getElementById('previewTitle').style.color=color;
-  document.getElementById('previewMsg').textContent=msgInput.value||'(vacÃ­o)';
+  document.getElementById('previewMsg').textContent=msgInput.value||'(vacío)';
   document.getElementById('previewNotif').style.borderLeftColor=color;
 }
 
 /* ENVIAR ALARMA */
 async function enviarAlarma(){
   const mensaje=msgInput.value.trim();const titulo=tituloInput.value.trim()||'Alerta';
-  if(!mensaje){log('âš ï¸ Escribe un mensaje.','warn');return;}
+  if(!mensaje){log('⚠️ Escribe un mensaje.','warn');return;}
   const btn=document.getElementById('btnEnviar');
-  btn.classList.add('loading');btn.textContent='ðŸ”„ ENVIANDO...';statsHoy.alarmas++;
+  btn.classList.add('loading');btn.textContent='�„ ENVIANDO...';statsHoy.alarmas++;
   try {
     const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uid:sessionUser.uid})});
-    if(res.ok){log(`âœ… Alarma [${nivelActual.toUpperCase()}] activada en tu dispositivo.`,'ok');statsHoy.ok++;addActividad(titulo,mensaje,nivelActual);actualizarStats();}
-    else{const e=await res.text();log(`âŒ Error: ${e}`,'err');statsHoy.err++;}
-  } catch(e){log(`âŒ ${e.message}`,'err');statsHoy.err++;}
-  btn.classList.remove('loading');btn.textContent='ðŸ”” ACTIVAR MI ALARMA';
+    if(res.ok){log(`✅ Alarma [${nivelActual.toUpperCase()}] activada en tu dispositivo.`,'ok');statsHoy.ok++;addActividad(titulo,mensaje,nivelActual);actualizarStats();}
+    else{const e=await res.text();log(`❌ Error: ${e}`,'err');statsHoy.err++;}
+  } catch(e){log(`❌ ${e.message}`,'err');statsHoy.err++;}
+  btn.classList.remove('loading');btn.textContent='🔔 ACTIVAR MI ALARMA';
 }
 async function cancelarAlarma(){
-  try{await fetch('/cancel-alarm',{method:'POST'});log('âœ• Alarma cancelada.','ok');}
+  try{await fetch('/cancel-alarm',{method:'POST'});log('✕ Alarma cancelada.','ok');}
   catch(e){log('Error: '+e.message,'err');}
 }
 function enviarAOtros(){const p=document.getElementById('panelOtros');p.style.display=p.style.display==='none'?'block':'none';}
@@ -1049,7 +1260,7 @@ function refreshUserDashboard(){
     {title:'Estado general',value:sistemaArmado?'Protegido':'Pendiente',detail:sistemaArmado?'El sistema esta armado ahora mismo.':'Conviene armarlo si saldras de casa.',tone:sistemaArmado?'var(--green)':'var(--yellow)'},
     {title:'Actividad de hardware',value:latestSensors.length?`${sensoresOnline}/${latestSensors.length}`:'--',detail:latestSensors.length?'Sensores con conexion reciente frente al total visible.':'Aun no hay sensores vinculados.',tone:latestSensors.length?(sensoresOnline===latestSensors.length?'var(--green)':'var(--yellow)'):'var(--muted)'},
     {title:'Cobertura del hogar',value:`${camaras.length} cam / ${latestMiembros.length} miembros`,detail:'Resumen rapido de vigilancia visual y presencia registrada.',tone:(camaras.length||latestMiembros.length)?'var(--blue)':'var(--muted)'},
-    {title:'Ultimo movimiento',value:ultimo?.titulo||'Sin eventos',detail:ultimo?`${ultimo.hora||'Reciente'} Â· ${ultimo.detalle||ultimo.nivel||'Evento detectado'}`:'Todavia no hay eventos recientes en historial.',tone:ultimo?'var(--yellow)':'var(--muted)'}
+    {title:'Ultimo movimiento',value:ultimo?.titulo||'Sin eventos',detail:ultimo?`${ultimo.hora||'Reciente'} · ${ultimo.detalle||ultimo.nivel||'Evento detectado'}`:'Todavia no hay eventos recientes en historial.',tone:ultimo?'var(--yellow)':'var(--muted)'}
   ];
   daily.innerHTML=dailyCards.map(item=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);min-height:158px;display:flex;flex-direction:column;gap:10px;"><div style="font-size:12px;font-weight:800;color:var(--text);">${item.title}</div><div style="font-size:24px;font-weight:900;color:${item.tone};line-height:1.1;">${item.value}</div><div style="font-size:12px;color:var(--text-sec);line-height:1.45;">${item.detail}</div></div>`).join('');
   const resumen=[
@@ -1069,32 +1280,32 @@ function refreshUserDashboard(){
   attention.innerHTML=avisos.map(item=>`<div style="padding:12px 14px;border:1px solid ${item.tone};border-radius:10px;background:var(--surface);"><div style="font-size:12px;font-weight:800;color:${item.tone};margin-bottom:4px;">${item.title}</div><div style="font-size:12px;color:var(--text);">${item.text}</div></div>`).join('');
 }
 
-/* CÃ“DIGOS */
+/* CÓDIGOS */
 function agregarCodigo(){
   const input=document.getElementById('codigoInput');const codigo=input.value.trim();
   if(!codigo)return;
-  if(codigo===sessionUser?.codigo){log('âš ï¸ No puedes enviarte a ti mismo.','warn');return;}
-  if(codigosSelec.includes(codigo)){log('âš ï¸ CÃ³digo ya agregado.','warn');return;}
+  if(codigo===sessionUser?.codigo){log('⚠️ No puedes enviarte a ti mismo.','warn');return;}
+  if(codigosSelec.includes(codigo)){log('⚠️ Código ya agregado.','warn');return;}
   codigosSelec.push(codigo);input.value='';renderChips();
 }
 function renderChips(){
   const cont=document.getElementById('codigosChips');
-  cont.innerHTML=codigosSelec.map(c=>`<div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--blue-dim);border:1px solid rgba(59,130,246,0.4);border-radius:4px;"><span style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:700;">${c}</span><span style="cursor:pointer;color:var(--blue);font-size:14px;" onclick="quitarCodigo('${c}')">Ã—</span></div>`).join('');
+  cont.innerHTML=codigosSelec.map(c=>`<div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--blue-dim);border:1px solid rgba(59,130,246,0.4);border-radius:4px;"><span style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:700;">${c}</span><span style="cursor:pointer;color:var(--blue);font-size:14px;" onclick="quitarCodigo('${c}')">×</span></div>`).join('');
 }
 function quitarCodigo(c){codigosSelec=codigosSelec.filter(x=>x!==c);renderChips();}
 async function enviarACodigos(){
-  if(!codigosSelec.length){log('âš ï¸ Agrega al menos un cÃ³digo.','warn');return;}
-  const mensaje=msgInput.value.trim()||'ðŸš¨ Â¡ALERTA!';const titulo=tituloInput.value.trim()||'Alerta';
+  if(!codigosSelec.length){log('⚠️ Agrega al menos un código.','warn');return;}
+  const mensaje=msgInput.value.trim()||'🚨 ¡ALERTA!';const titulo=tituloInput.value.trim()||'Alerta';
   log(`Buscando ${codigosSelec.length} usuario(s)...`,'info');const uids=[];
   for(const codigo of codigosSelec){
-    try{const res=await fetch('/find-by-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo})});const data=await res.json();if(data.found)uids.push(data.uid);else log(`âš ï¸ CÃ³digo no encontrado: ${codigo}`,'warn');}catch(e){}
+    try{const res=await fetch('/find-by-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo})});const data=await res.json();if(data.found)uids.push(data.uid);else log(`⚠️ Código no encontrado: ${codigo}`,'warn');}catch(e){}
   }
-  if(!uids.length){log('âŒ NingÃºn cÃ³digo fue encontrado.','err');return;}
+  if(!uids.length){log('❌ Ningún código fue encontrado.','err');return;}
   try{
     const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uids})});
-    if(res.ok){log(`âœ… Alarma enviada a ${uids.length} usuario(s).`,'ok');codigosSelec=[];renderChips();}
-    else log('âŒ Error enviando alarmas.','err');
-  }catch(e){log('âŒ Error: '+e.message,'err');}
+    if(res.ok){log(`✅ Alarma enviada a ${uids.length} usuario(s).`,'ok');codigosSelec=[];renderChips();}
+    else log('❌ Error enviando alarmas.','err');
+  }catch(e){log('❌ Error: '+e.message,'err');}
 }
 
 /* MODO NOCHE */
@@ -1118,7 +1329,7 @@ function actualizarUINocha(){
 async function toggleModoNoche(){
   if(!sessionUser?.uid)return;modoNocheActivo=!modoNocheActivo;
   await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,armado:modoNocheActivo,modoNoche:modoNocheActivo,ignorarGPS:modoNocheActivo})});
-  actualizarUINocha();showToast(modoNocheActivo?'ðŸŒ™ Modo Noche activado':'Modo Noche desactivado');
+  actualizarUINocha();showToast(modoNocheActivo?'🌙 Modo Noche activado':'Modo Noche desactivado');
 }
 async function guardarConfigNoche(){
   if(!sessionUser?.uid)return;
@@ -1126,7 +1337,7 @@ async function guardarConfigNoche(){
   const inicio=document.getElementById('nocheHoraInicio')?.value||'22:00';
   const fin=document.getElementById('nocheHoraFin')?.value||'06:00';
   await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,modoNocheHorario:horario,modoNocheInicio:inicio,modoNocheFin:fin})});
-  showToast('âœ… ConfiguraciÃ³n guardada');
+  showToast('✅ Configuración guardada');
 }
 function setNivelNoche(nivel){
   nivelNocheActual=nivel;
@@ -1136,26 +1347,26 @@ function setNivelNoche(nivel){
   if(sessionUser?.uid)fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,modoNocheNivel:nivel})});
 }
 
-/* CÃMARAS */
+/* CÁMARAS */
 async function cargarCamara(){
   if(!sessionUser?.uid)return;
   try{
     const res=await fetch('/get-sistema?uid='+sessionUser.uid);const data=await res.json();
     if(data.camaras&&data.camaras.length>0){camaras=data.camaras;}
-    else if(data.camaraUrl){camaras=[{id:'cam_01',nombre:'CÃ¡mara Principal',url:data.camaraUrl}];}
+    else if(data.camaraUrl){camaras=[{id:'cam_01',nombre:'Cámara Principal',url:data.camaraUrl}];}
     else{camaras=[];}
     renderizarTabsCamaras();if(camaras.length>0)seleccionarCamara(0);refreshUserDashboard();
   }catch(e){}
 }
 function renderizarTabsCamaras(){
   const tabs=document.getElementById('camarasTabs');if(!tabs)return;
-  tabs.innerHTML=camaras.map((cam,i)=>`<div onclick="seleccionarCamara(${i})" id="tab_cam_${i}" style="padding:6px 14px;cursor:pointer;font-size:12px;font-weight:600;background:${camaraActivaIdx===i?'var(--blue)':'var(--surface2)'};color:${camaraActivaIdx===i?'#fff':'var(--text-sec)'};border:1px solid ${camaraActivaIdx===i?'var(--blue)':'var(--border)'};white-space:nowrap;flex-shrink:0;border-radius:5px;">ðŸ“· ${cam.nombre}</div>`).join('')+(camaras.length===0?'<span style="color:var(--text-sec);font-size:12px;font-family:var(--mono);">Sin cÃ¡maras Â· toca + Agregar</span>':'');
+  tabs.innerHTML=camaras.map((cam,i)=>`<div onclick="seleccionarCamara(${i})" id="tab_cam_${i}" style="padding:6px 14px;cursor:pointer;font-size:12px;font-weight:600;background:${camaraActivaIdx===i?'var(--blue)':'var(--surface2)'};color:${camaraActivaIdx===i?'#fff':'var(--text-sec)'};border:1px solid ${camaraActivaIdx===i?'var(--blue)':'var(--border)'};white-space:nowrap;flex-shrink:0;border-radius:5px;">📷 ${cam.nombre}</div>`).join('')+(camaras.length===0?'<span style="color:var(--text-sec);font-size:12px;font-family:var(--mono);">Sin cámaras · toca + Agregar</span>':'');
 }
 function seleccionarCamara(idx){
   camaraActivaIdx=idx;renderizarTabsCamaras();const cam=camaras[idx];if(!cam)return;
   mostrarStream(cam.url);
   const info=document.getElementById('camaraInfo'),nombre=document.getElementById('camaraActivaNombre');
-  if(info)info.style.display='flex';if(nombre)nombre.textContent=`${cam.nombre}  Â·  ${cam.url}`;
+  if(info)info.style.display='flex';if(nombre)nombre.textContent=`${cam.nombre}  ·  ${cam.url}`;
 }
 function mostrarStream(url){
   const c=document.getElementById('camaraContainer');if(!c)return;
@@ -1165,18 +1376,18 @@ function recargarCamaraActiva(){if(camaraActivaIdx>=0&&camaras[camaraActivaIdx])
 function editarCamaraActiva(){if(camaraActivaIdx>=0)mostrarDialogoCamara(camaraActivaIdx);}
 async function eliminarCamaraActiva(){
   if(camaraActivaIdx<0)return;const cam=camaras[camaraActivaIdx];
-  if(!confirm(`Â¿Eliminar cÃ¡mara "${cam.nombre}"?`))return;
+  if(!confirm(`¿Eliminar cámara "${cam.nombre}"?`))return;
   camaras.splice(camaraActivaIdx,1);camaraActivaIdx=camaras.length>0?0:-1;
   await guardarCamaras();renderizarTabsCamaras();
   if(camaraActivaIdx>=0)seleccionarCamara(0);
-  else{document.getElementById('camaraContainer').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--muted);font-size:13px;font-family:var(--mono);">ðŸ“· Sin cÃ¡mara seleccionada</div>';const info=document.getElementById('camaraInfo');if(info)info.style.display='none';}
-  showToast('âœ… CÃ¡mara eliminada.');
+  else{document.getElementById('camaraContainer').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--muted);font-size:13px;font-family:var(--mono);">📷 Sin cámara seleccionada</div>';const info=document.getElementById('camaraInfo');if(info)info.style.display='none';}
+  showToast('✅ Cámara eliminada.');
 }
 function mostrarDialogoCamara(editarIdx=null){
   dialogoCamaraEditar=editarIdx;const cam=editarIdx!==null?camaras[editarIdx]:null;
   const overlay=document.createElement('div');overlay.id='dialogoCamara';
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
-  overlay.innerHTML=`<div style="background:var(--surface);padding:24px;width:340px;max-width:90vw;border:1px solid var(--border2);border-radius:var(--radius);position:relative"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);border-radius:var(--radius) var(--radius) 0 0;"></div><h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam?'âœï¸ Editar CÃ¡mara':'ðŸ“· Agregar CÃ¡mara'}</h3><div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-sec)">Nombre</label><input id="dlg_cam_nombre" type="text" class="input-field" value="${cam?.nombre||''}" placeholder="Sala, Garaje, Entrada..." style="margin-top:4px"></div><div style="margin-bottom:16px"><label style="font-size:12px;color:var(--text-sec)">URL del stream</label><input id="dlg_cam_url" type="url" class="input-field" value="${cam?.url||''}" placeholder="http://192.168.1.x:8080/video" style="margin-top:4px"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="cerrarDialogoCamara()" style="padding:8px 16px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;border-radius:6px;">Cancelar</button><button onclick="guardarDialogoCamara()" style="padding:8px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;border-radius:6px;">Guardar</button></div></div>`;
+  overlay.innerHTML=`<div style="background:var(--surface);padding:24px;width:340px;max-width:90vw;border:1px solid var(--border2);border-radius:var(--radius);position:relative"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);border-radius:var(--radius) var(--radius) 0 0;"></div><h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam?'✏️ Editar Cámara':'📷 Agregar Cámara'}</h3><div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-sec)">Nombre</label><input id="dlg_cam_nombre" type="text" class="input-field" value="${cam?.nombre||''}" placeholder="Sala, Garaje, Entrada..." style="margin-top:4px"></div><div style="margin-bottom:16px"><label style="font-size:12px;color:var(--text-sec)">URL del stream</label><input id="dlg_cam_url" type="url" class="input-field" value="${cam?.url||''}" placeholder="http://192.168.1.x:8080/video" style="margin-top:4px"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="cerrarDialogoCamara()" style="padding:8px 16px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;border-radius:6px;">Cancelar</button><button onclick="guardarDialogoCamara()" style="padding:8px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;border-radius:6px;">Guardar</button></div></div>`;
   document.body.appendChild(overlay);setTimeout(()=>document.getElementById('dlg_cam_nombre').focus(),100);
 }
 function cerrarDialogoCamara(){const d=document.getElementById('dialogoCamara');if(d)d.remove();}
@@ -1186,14 +1397,14 @@ async function guardarDialogoCamara(){
   if(dialogoCamaraEditar!==null){camaras[dialogoCamaraEditar]={...camaras[dialogoCamaraEditar],nombre,url};}
   else{camaras.push({id:'cam_'+Date.now(),nombre,url});}
   cerrarDialogoCamara();await guardarCamaras();renderizarTabsCamaras();
-  const newIdx=dialogoCamaraEditar!==null?dialogoCamaraEditar:camaras.length-1;seleccionarCamara(newIdx);showToast('âœ… CÃ¡mara guardada.');
+  const newIdx=dialogoCamaraEditar!==null?dialogoCamaraEditar:camaras.length-1;seleccionarCamara(newIdx);showToast('✅ Cámara guardada.');
 }
 async function guardarCamaras(){
-  if(!sessionUser?.uid){showToast('âŒ No hay sesiÃ³n activa');return;}
+  if(!sessionUser?.uid){showToast('❌ No hay sesión activa');return;}
   try{
     const res=await fetch('/save-camera-url',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,camaraUrl:camaras.length>0?camaras[0].url:'',camaras})});
-    const data=await res.json();if(data.ok)showToast('âœ… CÃ¡mara guardada');else showToast('âŒ Error guardando cÃ¡mara');
-  }catch(e){showToast('âŒ Error de conexiÃ³n al servidor');}
+    const data=await res.json();if(data.ok)showToast('✅ Cámara guardada');else showToast('❌ Error guardando cámara');
+  }catch(e){showToast('❌ Error de conexión al servidor');}
 }
 
 /* SENSORES */
@@ -1204,26 +1415,26 @@ async function cargarSensores(){
     const lista=data.sensores||[];latestSensors=lista;refreshUserDashboard();
     const statEl=document.getElementById('statSensores');if(statEl)statEl.textContent=lista.length;
     const cont=document.getElementById('sensoresLista');
-    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin sensores conectados.<br>Conecta tu ESP32 e ingresa tu cÃ³digo en la pantalla web del sensor.</div>';return;}
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin sensores conectados.<br>Conecta tu ESP32 e ingresa tu código en la pantalla web del sensor.</div>';return;}
     cont.innerHTML=lista.map(s=>{
       const ahora=Math.floor(Date.now()/1000),diff=ahora-(s.ultimoHeartbeat||0),online=diff<15;
       const comps=s.componentes?Object.values(s.componentes):[];
-      return `<div style="border:1px solid ${online?'rgba(34,197,94,0.3)':'rgba(232,40,26,0.25)'};padding:14px;margin-bottom:10px;background:var(--surface);border-radius:6px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:10px;height:10px;border-radius:50%;background:${online?'var(--green)':'var(--red)'};flex-shrink:0;"></div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text-pri)">${s.nombre||'ESP32'}</div><div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">IP: ${s.ip||'?'} Â· ID: ${s.sensorId||s.id}</div></div><span style="font-size:11px;font-weight:700;color:${online?'var(--green)':'var(--red)'};border:1px solid ${online?'rgba(34,197,94,0.4)':'rgba(232,40,26,0.4)'};padding:3px 8px;border-radius:4px;font-family:var(--mono)">${online?'ONLINE':'OFFLINE'}</span></div>${comps.length>0?`<div style="font-size:11px;color:var(--text-sec);margin-bottom:6px;font-family:var(--mono)">Componentes:</div>${comps.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border)"><span style="font-size:16px">${emojiTipo(c.tipoId)}</span><span style="flex:1;font-size:12px;color:var(--text-pri)">${c.nombre} Â· GPIO ${c.pin}</span>${!c.esEntrada?`<button onclick="controlarComponente('${s.id}','${c.id}',${!c.activo})" style="padding:4px 12px;background:${c.activo?'var(--green)':'var(--surface2)'};color:${c.activo?'#000':'var(--text-sec)'};border:none;cursor:pointer;font-size:11px;font-weight:700;border-radius:4px">${c.activo?'APAGAR':'ENCENDER'}</button>`:'<span style="font-size:10px;color:var(--text-sec);font-family:var(--mono)">ENTRADA</span>'}</div>`).join('')}`:'<div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">Sin componentes registrados</div>'}</div>`;
+      return `<div style="border:1px solid ${online?'rgba(34,197,94,0.3)':'rgba(232,40,26,0.25)'};padding:14px;margin-bottom:10px;background:var(--surface);border-radius:6px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:10px;height:10px;border-radius:50%;background:${online?'var(--green)':'var(--red)'};flex-shrink:0;"></div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text-pri)">${s.nombre||'ESP32'}</div><div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">IP: ${s.ip||'?'} · ID: ${s.sensorId||s.id}</div></div><span style="font-size:11px;font-weight:700;color:${online?'var(--green)':'var(--red)'};border:1px solid ${online?'rgba(34,197,94,0.4)':'rgba(232,40,26,0.4)'};padding:3px 8px;border-radius:4px;font-family:var(--mono)">${online?'ONLINE':'OFFLINE'}</span></div>${comps.length>0?`<div style="font-size:11px;color:var(--text-sec);margin-bottom:6px;font-family:var(--mono)">Componentes:</div>${comps.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border)"><span style="font-size:16px">${emojiTipo(c.tipoId)}</span><span style="flex:1;font-size:12px;color:var(--text-pri)">${c.nombre} · GPIO ${c.pin}</span>${!c.esEntrada?`<button onclick="controlarComponente('${s.id}','${c.id}',${!c.activo})" style="padding:4px 12px;background:${c.activo?'var(--green)':'var(--surface2)'};color:${c.activo?'#000':'var(--text-sec)'};border:none;cursor:pointer;font-size:11px;font-weight:700;border-radius:4px">${c.activo?'APAGAR':'ENCENDER'}</button>`:'<span style="font-size:10px;color:var(--text-sec);font-family:var(--mono)">ENTRADA</span>'}</div>`).join('')}`:'<div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">Sin componentes registrados</div>'}</div>`;
     }).join('');
     renderizarControlesManual(lista);refreshUserDashboard();
   }catch(e){console.error('Error cargando sensores:',e);}
 }
-function emojiTipo(tipoId){const m={pir:'ðŸ“¡',led:'ðŸ’¡',relay:'ðŸ”Œ',buzzer:'ðŸ””',door:'ðŸšª',smoke:'ðŸ’¨',temp:'ðŸŒ¡ï¸'};return m[tipoId]||'â“';}
+function emojiTipo(tipoId){const m={pir:'📡',led:'💡',relay:'🔌',buzzer:'🔔',door:'🚪',smoke:'💨',temp:'🌡️'};return m[tipoId]||'❓';}
 async function controlarComponente(sensorId,compId,estado){
   if(!sessionUser?.uid)return;
-  try{await fetch('/toggle-componente',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,sensorId,compId,estado})});showToast(estado?'ðŸ’¡ Componente encendido':'Componente apagado');setTimeout(cargarSensores,500);}
-  catch(e){showToast('âŒ Error controlando componente');}
+  try{await fetch('/toggle-componente',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,sensorId,compId,estado})});showToast(estado?'💡 Componente encendido':'Componente apagado');setTimeout(cargarSensores,500);}
+  catch(e){showToast('❌ Error controlando componente');}
 }
 function renderizarControlesManual(sensores){
   const cont=document.getElementById('controlesManual');if(!cont)return;
   const salidas=[];sensores.forEach(s=>{const comps=s.componentes?Object.values(s.componentes):[];comps.filter(c=>!c.esEntrada).forEach(c=>salidas.push({...c,sensorId:s.id,sensorNombre:s.nombre}));});
-  if(!salidas.length){cont.innerHTML='<div class="empty-msg">Sin componentes de salida (LED, RelÃ©, Buzzer)</div>';return;}
-  cont.innerHTML=salidas.map(c=>`<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);margin-bottom:8px;background:var(--surface);border-radius:6px"><span style="font-size:24px">${emojiTipo(c.tipoId)}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text-pri)">${c.nombre}</div><div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">${c.sensorNombre} Â· GPIO ${c.pin}</div></div><button onclick="controlarComponente('${c.sensorId}','${c.id}',${!c.activo})" style="padding:8px 20px;background:${c.activo?'var(--green)':'var(--surface2)'};color:${c.activo?'#000':'var(--text-sec)'};border:1px solid ${c.activo?'var(--green)':'var(--border)'};cursor:pointer;font-size:13px;font-weight:700;border-radius:6px">${c.activo?'APAGAR':'ENCENDER'}</button></div>`).join('');
+  if(!salidas.length){cont.innerHTML='<div class="empty-msg">Sin componentes de salida (LED, Relé, Buzzer)</div>';return;}
+  cont.innerHTML=salidas.map(c=>`<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);margin-bottom:8px;background:var(--surface);border-radius:6px"><span style="font-size:24px">${emojiTipo(c.tipoId)}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text-pri)">${c.nombre}</div><div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">${c.sensorNombre} · GPIO ${c.pin}</div></div><button onclick="controlarComponente('${c.sensorId}','${c.id}',${!c.activo})" style="padding:8px 20px;background:${c.activo?'var(--green)':'var(--surface2)'};color:${c.activo?'#000':'var(--text-sec)'};border:1px solid ${c.activo?'var(--green)':'var(--border)'};cursor:pointer;font-size:13px;font-weight:700;border-radius:6px">${c.activo?'APAGAR':'ENCENDER'}</button></div>`).join('');
 }
 
 /* MIEMBROS */
@@ -1232,8 +1443,8 @@ async function cargarMiembros(){
     const res=await fetch('/get-miembros?uid='+sessionUser.uid);const data=await res.json();const lista=data.miembros||[];latestMiembros=lista;
     document.getElementById('statMiembros').textContent=lista.length;
     const cont=document.getElementById('miembrosLista');
-    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin miembros.<br>RegÃ­stralos en la app mÃ³vil.</div>';refreshUserDashboard();return;}
-    cont.innerHTML=lista.map(m=>`<div class="lista-item ${m.enCasa?'encasa':''}"><div style="width:40px;height:40px;border-radius:50%;background:var(--red-dim);border:2px solid rgba(232,40,26,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--red);">${m.nombre?m.nombre[0].toUpperCase():'?'}</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">${m.nombre||'Miembro'}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${m.cantFotos||0} fotos Â· Reconocimiento facial</div></div><span class="status-badge" style="color:${m.enCasa?'var(--green)':'var(--muted)'};border-color:${m.enCasa?'rgba(34,197,94,0.4)':'rgba(90,90,122,0.4)'};">${m.enCasa?'EN CASA':'FUERA'}</span></div>`).join('');refreshUserDashboard();
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin miembros.<br>Regístralos en la app móvil.</div>';refreshUserDashboard();return;}
+    cont.innerHTML=lista.map(m=>`<div class="lista-item ${m.enCasa?'encasa':''}"><div style="width:40px;height:40px;border-radius:50%;background:var(--red-dim);border:2px solid rgba(232,40,26,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--red);">${m.nombre?m.nombre[0].toUpperCase():'?'}</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">${m.nombre||'Miembro'}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${m.cantFotos||0} fotos · Reconocimiento facial</div></div><span class="status-badge" style="color:${m.enCasa?'var(--green)':'var(--muted)'};border-color:${m.enCasa?'rgba(34,197,94,0.4)':'rgba(90,90,122,0.4)'};">${m.enCasa?'EN CASA':'FUERA'}</span></div>`).join('');refreshUserDashboard();
   }catch(e){log('Error cargando miembros','err');}
 }
 
@@ -1243,19 +1454,19 @@ function activarEscolta(){
   const lng=parseFloat(document.getElementById('escDestLng').value);
   const min=parseInt(document.getElementById('escMinutos').value)||30;
   const pin=document.getElementById('escPin').value.trim();
-  if(isNaN(lat)||isNaN(lng)){log('âš ï¸ Ingresa las coordenadas del destino.','warn');return;}
-  if(pin.length<4){log('âš ï¸ El PIN debe tener al menos 4 dÃ­gitos.','warn');return;}
+  if(isNaN(lat)||isNaN(lng)){log('⚠️ Ingresa las coordenadas del destino.','warn');return;}
+  if(pin.length<4){log('⚠️ El PIN debe tener al menos 4 dígitos.','warn');return;}
   escoltaPin=pin;
   document.getElementById('escoltaForm').style.display='none';
   document.getElementById('escoltaActiva').style.display='block';
   document.getElementById('panelCancelar').style.display='none';
   let secs=min*60;
   escoltaTimer=setInterval(()=>{secs--;const m=String(Math.floor(secs/60)).padStart(2,'0');const s=String(secs%60).padStart(2,'0');document.getElementById('escContador').textContent=`${m}:${s}`;if(secs<=0){clearInterval(escoltaTimer);enviarAlertaEscolta();}},1000);
-  log(`ðŸ›¡ï¸ Modo Escolta activado Â· ${min} minutos.`,'ok');
+  log(`🛡️ Modo Escolta activado · ${min} minutos.`,'ok');
 }
 async function enviarAlertaEscolta(){
-  log('âš ï¸ Tiempo expirado Â· Enviando alerta de escolta.','warn');
-  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,message:'âš ï¸ '+sessionUser.email+' no llegÃ³ a su destino a tiempo.',lat:0,lng:0})});log('ðŸš¨ Alerta de escolta enviada a contactos.','err');document.getElementById('escContador').textContent='Â¡ALERTA!';document.getElementById('escContador').style.color='var(--red)';}
+  log('⚠️ Tiempo expirado · Enviando alerta de escolta.','warn');
+  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,message:'⚠️ '+sessionUser.email+' no llegó a su destino a tiempo.',lat:0,lng:0})});log('🚨 Alerta de escolta enviada a contactos.','err');document.getElementById('escContador').textContent='¡ALERTA!';document.getElementById('escContador').style.color='var(--red)';}
   catch(e){log('Error enviando alerta','err');}
 }
 function mostrarCancelar(){const p=document.getElementById('panelCancelar');p.style.display=p.style.display==='none'?'block':'none';}
@@ -1264,16 +1475,16 @@ function cancelarEscolta(){
   if(pin===escoltaPin){
     clearInterval(escoltaTimer);
     document.getElementById('escoltaForm').style.display='block';document.getElementById('escoltaActiva').style.display='none';document.getElementById('panelCancelar').style.display='none';document.getElementById('pinCancelar').value='';
-    log('âœ… Modo Escolta cancelado.','ok');
+    log('✅ Modo Escolta cancelado.','ok');
   } else if(pin===escoltaPin+'0'){
     clearInterval(escoltaTimer);enviarAlertaEscolta();
     document.getElementById('escoltaForm').style.display='block';document.getElementById('escoltaActiva').style.display='none';document.getElementById('panelCancelar').style.display='none';
-    log('âš ï¸ PIN de coacciÃ³n usado Â· Alerta enviada silenciosamente.','warn');
-  } else log('âŒ PIN incorrecto.','err');
+    log('⚠️ PIN de coacción usado · Alerta enviada silenciosamente.','warn');
+  } else log('❌ PIN incorrecto.','err');
 }
 async function activarAntiRobo(){
-  if(!confirm('Â¿Activar botÃ³n de pÃ¡nico?'))return;
-  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,message:'ðŸš¨ ALERTA ANTI-ROBO: '+sessionUser.email,lat:0,lng:0})});log('ðŸš¨ Alerta de robo enviada.','err');}
+  if(!confirm('¿Activar botón de pánico?'))return;
+  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,message:'🚨 ALERTA ANTI-ROBO: '+sessionUser.email,lat:0,lng:0})});log('🚨 Alerta de robo enviada.','err');}
   catch(e){log('Error: '+e.message,'err');}
 }
 
@@ -1301,7 +1512,7 @@ async function guardarSonidos(){
   const sonidoModerado=document.getElementById('sonidoModeradoInput')?.value.trim()||'sounds/alarma_moderada.wav';
   const sonidoSevero=document.getElementById('sonidoSeveroInput')?.value.trim()||'sounds/alarma_severa.wav';
   await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,sonidoLeve,sonidoModerado,sonidoSevero})});
-  showToast('ðŸ”Š Sonidos guardados');
+  showToast('🔊 Sonidos guardados');
 }
 
 /* COPIAR / PROBAR */
@@ -1310,11 +1521,11 @@ async function copiarTexto(texto,etiqueta='Enlace copiado'){
     if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(texto);
     else{const input=document.createElement('textarea');input.value=texto;input.setAttribute('readonly','');input.style.position='fixed';input.style.opacity='0';input.style.pointerEvents='none';document.body.appendChild(input);input.focus();input.select();input.setSelectionRange(0,texto.length);const copiado=document.execCommand('copy');document.body.removeChild(input);if(!copiado)throw new Error('copy-fallback-failed');}
     showToast(etiqueta);
-  }catch(error){showToast('âŒ No se pudo copiar. CÃ³pialo manualmente desde el enlace mostrado.');}
+  }catch(error){showToast('❌ No se pudo copiar. Cópialo manualmente desde el enlace mostrado.');}
 }
 function probarEnlace(url){try{const n=window.open(url,'_blank','noopener,noreferrer');if(!n)window.location.href=url;showToast('Abriendo enlace de prueba...');}catch(error){window.location.href=url;}}
 
-/* NAVEGACIÃ“N */
+/* NAVEGACIÓN */
 const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Noche','Esp32','Sonidos','Historial'];
 function setView(view,el){
   document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');
