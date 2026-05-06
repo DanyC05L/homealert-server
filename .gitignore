@@ -1,8 +1,17 @@
-# HomeAlert gitignore 
-*.json 
-!package.json 
-panel.html 
-setup_admin.js 
-node_modules/ 
-.env 
-token.txt 
+# HomeAlert gitignore
+*.json
+!package.json
+panel.html
+setup_admin.js
+send.js
+node_modules/
+.env
+.env.*
+env.example
+.env.example
+token.txt
+*.bak
+*.bak_*
+_*.js
+git
+gitignore

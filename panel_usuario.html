@@ -4,224 +4,381 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>HomeAlert - Mi Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --red:#FF2200; --red-dim:rgba(255,34,0,0.1); --red-glow:rgba(255,34,0,0.3);
-  --yellow:#FFB800; --green:#00FF88; --blue:#0088FF;
-  --bg:#070709; --surface:#0E0E12; --surface2:#13131A;
-  --border:#1C1C26; --text:#E8E8F0; --muted:#44445A;
+  --red:#E8281A; --red-dim:rgba(232,40,26,0.10); --red-glow:rgba(232,40,26,0.28);
+  --yellow:#F5A623; --green:#22C55E; --blue:#3B82F6; --blue-dim:rgba(59,130,246,0.10); --blue-glow:rgba(59,130,246,0.28); --purple:#8B5CF6;
+  --bg:#06060A; --surface:#0F0F16; --surface2:#161620; --surface3:#1C1C28;
+  --border:#22222E; --border2:#2E2E3E; --text:#F0F0FA; --muted:#5A5A7A; --muted2:#3A3A55;
+  --mono:'JetBrains Mono',monospace; --sans:'Space Grotesk',sans-serif;
   --text-pri:var(--text); --text-sec:var(--muted);
-  --mono:'Share Tech Mono',monospace; --sans:'Rajdhani',sans-serif;
+  --radius:8px; --transition:0.18s ease;
 }
 [data-theme="light"] {
-  --red:#CC1100; --red-dim:rgba(204,17,0,0.08); --red-glow:rgba(204,17,0,0.18);
-  --yellow:#8B6A00; --green:#107C10; --blue:#0062CC;
-  --bg:#F5F7FA; --surface:#FFFFFF; --surface2:#EEF2F7;
-  --border:#DDE1EC; --text:#1A1A2E; --muted:#555577;
+  --red:#C0200F; --red-dim:rgba(192,32,15,0.07); --red-glow:rgba(192,32,15,0.15);
+  --yellow:#9B6800; --green:#16A34A; --blue:#2563EB; --blue-dim:rgba(37,99,235,0.07); --blue-glow:rgba(37,99,235,0.18); --purple:#7C3AED;
+  --bg:#F4F5FA; --surface:#FFFFFF; --surface2:#EDF0F7; --surface3:#E4E8F2;
+  --border:#DDE1EE; --border2:#C8CEDF; --text:#131320; --muted:#7070A0; --muted2:#B0B8D0;
   --text-pri:var(--text); --text-sec:var(--muted);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,136,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,136,255,0.02) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
-.scanline{position:fixed;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,136,255,0.3),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:999;}
-@keyframes scan{from{top:0}to{top:100vh}}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background var(--transition),color var(--transition);}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6;}
+.scanline{position:fixed;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--blue-glow) 40%,rgba(59,130,246,0.5) 50%,var(--blue-glow) 60%,transparent 100%);animation:scan 10s linear infinite;pointer-events:none;z-index:9999;}
+@keyframes scan{from{top:-2px}to{top:100vh}}
 
 /* LOGIN */
 #loginPage{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;}
-.login-box{width:380px;background:var(--surface);border:1px solid var(--border);position:relative;}
+.login-wrap{display:flex;flex-direction:column;align-items:center;width:390px;}
+.login-glow{width:80px;height:80px;border-radius:50%;background:var(--blue-dim);border:1.5px solid var(--blue);display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 0 40px var(--blue-glow),0 0 80px var(--blue-dim);animation:glow 3s ease-in-out infinite;margin-bottom:20px;}
+@keyframes glow{0%,100%{box-shadow:0 0 30px var(--blue-glow),0 0 60px var(--blue-dim);}50%{box-shadow:0 0 50px var(--blue-glow),0 0 100px var(--blue-dim);}}
+.login-brand{font-size:28px;font-weight:700;letter-spacing:6px;margin-bottom:4px;}
+.login-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:3px;margin-bottom:28px;}
+.login-box{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;position:relative;}
 .login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);}
-.login-header{padding:28px;text-align:center;border-bottom:1px solid var(--border);}
-.login-logo{width:56px;height:56px;border:1.5px solid var(--blue);background:rgba(0,136,255,0.1);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;box-shadow:0 0 16px rgba(0,136,255,0.3);}
-.login-title{font-size:22px;font-weight:700;letter-spacing:4px;margin-bottom:4px;}
-.login-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;}
-.login-body{padding:24px;}
-.field-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:6px;}
-.field{display:flex;align-items:center;background:#080808;border:1px solid var(--border);margin-bottom:14px;}
-.field-icon{padding:0 12px;color:var(--muted);}
-.field input{flex:1;background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:13px;padding:11px 0;outline:none;}
-.field input::placeholder{color:var(--muted);}
-.field:focus-within{border-color:var(--blue);}
-.btn-login{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 20px rgba(0,136,255,0.3);transition:all 0.15s;}
-.btn-login:hover{background:#0066dd;}
-.login-error{background:rgba(255,34,0,0.1);border:1px solid rgba(255,34,0,0.3);padding:8px 12px;margin-bottom:12px;font-family:var(--mono);font-size:11px;color:var(--red);display:none;}
+.login-inner{padding:28px;}
+.login-error{background:var(--red-dim);border:1px solid rgba(232,40,26,0.3);border-radius:6px;padding:9px 12px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:var(--red);display:none;}
+.field-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2.5px;margin-bottom:7px;}
+.field{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px;transition:border-color var(--transition);}
+.field-icon{padding:0 13px;color:var(--muted);}
+.field input{flex:1;background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:13px;padding:12px 0;outline:none;}
+.field input::placeholder{color:var(--muted2);}
+.field:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-dim);}
+.btn-login{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 24px var(--blue-glow);transition:all var(--transition);}
+.btn-login:hover{background:#2563EB;transform:translateY(-1px);box-shadow:0 8px 32px var(--blue-glow);}
 
 /* TOPBAR */
-.topbar{position:relative;z-index:10;display:flex;align-items:center;gap:14px;padding:0 24px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
-.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);}
-.logo-mark{width:36px;height:36px;border:1.5px solid var(--blue);background:rgba(0,136,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 10px rgba(0,136,255,0.3);}
-.app-title{font-size:18px;font-weight:700;letter-spacing:3px;}
-.user-badge{background:rgba(0,136,255,0.15);border:1px solid rgba(0,136,255,0.4);color:var(--blue);font-family:var(--mono);font-size:10px;padding:3px 10px;letter-spacing:1px;}
-.codigo-pill{display:flex;align-items:center;gap:6px;background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.25);padding:4px 12px;}
+.topbar{position:relative;z-index:10;display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;transition:background var(--transition);}
+.topbar::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--blue) 20%,transparent 60%);}
+.logo-mark{width:32px;height:32px;border-radius:6px;border:1.5px solid var(--blue);background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 12px var(--blue-glow);animation:glow 3s ease-in-out infinite;flex-shrink:0;}
+.app-title{font-size:15px;font-weight:700;letter-spacing:3px;}
+.badge{font-family:var(--mono);font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:1.5px;font-weight:500;}
+.badge-user{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.4);color:var(--blue);}
+.codigo-pill{display:flex;align-items:center;gap:7px;background:var(--blue-dim);border:1px solid rgba(59,130,246,0.25);padding:4px 12px;border-radius:5px;}
 .codigo-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;}
 .codigo-val{font-family:var(--mono);font-size:13px;color:var(--blue);font-weight:700;letter-spacing:1px;}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
-.sistema-pill{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;padding:5px 14px;border:1px solid var(--border);cursor:pointer;transition:all 0.2s;font-weight:700;}
-.sistema-pill.armado{background:rgba(255,34,0,0.1);border-color:rgba(255,34,0,0.4);color:var(--red);}
-.sistema-pill.desarmado{background:rgba(0,255,136,0.1);border-color:rgba(0,255,136,0.4);color:var(--green);}
-.dot{width:6px;height:6px;border-radius:50%;animation:blink 1.5s ease-in-out infinite;}
-.dot-green{background:var(--green);box-shadow:0 0 6px var(--green);}
-.dot-red{background:var(--red);box-shadow:0 0 6px var(--red);}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.time-display{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:2px;}
-.btn-top{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--mono);font-size:10px;padding:5px 12px;cursor:pointer;transition:all 0.15s;letter-spacing:1px;}
-.btn-top:hover{border-color:var(--red);color:var(--red);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.sistema-pill{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;padding:5px 13px;border:1px solid var(--border);cursor:pointer;transition:all var(--transition);font-weight:700;border-radius:5px;}
+.sistema-pill.armado{background:rgba(232,40,26,0.10);border-color:rgba(232,40,26,0.4);color:var(--red);}
+.sistema-pill.desarmado{background:rgba(34,197,94,0.10);border-color:rgba(34,197,94,0.4);color:var(--green);}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dot-green{background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s ease-in-out infinite;}
+.dot-red{background:var(--red);box-shadow:0 0 6px var(--red);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
+.time-display{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;}
+.btn-sm{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--mono);font-size:9px;padding:5px 11px;cursor:pointer;letter-spacing:1px;border-radius:5px;transition:all var(--transition);}
+.btn-sm:hover{border-color:var(--red);color:var(--red);}
+select.btn-sm{padding:5px 8px;}
 
 /* MAIN */
 .main{position:relative;z-index:1;flex:1;display:flex;overflow:hidden;}
 
 /* SIDEBAR */
-.sidebar{width:210px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;}
-.nav-section{margin-bottom:24px;}
-.nav-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;padding:0 18px;margin-bottom:8px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;font-size:13px;font-weight:600;letter-spacing:1px;color:var(--muted);border-left:2px solid transparent;transition:all 0.15s;}
-.nav-item:hover{color:var(--text);background:rgba(0,136,255,0.06);}
-.nav-item.active{color:var(--blue);border-left-color:var(--blue);background:rgba(0,136,255,0.08);}
-.nav-icon{font-size:15px;width:20px;text-align:center;}
-.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.9;}
+.sidebar{width:200px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 0;transition:background var(--transition);}
+.nav-section{margin-bottom:16px;}
+.nav-label{font-family:var(--mono);font-size:8px;color:var(--muted2);letter-spacing:3px;padding:0 16px;margin-bottom:5px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;font-size:12px;font-weight:600;letter-spacing:0.5px;color:var(--muted);border-left:2px solid transparent;transition:all var(--transition);user-select:none;}
+.nav-item:hover{color:var(--text);background:var(--blue-dim);}
+.nav-item.active{color:var(--blue);border-left-color:var(--blue);background:var(--blue-dim);}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.sidebar-footer{margin-top:auto;padding:12px 16px;border-top:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--muted);line-height:2;}
 
 /* CONTENT */
 .content{flex:1;display:flex;overflow:hidden;}
-.center-panel{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
-.right-panel{width:300px;flex-shrink:0;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.center-panel{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;}
+.right-panel{width:290px;flex-shrink:0;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
 
 /* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);padding:16px;position:relative;}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--blue),transparent);}
-.card-title{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;transition:background var(--transition);}
+.card::before{content:'';position:absolute;top:0;left:0;width:3px;bottom:0;background:linear-gradient(180deg,var(--blue),transparent);}
+.card-title{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2.5px;margin-bottom:14px;display:flex;align-items:center;gap:8px;text-transform:uppercase;}
 .card-title::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.stat-card{background:var(--surface2);border:1px solid var(--border);padding:14px;text-align:center;position:relative;overflow:hidden;}
-.stat-value{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;}
-.stat-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1.5px;margin-top:5px;}
-.accent-line{position:absolute;bottom:0;left:0;right:0;height:2px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;position:relative;overflow:hidden;transition:border-color var(--transition),transform var(--transition);}
+.stat-card:hover{transform:translateY(-2px);}
+.stat-value{font-family:var(--mono);font-size:24px;font-weight:700;line-height:1;}
+.stat-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-top:5px;}
+.accent-line{position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 var(--radius) var(--radius);}
 
-/* SISTEMA */
-.sistema-grande{width:100%;padding:24px;border:2px solid var(--border);background:var(--surface2);cursor:pointer;transition:all 0.2s;text-align:center;font-family:var(--sans);}
-.sistema-grande.armado{border-color:rgba(255,34,0,0.5);background:rgba(255,34,0,0.06);}
-.sistema-grande.desarmado{border-color:rgba(0,255,136,0.5);background:rgba(0,255,136,0.06);}
+/* SISTEMA GRANDE */
+.sistema-grande{width:100%;padding:24px;border:2px solid var(--border);background:var(--surface2);cursor:pointer;transition:all var(--transition);text-align:center;font-family:var(--sans);border-radius:var(--radius);}
+.sistema-grande.armado{border-color:rgba(232,40,26,0.5);background:rgba(232,40,26,0.06);}
+.sistema-grande.desarmado{border-color:rgba(34,197,94,0.5);background:rgba(34,197,94,0.06);}
+.sistema-grande:hover{transform:scale(1.01);}
 
 /* NIVEL */
-.nivel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.nivel-btn{padding:12px 8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center;transition:all 0.15s;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted);}
-.nivel-btn[data-nivel="leve"].selected{background:rgba(0,255,136,0.15);border-color:var(--green);color:var(--green);}
-.nivel-btn[data-nivel="moderado"].selected{background:rgba(255,184,0,0.15);border-color:var(--yellow);color:var(--yellow);}
-.nivel-btn[data-nivel="severo"].selected{background:rgba(255,34,0,0.15);border-color:var(--red);color:var(--red);}
+.nivel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.nivel-btn{padding:12px 6px;border:1px solid var(--border);background:var(--surface2);border-radius:6px;cursor:pointer;text-align:center;transition:all var(--transition);font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:1px;color:var(--muted);}
+.nivel-btn:hover{border-color:var(--border2);color:var(--text);}
 .nivel-icon{font-size:20px;display:block;margin-bottom:5px;}
+.nivel-btn[data-nivel="leve"].selected{background:rgba(34,197,94,0.12);border-color:var(--green);color:var(--green);box-shadow:0 0 14px rgba(34,197,94,0.12);}
+.nivel-btn[data-nivel="moderado"].selected{background:rgba(245,166,35,0.12);border-color:var(--yellow);color:var(--yellow);box-shadow:0 0 14px rgba(245,166,35,0.12);}
+.nivel-btn[data-nivel="severo"].selected{background:rgba(232,40,26,0.12);border-color:var(--red);color:var(--red);box-shadow:0 0 14px rgba(232,40,26,0.12);}
 
 /* INPUTS */
-.input-field{width:100%;background:#080808;border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:13px;padding:9px 12px;outline:none;transition:border-color 0.2s;}
-.input-field:focus{border-color:var(--blue);}
-.input-field::placeholder{color:var(--muted);}
+.input-field{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:10px 12px;outline:none;border-radius:6px;transition:border-color var(--transition),box-shadow var(--transition);}
+.input-field:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-dim);}
+.input-field::placeholder{color:var(--muted2);}
 textarea.input-field{resize:none;height:75px;line-height:1.6;}
-.input-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:5px;}
-.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.input-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2.5px;margin-bottom:5px;text-transform:uppercase;}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 .char-count{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right;margin-top:4px;margin-bottom:12px;}
 
 /* PREVIEW */
-.preview-wrap{background:#080808;border:1px solid var(--border);padding:12px;margin-bottom:14px;}
-.preview-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:8px;}
-.preview-notif{border-left:3px solid var(--blue);padding:9px 12px;background:#000D1A;}
-.preview-title{font-size:12px;font-weight:700;font-family:var(--mono);margin-bottom:3px;color:var(--blue);}
-.preview-body{font-size:11px;font-family:var(--mono);line-height:1.4;color:#AACCFF;}
+.preview-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:14px;}
+.preview-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2.5px;margin-bottom:8px;text-transform:uppercase;}
+.preview-notif{border-left:3px solid var(--blue);padding:10px 12px;background:var(--surface3);border-radius:0 6px 6px 0;}
+.preview-title{font-size:12px;font-weight:700;font-family:var(--sans);margin-bottom:3px;color:var(--blue);}
+.preview-body{font-size:11px;font-family:var(--mono);line-height:1.5;color:var(--muted);}
 
-/* BOTONES */
-.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.btn{padding:12px;border:none;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1.5px;transition:all 0.15s;}
-.btn-send{grid-column:span 2;padding:14px;background:var(--blue);color:#fff;box-shadow:0 4px 20px rgba(0,136,255,0.3);}
-.btn-send:hover{background:#0066dd;transform:translateY(-1px);}
-.btn-send.loading{background:#001A33;color:var(--muted);box-shadow:none;pointer-events:none;}
-.btn-cancel{background:var(--surface2);color:var(--yellow);border:1px solid rgba(255,184,0,0.3);}
-.btn-cancel:hover{background:rgba(255,184,0,0.1);}
-.btn-danger{background:var(--surface2);color:var(--red);border:1px solid rgba(255,34,0,0.3);}
-.btn-danger:hover{background:rgba(255,34,0,0.1);}
+/* BUTTONS */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.btn{padding:12px;border:none;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:1.5px;transition:all var(--transition);border-radius:6px;}
+.btn-send{grid-column:span 2;padding:13px;background:var(--blue);color:#fff;box-shadow:0 4px 20px var(--blue-glow);}
+.btn-send:hover{background:#2563EB;transform:translateY(-1px);box-shadow:0 8px 28px var(--blue-glow);}
+.btn-send.loading{background:var(--surface3);color:var(--muted);box-shadow:none;pointer-events:none;}
+.btn-cancel{background:var(--surface2);color:var(--yellow);border:1px solid rgba(245,166,35,0.3);}
+.btn-cancel:hover{background:rgba(245,166,35,0.1);}
+.btn-danger{background:var(--surface2);color:var(--red);border:1px solid rgba(232,40,26,0.3);}
+.btn-danger:hover{background:rgba(232,40,26,0.1);}
 
-/* CÃMARA */
-.camara-wrap{width:100%;background:#000;border:1px solid var(--border);min-height:280px;display:flex;align-items:center;justify-content:center;}
+/* LIST ITEMS */
+.lista-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:7px;transition:border-color var(--transition);}
+.lista-item.online{border-color:rgba(34,197,94,0.25);}
+.lista-item.offline{border-color:rgba(232,40,26,0.2);}
+.lista-item.encasa{border-color:rgba(34,197,94,0.25);}
+.status-badge{font-family:var(--mono);font-size:9px;padding:3px 8px;border:1px solid;font-weight:700;white-space:nowrap;border-radius:4px;}
 
-/* SENSORES / MIEMBROS */
-.lista-item{display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--surface2);border:1px solid var(--border);margin-bottom:8px;transition:border-color 0.15s;}
-.lista-item.online{border-color:rgba(0,255,136,0.25);}
-.lista-item.offline{border-color:rgba(255,34,0,0.25);}
-.lista-item.encasa{border-color:rgba(0,255,136,0.25);}
-.status-badge{font-family:var(--mono);font-size:9px;padding:3px 8px;border:1px solid;font-weight:700;white-space:nowrap;}
-
-/* HISTORIAL */
-.hist-item{background:var(--surface2);border:1px solid var(--border);border-left:3px solid transparent;padding:11px 13px;margin-bottom:7px;animation:fadeIn 0.3s ease both;}
-@keyframes fadeIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+/* HIST ITEMS */
+.hist-item{background:var(--surface2);border:1px solid var(--border);border-radius:6px;border-left:3px solid transparent;padding:10px 12px;margin-bottom:6px;animation:slideIn 0.3s ease both;}
+@keyframes slideIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
 .hist-item.leve{border-left-color:var(--green);}
 .hist-item.moderado{border-left-color:var(--yellow);}
 .hist-item.severo{border-left-color:var(--red);}
 
 /* ESCOLTA */
-.escolta-activa{background:rgba(30,58,92,0.3);border:2px solid rgba(0,136,255,0.4);padding:20px;text-align:center;}
+.escolta-activa{background:rgba(37,99,235,0.08);border:2px solid rgba(59,130,246,0.35);padding:20px;text-align:center;border-radius:var(--radius);}
 
 /* LOG */
-.right-panel-header{padding:12px 16px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
+.right-panel-header{padding:11px 14px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2.5px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
 .history-list{flex:1;overflow-y:auto;padding:8px;}
-.history-list::-webkit-scrollbar{width:3px;}
-.history-list::-webkit-scrollbar-thumb{background:var(--border);}
-.log-panel{border-top:1px solid var(--border);flex-shrink:0;height:130px;display:flex;flex-direction:column;}
-.log-header{padding:6px 14px;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.log-body{flex:1;overflow-y:auto;padding:5px 14px;font-family:var(--mono);font-size:10px;line-height:1.9;}
-.log-body::-webkit-scrollbar{width:3px;}
-.log-body::-webkit-scrollbar-thumb{background:var(--border);}
+.log-panel{border-top:1px solid var(--border);flex-shrink:0;height:120px;display:flex;flex-direction:column;}
+.log-header{padding:6px 13px;font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2.5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;text-transform:uppercase;}
+.log-body{flex:1;overflow-y:auto;padding:5px 13px;font-family:var(--mono);font-size:10px;line-height:2;}
 .log-line{display:flex;gap:10px;}
-.log-t{color:var(--muted);min-width:62px;}
-.log-ok{color:var(--green);}.log-err{color:var(--red);}.log-info{color:#4488ff;}.log-warn{color:var(--yellow);}
-.empty-msg{text-align:center;padding:24px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:2;}
+.log-t{color:var(--muted);min-width:62px;flex-shrink:0;}
+.log-ok{color:var(--green);}.log-err{color:var(--red);}.log-info{color:var(--blue);}.log-warn{color:var(--yellow);}
+.empty-msg{text-align:center;padding:24px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:2.2;}
+
+/* CAMARA */
+.camara-wrap{width:100%;background:#000;border:1px solid var(--border);border-radius:6px;min-height:280px;display:flex;align-items:center;justify-content:center;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 20px;font-family:var(--mono);font-size:12px;color:var(--text);z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast.show{opacity:1;}
+
+/* MODO NOCHE */
+.noche-btn{flex:1;padding:8px;cursor:pointer;font-size:12px;font-weight:700;border-radius:6px;transition:all var(--transition);}
+
+/* INFO BANNER */
+.info-banner-blue{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.2);border-radius:6px;padding:10px 13px;margin-bottom:12px;font-family:var(--mono);font-size:11px;color:var(--blue);line-height:1.8;}
+.info-banner-yellow{background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.2);border-radius:6px;padding:10px 13px;margin-bottom:12px;font-family:var(--mono);font-size:11px;color:var(--yellow);line-height:1.8;}
+
+/* ===== HomeAlert Redesign Layer ===== */
+body{
+  background:
+    radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(139,92,246,0.14), transparent 24%),
+    linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 92%, #0b1220 8%) 100%);
+}
+.main{gap:16px;padding:16px;}
+.topbar{
+  height:78px;padding:16px 24px;
+  background:color-mix(in srgb, var(--surface) 88%, transparent 12%);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid color-mix(in srgb, var(--border) 70%, transparent 30%);
+  box-shadow:0 18px 60px rgba(0,0,0,0.22);
+}
+.topbar::after{
+  height:2px;
+  background:linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--blue) 70%, var(--red) 30%) 25%, transparent 75%);
+}
+.logo-mark{width:42px;height:42px;border-radius:14px;font-size:18px;}
+.app-title{font-size:18px;letter-spacing:3.5px;}
+.topbar-stack{display:flex;flex-direction:column;gap:3px;}
+.topbar-kicker{font-family:var(--mono);font-size:10px;letter-spacing:1.8px;color:var(--muted);text-transform:uppercase;}
+.topbar-right{gap:12px;flex-wrap:wrap;justify-content:flex-end;}
+.sidebar{
+  width:248px;margin:0;padding:18px 14px;
+  border:1px solid color-mix(in srgb, var(--border2) 78%, transparent 22%);
+  border-radius:26px;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, transparent 8%) 0%, color-mix(in srgb, var(--surface2) 95%, transparent 5%) 100%);
+  box-shadow:0 24px 70px rgba(0,0,0,0.22);
+}
+.nav-section{margin-bottom:18px;}
+.nav-label{padding:0 12px;margin-bottom:8px;font-size:9px;letter-spacing:2.6px;}
+.nav-item{border:1px solid transparent;border-left:none;border-radius:14px;padding:11px 12px;margin-bottom:6px;gap:11px;}
+.nav-item:hover{
+  background:color-mix(in srgb, var(--surface2) 85%, var(--blue) 15%);
+  border-color:color-mix(in srgb, var(--border2) 65%, var(--blue) 35%);
+}
+.nav-item.active{
+  border-color:color-mix(in srgb, var(--blue) 35%, var(--border2) 65%);
+  background:linear-gradient(135deg, color-mix(in srgb, var(--blue) 12%, transparent 88%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+}
+.sidebar-footer{border-top:1px solid var(--border);margin-top:auto;padding:16px 12px 8px;font-size:10px;line-height:1.8;}
+.content{gap:16px;overflow:hidden;}
+.center-panel{padding:0;gap:18px;}
+.right-panel{
+  width:320px;border:1px solid color-mix(in srgb, var(--border2) 72%, transparent 28%);
+  border-radius:26px;background:color-mix(in srgb, var(--surface) 90%, transparent 10%);
+  backdrop-filter:blur(12px);overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,0.20);
+}
+.right-panel-header,.log-header{padding:14px 16px;background:color-mix(in srgb, var(--surface2) 78%, transparent 22%);}
+.card{
+  border-radius:24px;padding:18px;
+  border:1px solid color-mix(in srgb, var(--border2) 76%, transparent 24%);
+  background:linear-gradient(180deg, color-mix(in srgb, var(--surface) 94%, transparent 6%) 0%, color-mix(in srgb, var(--surface2) 96%, transparent 4%) 100%);
+  box-shadow:0 18px 48px rgba(0,0,0,0.16);
+}
+.card::before{
+  width:100%;height:3px;bottom:auto;border-radius:24px 24px 0 0;
+  background:linear-gradient(90deg, color-mix(in srgb, var(--blue) 60%, var(--red) 40%), transparent 70%);
+}
+.card-title{font-size:10px;letter-spacing:2.8px;margin-bottom:16px;}
+.stats-row{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+.stat-card{
+  min-height:118px;border-radius:20px;padding:16px;text-align:left;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--surface2) 86%, transparent 14%) 0%, color-mix(in srgb, var(--surface3) 92%, transparent 8%) 100%);
+}
+.stat-value{font-size:28px;}
+.stat-label{font-size:9px;margin-top:8px;}
+.hero-banner{
+  position:relative;overflow:hidden;padding:24px;border-radius:28px;
+  border:1px solid color-mix(in srgb, var(--border2) 70%, transparent 30%);
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 16%, transparent 84%), transparent 26%),
+    linear-gradient(135deg, color-mix(in srgb, var(--surface) 92%, transparent 8%) 0%, color-mix(in srgb, var(--surface2) 94%, transparent 6%) 100%);
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,0.85fr);gap:18px;
+  box-shadow:0 28px 80px rgba(0,0,0,0.24);
+}
+.hero-banner::after{
+  content:'';position:absolute;inset:auto -60px -80px auto;width:240px;height:240px;border-radius:50%;
+  background:color-mix(in srgb, var(--blue) 18%, transparent 82%);filter:blur(12px);
+}
+.hero-copy{position:relative;z-index:1;display:flex;flex-direction:column;gap:14px;}
+.hero-kicker{font-family:var(--mono);font-size:10px;letter-spacing:2.8px;color:var(--muted);text-transform:uppercase;}
+.hero-title{font-size:clamp(26px, 3vw, 40px);line-height:1.05;font-weight:700;max-width:14ch;}
+.hero-text{font-size:14px;line-height:1.7;color:var(--text-sec);max-width:60ch;}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.hero-btn{
+  padding:12px 16px;border-radius:14px;
+  border:1px solid color-mix(in srgb, var(--border2) 68%, transparent 32%);
+  background:color-mix(in srgb, var(--surface2) 82%, transparent 18%);
+  color:var(--text);cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:0.5px;
+}
+.hero-btn.primary{
+  background:linear-gradient(135deg, color-mix(in srgb, var(--blue) 82%, #ffffff 18%) 0%, color-mix(in srgb, var(--purple) 64%, var(--blue) 36%) 100%);
+  color:#fff;border:none;box-shadow:0 16px 40px color-mix(in srgb, var(--blue) 24%, transparent 76%);
+}
+.hero-side{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;}
+.hero-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.hero-mini-card{
+  border-radius:20px;border:1px solid color-mix(in srgb, var(--border2) 74%, transparent 26%);
+  background:color-mix(in srgb, var(--surface2) 88%, transparent 12%);
+  padding:14px;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;
+}
+.hero-mini-label{font-family:var(--mono);font-size:9px;letter-spacing:1.8px;color:var(--muted);text-transform:uppercase;}
+.hero-mini-value{font-size:22px;font-weight:800;line-height:1.1;}
+.hero-mini-meta{font-size:11px;color:var(--text-sec);line-height:1.45;}
+.panel-cluster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start;}
+.panel-cluster .card{height:100%;}
+#viewPanel{display:flex;flex-direction:column;gap:18px;}
+.sistema-grande{
+  border-radius:24px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--surface2) 84%, transparent 16%) 0%, color-mix(in srgb, var(--surface3) 92%, transparent 8%) 100%);
+}
+.sistema-grande.armado{box-shadow:0 18px 44px rgba(232,40,26,0.12);}
+.sistema-grande.desarmado{box-shadow:0 18px 44px rgba(34,197,94,0.10);}
+.btn-sm,.badge,.codigo-pill,.stat-pill,.sistema-pill{border-radius:12px;}
+@media (max-width: 1300px){
+  .hero-banner{grid-template-columns:1fr;}
+  .panel-cluster{grid-template-columns:1fr;}
+  .right-panel{width:300px;}
+}
+@media (max-width: 1024px){
+  body{overflow:auto;}
+  .main{flex-direction:column;padding:12px;overflow:visible;}
+  .sidebar{width:100%;}
+  .content{flex-direction:column;overflow:visible;}
+  .right-panel{width:100%;}
+}
+@media (max-width: 720px){
+  .topbar{height:auto;padding:14px 16px;align-items:flex-start;flex-wrap:wrap;}
+  .topbar-right{margin-left:0;width:100%;justify-content:flex-start;}
+  .hero-mini-grid{grid-template-columns:1fr;}
+  .hero-actions{flex-direction:column;}
+  .hero-btn{width:100%;}
+}
 </style>
 </head>
 <body>
 <div class="scanline"></div>
+<div class="toast" id="toastMsg"></div>
 
 <!-- LOGIN -->
 <div id="loginPage">
-  <div class="login-box">
-    <div class="login-header">
-      <div class="login-logo">&#127968;</div>
-      <div class="login-title">HOMEALERT</div>
-      <div class="login-sub">PANEL DE CONTROL - MI CUENTA</div>
-    </div>
-    <div class="login-body">
-      <div class="login-error" id="loginError"></div>
-      <div class="field-label">EMAIL</div>
-      <div class="field"><span class="field-icon">&#9993;</span>
-        <input type="email" id="userEmail" placeholder="tu@email.com" autocomplete="email"/>
+  <div class="login-wrap">
+    <div class="login-glow">ðŸ </div>
+    <div class="login-brand">HOMEALERT</div>
+    <div class="login-sub">PANEL DE CONTROL Â· MI CUENTA</div>
+    <div class="login-box">
+      <div class="login-inner">
+        <div class="login-error" id="loginError"></div>
+        <div class="field-label">EMAIL</div>
+        <div class="field"><span class="field-icon">âœ‰ï¸</span>
+          <input type="email" id="userEmail" placeholder="tu@email.com" autocomplete="email"/>
+        </div>
+        <div class="field-label">CONTRASEÃ‘A</div>
+        <div class="field"><span class="field-icon">ðŸ”’</span>
+          <input type="password" id="userPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"/>
+        </div>
+        <button class="btn-login" id="btnLogin" onclick="doLogin()">ðŸ”‘ ENTRAR A MI PANEL</button>
       </div>
-      <div class="field-label">CONTRASEÑA</div>
-      <div class="field"><span class="field-icon">&#128274;</span>
-        <input type="password" id="userPass" placeholder="••••••••" autocomplete="current-password"/>
-      </div>
-      <button class="btn-login" id="btnLogin" onclick="doLogin()">ENTRAR A MI PANEL</button>
     </div>
   </div>
 </div>
 
 <!-- TOPBAR -->
 <div class="topbar" id="mainApp" style="display:none">
-  <div class="logo-mark">&#127968;</div>
-  <span class="app-title">HOMEALERT</span>
-  <span class="user-badge">MI PANEL</span>
+  <div class="logo-mark">ðŸ”</div>
+  <div class="topbar-stack">
+    <span class="topbar-kicker">ðŸ  Home control view</span>
+    <span class="app-title">HOMEALERT USER</span>
+  </div>
+  <span class="badge badge-user">ðŸ  HOGAR ACTIVO</span>
   <div class="codigo-pill">
-    <span class="codigo-label">MI CÓDIGO</span>
+    <span class="codigo-label">USER CODE</span>
     <span class="codigo-val" id="topCodigo">--</span>
   </div>
   <div class="topbar-right">
-    <select id="themeSelect" onchange="changeTheme(this.value)" class="btn-top" style="padding:5px 8px" aria-label="Seleccionar tema visual">
-      <option value="system">Sistema</option>
-      <option value="dark">Oscuro</option>
-      <option value="light">Claro</option>
+    <select id="themeSelect" onchange="changeTheme(this.value)" class="btn-sm" aria-label="Tema">
+      <option value="system">System</option>
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
     </select>
-    <div class="codigo-pill" id="themeModeLabel" style="min-width:160px;justify-content:center;">Tema: Sistema</div>
-    <div class="sistema-pill desarmado" id="sistemaPill" onclick="toggleSistema()" title="Clic para armar/desarmar">
+    <div class="sistema-pill desarmado" id="sistemaPill" onclick="toggleSistema()" title="Cambiar estado del sistema">
       <div class="dot dot-green" id="sistemaDot"></div>
       <span id="sistemaLabel">DESARMADO</span>
     </div>
     <div class="time-display" id="clock">00:00:00</div>
-    <button class="btn-top" onclick="doLogout()">SALIR</button>
+    <button class="btn-sm" onclick="doLogout()">ðŸšª SALIR</button>
   </div>
 </div>
 
@@ -229,29 +386,29 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
 <div class="main" id="mainContent" style="display:none">
   <div class="sidebar">
     <div class="nav-section">
-      <div class="nav-label">MI SISTEMA</div>
-      <div class="nav-item active" onclick="setView('panel',this)"><span class="nav-icon">&#9889;</span>Panel Principal</div>
-      <div class="nav-item" onclick="setView('alarmas',this)"><span class="nav-icon">&#128680;</span>Enviar Alarmas</div>
+      <div class="nav-label">Resumen</div>
+      <div class="nav-item active" onclick="setView('panel',this)"><span class="nav-icon">ðŸ </span>Inicio del hogar</div>
+      <div class="nav-item" onclick="setView('alarmas',this)"><span class="nav-icon">ðŸ””</span>Alertas directas</div>
     </div>
     <div class="nav-section">
-      <div class="nav-label">MI HOGAR</div>
-      <div class="nav-item" onclick="setView('camara',this)"><span class="nav-icon">&#128249;</span>Mi Camara</div>
-      <div class="nav-item" onclick="setView('sensores',this)"><span class="nav-icon">&#128225;</span>Mis Sensores</div>
-      <div class="nav-item" onclick="setView('miembros',this)"><span class="nav-icon">&#128101;</span>Miembros</div>
+      <div class="nav-label">Hogar</div>
+      <div class="nav-item" onclick="setView('camara',this)"><span class="nav-icon">ðŸ“·</span>CÃ¡maras</div>
+      <div class="nav-item" onclick="setView('sensores',this)"><span class="nav-icon">ðŸ“¡</span>Sensores y salidas</div>
+      <div class="nav-item" onclick="setView('miembros',this)"><span class="nav-icon">ðŸ‘¥</span>Miembros</div>
     </div>
     <div class="nav-section">
-      <div class="nav-label">SEGURIDAD</div>
-      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">&#128737;</span>Modo Escolta</div>
-      <div class="nav-item" onclick="setView('noche',this)"><span class="nav-icon">&#127769;</span>Modo Noche</div>
-      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">&#128203;</span>Historial</div>
+      <div class="nav-label">Proteccion</div>
+      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">ðŸ›¡ï¸</span>Modo escolta</div>
+      <div class="nav-item" onclick="setView('noche',this)"><span class="nav-icon">ðŸŒ™</span>Modo noche</div>
+      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">ðŸ“‹</span>Historial</div>
     </div>
     <div class="nav-section">
-      <div class="nav-label">INTEGRACIONES</div>
-      <div class="nav-item" onclick="setView('esp32',this)"><span class="nav-icon">??</span>Guia ESP32</div>
-      <div class="nav-item" onclick="setView('googlehome',this)"><span class="nav-icon">??</span>Google Home</div>
-      <div class="nav-item" onclick="setView('sonidos',this)"><span class="nav-icon">??</span>Sonidos</div>
+      <div class="nav-label">Integraciones</div>
+      <div class="nav-item" onclick="setView('esp32',this)"><span class="nav-icon">ðŸ”Œ</span>GuÃ­a ESP32</div>
+      <div class="nav-item" onclick="setView('sonidos',this)"><span class="nav-icon">ðŸ”Š</span>ðŸ”Š Sonidos</div>
     </div>
     <div class="sidebar-footer" id="sidebarInfo">
+      <strong style="display:block;color:var(--text);margin-bottom:4px;">ðŸ‘¤ Cuenta conectada</strong>
       <span id="sidebarEmail">--</span><br>
       <span id="sidebarDate"></span>
     </div>
@@ -260,70 +417,122 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
   <div class="content">
     <div class="center-panel">
 
-      <!-- ï¿½"?ï¿½"? PANEL PRINCIPAL ï¿½"?ï¿½"? -->
+      <!-- PANEL PRINCIPAL -->
       <div id="viewPanel">
-        <div class="stats-row" style="margin-bottom:0">
-          <div class="stat-card">
-            <div class="stat-value" id="statAlarmas" style="color:var(--text)">0</div>
-            <div class="stat-label">ALARMAS HOY</div>
-            <div class="accent-line" style="background:var(--blue)"></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="statSensores" style="color:var(--green)">0</div>
-            <div class="stat-label">SENSORES</div>
-            <div class="accent-line" style="background:var(--green)"></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="statMiembros" style="color:var(--yellow)">0</div>
-            <div class="stat-label">MIEMBROS</div>
-            <div class="accent-line" style="background:var(--yellow)"></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="statUltimoNivel" style="color:var(--muted);font-size:14px;padding-top:6px">--</div>
-            <div class="stat-label">ULTIMO NIVEL</div>
-            <div class="accent-line" id="ultimoNivelLine" style="background:var(--muted)"></div>
-          </div>
-        </div>
-
-        <!-- Armar/Desarmar grande -->
-        <div class="card" style="padding:0">
-          <button class="sistema-grande desarmado" id="sistemaGrande" onclick="toggleSistema()">
-            <div style="font-size:52px;margin-bottom:10px" id="sistemaIcono">&#128737;</div>
-            <div style="font-size:20px;font-weight:900;letter-spacing:2px;margin-bottom:6px" id="sistemaEstado">SISTEMA DESARMADO</div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="sistemaSub">Haz clic para armar tu sistema</div>
-          </button>
-        </div>
-
-        <!-- Simulador de presencia -->
-        <div class="card">
-          <div class="card-title">SIMULADOR DE PRESENCIA</div>
-          <div style="display:flex;align-items:center;gap:14px;">
-            <div style="font-size:28px;">&#128161;</div>
-            <div style="flex:1;">
-              <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Luces aleatorias</div>
-              <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">El ESP32 simula presencia humana encendiendo/apagando luces</div>
+        <div class="hero-banner">
+          <div class="hero-copy">
+            <div class="hero-kicker">Living home dashboard</div>
+            <div class="hero-title">Tu hogar, claro, visual y facil de usar.</div>
+            <div class="hero-text">Esta vista nueva esta pensada para que cualquier persona entienda rapido el estado de seguridad, los dispositivos activos y lo que conviene hacer ahora mismo.</div>
+            <div class="hero-actions">
+              <button class="hero-btn primary" onclick="toggleSistema()">ðŸ”’ Cambiar protecciÃ³n</button>
+              <button class="hero-btn" onclick="goUserView('sensores')">ðŸ“¡ Ver dispositivos</button>
+              <button class="hero-btn" onclick="goUserView('camara')">ðŸ“· Abrir cÃ¡maras</button>
             </div>
-            <button id="btnSimulador" onclick="toggleSimulador()"
-              style="padding:9px 18px;background:rgba(0,255,136,0.15);color:var(--green);border:1px solid rgba(0,255,136,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;transition:all 0.15s;">
-              ACTIVAR
+          </div>
+          <div class="hero-side">
+            <div class="hero-mini-grid">
+              <div class="hero-mini-card">
+                <div class="hero-mini-label">Alarmas hoy</div>
+                <div class="hero-mini-value" id="statAlarmas" style="color:var(--text)">0</div>
+                <div class="hero-mini-meta">Actividad reciente del hogar</div>
+              </div>
+              <div class="hero-mini-card">
+                <div class="hero-mini-label">Sensores</div>
+                <div class="hero-mini-value" id="statSensores" style="color:var(--green)">0</div>
+                <div class="hero-mini-meta">Hardware visible ahora mismo</div>
+              </div>
+              <div class="hero-mini-card">
+                <div class="hero-mini-label">Miembros</div>
+                <div class="hero-mini-value" id="statMiembros" style="color:var(--yellow)">0</div>
+                <div class="hero-mini-meta">Personas registradas en el hogar</div>
+              </div>
+              <div class="hero-mini-card">
+                <div class="hero-mini-label">Ultimo nivel</div>
+                <div class="hero-mini-value" id="statUltimoNivel" style="color:var(--muted);font-size:18px">--</div>
+                <div class="hero-mini-meta">Severidad mas reciente</div>
+                <div class="accent-line" id="ultimoNivelLine" style="background:var(--muted)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-cluster">
+          <div class="card">
+            <div class="card-title">ðŸ–¥ï¸ Centro de estado</div>
+            <div id="userStatusHub" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;"></div>
+          </div>
+          <div class="card" style="padding:0;overflow:hidden;">
+            <button class="sistema-grande desarmado" id="sistemaGrande" onclick="toggleSistema()">
+              <div style="font-size:52px;margin-bottom:10px" id="sistemaIcono">SAFE</div>
+              <div style="font-size:20px;font-weight:900;letter-spacing:2px;margin-bottom:6px" id="sistemaEstado">SISTEMA DESARMADO</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="sistemaSub">Haz clic para armar tu sistema</div>
             </button>
           </div>
         </div>
-      </div>
-
-      <!-- ï¿½"?ï¿½"? ENVIAR ALARMAS ï¿½"?ï¿½"? -->
-      <div id="viewAlarmas" style="display:none">
-        <div class="card">
-          <div class="card-title">NIVEL DE ALERTA</div>
-          <div class="nivel-grid">
-            <div class="nivel-btn" data-nivel="leve" onclick="setNivel(this)"><span class="nivel-icon">&#128994;</span>LEVE</div>
-            <div class="nivel-btn selected" data-nivel="moderado" onclick="setNivel(this)"><span class="nivel-icon">&#128993;</span>MODERADO</div>
-            <div class="nivel-btn" data-nivel="severo" onclick="setNivel(this)"><span class="nivel-icon">&#128308;</span>SEVERO</div>
+        <div class="panel-cluster">
+          <div class="card">
+            <div class="card-title">âš¡ Acciones rÃ¡pidas</div>
+            <div id="userQuickActions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">âš ï¸ Alertas y recomendaciones</div>
+            <div id="userAttentionList" style="display:grid;gap:10px;"></div>
           </div>
         </div>
-
+        <div class="panel-cluster">
+          <div class="card">
+            <div class="card-title">ðŸ§ª Centro de pruebas guiadas</div>
+            <div id="userTestingHub" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">âœ… Checklist de configuraciÃ³n inicial</div>
+            <div id="userSetupChecklist" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
+          </div>
+        </div>
+        <div class="panel-cluster">
+          <div class="card">
+            <div class="card-title">ðŸ”— Atajos contextuales</div>
+            <div id="userContextActions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">ðŸŽ¯ Prioridades del hogar</div>
+            <div id="userPriorityBoard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
+          </div>
+        </div>
+        <div class="panel-cluster">
+          <div class="card">
+            <div class="card-title">ðŸ“Š Resumen diario del hogar</div>
+            <div id="userDailySummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">ðŸ’¡ Simulador de presencia</div>
+            <div style="display:flex;align-items:center;gap:14px;min-height:170px;">
+              <div style="font-size:38px;">ðŸ </div>
+              <div style="flex:1;">
+                <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;">Luces que simulan vida en casa</div>
+                <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;">Usa tus salidas para encender o apagar luces en horarios inteligentes y hacer que la casa se vea activa.</div>
+              </div>
+              <button id="btnSimulador" onclick="toggleSimulador()" class="hero-btn primary">ACTIVAR</button>
+            </div>
+          </div>
+        </div>
         <div class="card">
-          <div class="card-title">COMPONER MENSAJE</div>
+          <div class="card-title">ðŸ¤– Resumen inteligente</div>
+          <div id="userSmartSummary" style="display:grid;gap:10px;"></div>
+        </div>
+      </div>
+
+      <div id="viewAlarmas" style="display:none">
+        <div class="card">
+          <div class="card-title">ðŸš¨ Nivel de alerta</div>
+          <div class="nivel-grid">
+            <div class="nivel-btn" data-nivel="leve" onclick="setNivel(this)"><span class="nivel-icon">ðŸŸ¢</span>LEVE</div>
+            <div class="nivel-btn selected" data-nivel="moderado" onclick="setNivel(this)"><span class="nivel-icon">ðŸŸ¡</span>MODERADO</div>
+            <div class="nivel-btn" data-nivel="severo" onclick="setNivel(this)"><span class="nivel-icon">ðŸ”´</span>SEVERO</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">âœ‰ï¸ Componer mensaje</div>
           <div class="input-row">
             <div>
               <div class="input-label">TÃTULO</div>
@@ -331,107 +540,93 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
             </div>
             <div>
               <div class="input-label">NIVEL ACTIVO</div>
-              <input type="text" id="nivelDisplay" class="input-field" value="MODERADO" readonly
-                style="color:var(--yellow);cursor:default"/>
+              <input type="text" id="nivelDisplay" class="input-field" value="MODERADO" readonly style="color:var(--yellow);cursor:default"/>
             </div>
           </div>
           <div class="input-label">MENSAJE</div>
-          <textarea id="msgInput" class="input-field" maxlength="200">&#128680; ¡ALERTA DE EMERGENCIA!</textarea>
+          <textarea id="msgInput" class="input-field" maxlength="200">ðŸš¨ Â¡ALERTA DE EMERGENCIA!</textarea>
           <div class="char-count"><span id="charCount">23</span>/200</div>
-
-          <!-- Preview -->
           <div class="preview-wrap">
-            <div class="preview-label">VISTA PREVIA EN DISPOSITIVO</div>
+            <div class="preview-label">Vista previa en dispositivo</div>
             <div class="preview-notif" id="previewNotif">
-              <div class="preview-title" id="previewTitle">&#128993; Alerta Sismica</div>
-              <div class="preview-body"  id="previewMsg">&#128680; ¡ALERTA DE EMERGENCIA!</div>
+              <div class="preview-title" id="previewTitle">ðŸŸ¡ Alerta SÃ­smica</div>
+              <div class="preview-body" id="previewMsg">ðŸš¨ Â¡ALERTA DE EMERGENCIA!</div>
             </div>
           </div>
-
           <div class="btn-row">
-            <button class="btn btn-send" id="btnEnviar" onclick="enviarAlarma()">ï¿½-ï¿½  ACTIVAR MI ALARMA</button>
-            <button class="btn btn-cancel" onclick="cancelarAlarma()">â¹ CANCELAR</button>
-            <button class="btn btn-danger" onclick="enviarAOtros()">ALERTAR A OTROS POR CODIGO</button>
+            <button class="btn btn-send" id="btnEnviar" onclick="enviarAlarma()">ðŸ”” ACTIVAR MI ALARMA</button>
+            <button class="btn btn-cancel" onclick="cancelarAlarma()">âœ• CANCELAR</button>
+            <button class="btn btn-danger" onclick="enviarAOtros()">ðŸ“¤ ALERTAR A OTROS POR CÃ“DIGO</button>
           </div>
         </div>
-
-        <!-- Enviar a otros por cÃ³digo -->
         <div class="card" id="panelOtros" style="display:none">
-          <div class="card-title">ALERTAR POR Cï¿½"DIGO DE USUARIO</div>
-          <div style="display:flex;gap:10px;margin-bottom:12px;">
-            <input type="text" id="codigoInput" class="input-field" placeholder="Ej: 54392-7841-03" style="margin-bottom:0;flex:1;"
-              onkeydown="if(event.key==='Enter')agregarCodigo()"/>
-            <button onclick="agregarCodigo()"
-              style="padding:9px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;">
-              AGREGAR
-            </button>
+          <div class="card-title">Alertar por cÃ³digo de usuario</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="text" id="codigoInput" class="input-field" placeholder="Ej: 54392-7841-03" style="margin-bottom:0;flex:1;" onkeydown="if(event.key==='Enter')agregarCodigo()"/>
+            <button onclick="agregarCodigo()" style="padding:9px 14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;border-radius:6px;white-space:nowrap;">+ AGREGAR</button>
           </div>
-          <div id="codigosChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;min-height:20px;"></div>
+          <div id="codigosChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:20px;"></div>
           <button onclick="enviarACodigos()" id="btnEnviarCodigos"
-            style="width:100%;padding:12px;background:var(--surface2);color:var(--blue);border:1px solid rgba(0,136,255,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;">
-            ï¿½-ï¿½  ENVIAR A USUARIOS SELECCIONADOS
+            style="width:100%;padding:12px;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:1px;border-radius:6px;transition:all 0.18s;">
+            ðŸ“¤ ENVIAR A USUARIOS SELECCIONADOS
           </button>
         </div>
       </div>
 
-      <!-- ï¿½"?ï¿½"? CÃMARA ï¿½"?ï¿½"? -->
+      <!-- CÃMARA -->
       <div id="viewCamara" style="display:none">
-  <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <h3 style="font-size:14px;font-weight:700;color:var(--text-pri)">&#128249; Mis Camaras</h3>
-      <button onclick="mostrarDialogoCamara()" style="padding:7px 14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700">+ AGREGAR</button>
-    </div>
-    <!-- Tabs de cÃ¡maras -->
-    <div id="camarasTabs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px"></div>
-    <!-- Stream -->
-    <div class="camara-wrap" id="camaraContainer" style="min-height:320px;background:#000;position:relative">
-      <div style="display:flex;align-items:center;justify-content:center;height:320px;color:#666;font-size:13px">Sin cÃ¡mara seleccionada</div>
-    </div>
-    <!-- Info cÃ¡mara activa -->
-    <div id="camaraInfo" style="margin-top:8px;display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <span id="camaraActivaNombre" style="font-size:12px;color:var(--text-sec)"></span>
-        <div style="display:flex;gap:8px">
-          <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer;font-size:11px">ï¿½oï¿½ï¸ Editar</button>
-          <button onclick="eliminarCamaraActiva()" style="padding:5px 10px;background:var(--red)22;color:var(--red);border:none;cursor:pointer;font-size:11px">ï¿½Y-'ï¸ Eliminar</button>
-          <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer;font-size:11px">ï¿½Y"" Recargar</button>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <h3 style="font-size:14px;font-weight:700;color:var(--text-pri)">ðŸ“· Mis CÃ¡maras</h3>
+            <button onclick="mostrarDialogoCamara()" style="padding:7px 14px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;border-radius:6px;">+ AGREGAR</button>
+          </div>
+          <div id="camarasTabs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px"></div>
+          <div class="camara-wrap" id="camaraContainer" style="min-height:320px;background:#000;position:relative">
+            <div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--muted);font-size:13px;font-family:var(--mono);">ðŸ“· Sin cÃ¡mara seleccionada</div>
+          </div>
+          <div id="camaraInfo" style="margin-top:8px;display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+              <span id="camaraActivaNombre" style="font-size:12px;color:var(--text-sec);font-family:var(--mono);"></span>
+              <div style="display:flex;gap:6px">
+                <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">âœï¸ Editar</button>
+                <button onclick="eliminarCamaraActiva()" style="padding:5px 10px;background:rgba(232,40,26,0.1);color:var(--red);border:1px solid rgba(232,40,26,0.3);cursor:pointer;font-size:11px;border-radius:4px;">ðŸ—‘ï¸ Eliminar</button>
+                <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">ðŸ”„ Recargar</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<div id="viewSensores" style="display:none">
+      <!-- SENSORES -->
+      <div id="viewSensores" style="display:none">
         <div class="card">
-          <div class="card-title">MIS SENSORES ESP32
-            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">ï¿½Yï¿½</button>
+          <div class="card-title">ðŸ“¡ Mis sensores ESP32
+            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">ðŸ”„</button>
           </div>
           <div id="sensoresLista"><div class="empty-msg">Cargando sensores...</div></div>
         </div>
         <div class="card">
-          <div class="card-title">CONTROL MANUAL DE SALIDAS</div>
+          <div class="card-title">ðŸŽ›ï¸ Control manual de salidas</div>
           <div id="controlesManual"><div class="empty-msg">Sin componentes de salida.</div></div>
         </div>
       </div>
 
-      <!-- ï¿½"?ï¿½"? MIEMBROS ï¿½"?ï¿½"? -->
+      <!-- MIEMBROS -->
       <div id="viewMiembros" style="display:none">
         <div class="card">
-          <div class="card-title">MIEMBROS DEL HOGAR</div>
+          <div class="card-title">ðŸ‘¥ Miembros del hogar</div>
           <div id="miembrosLista"><div class="empty-msg">Cargando miembros...</div></div>
-          <div style="margin-top:12px;padding:10px;background:rgba(0,136,255,0.06);border:1px solid rgba(0,136,255,0.15);font-family:var(--mono);font-size:10px;color:#4488ff;line-height:1.8;">
-            &#128241; Para registrar miembros con reconocimiento facial, usa la app movil HomeAlert > Seguridad > Miembros del Hogar
+          <div class="info-banner-blue" style="margin-top:12px;">
+            ðŸ“± Para registrar miembros con reconocimiento facial, usa la app mÃ³vil HomeAlert â€º Seguridad â€º Miembros del Hogar
           </div>
         </div>
       </div>
 
-      <!-- ï¿½"?ï¿½"? MODO ESCOLTA ï¿½"?ï¿½"? -->
+      <!-- MODO ESCOLTA -->
       <div id="viewEscolta" style="display:none">
         <div class="card" id="escoltaForm">
-          <div class="card-title">ACTIVAR MODO ESCOLTA</div>
-          <div style="background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.2);padding:12px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:#4488ff;line-height:1.8;">
-            &#128737; Define tu destino y tiempo estimado. Si no llegas, tus contactos recibiran una alerta con tu ubicacion.
-          </div>
+          <div class="card-title">ðŸ›¡ï¸ Activar modo escolta</div>
+          <div class="info-banner-blue">ðŸ›¡ï¸ Define tu destino y tiempo estimado. Si no llegas, tus contactos recibirÃ¡n una alerta con tu ubicaciÃ³n.</div>
           <div class="input-row">
             <div>
               <div class="input-label">LATITUD DESTINO</div>
@@ -448,200 +643,139 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
               <input type="number" id="escMinutos" class="input-field" value="30" min="1" max="480"/>
             </div>
             <div>
-              <div class="input-label">PIN DE CANCELACION</div>
+              <div class="input-label">PIN DE CANCELACIÃ“N</div>
               <input type="password" id="escPin" class="input-field" placeholder="MÃ­nimo 4 dÃ­gitos"/>
             </div>
           </div>
-          <div style="margin-bottom:14px;padding:10px;background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.2);font-family:var(--mono);font-size:10px;color:var(--yellow);line-height:1.8;">
-            &#9888; PIN de coaccion = PIN + "0" -> Cancela silenciosamente y envia alerta de robo
-          </div>
+          <div class="info-banner-yellow">âš ï¸ PIN de coacciÃ³n = PIN + "0" â†’ Cancela silenciosamente y envÃ­a alerta de robo</div>
           <button onclick="activarEscolta()"
-            style="width:100%;padding:14px;background:linear-gradient(90deg,#1A3A5C,#2E75B6);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 20px rgba(0,136,255,0.3);">
-            &#128737;  ACTIVAR MODO ESCOLTA
+            style="width:100%;padding:14px;background:linear-gradient(90deg,#1A3A5C,#2563EB);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 20px var(--blue-glow);border-radius:6px;transition:all 0.18s;">
+            ðŸ›¡ï¸ ACTIVAR MODO ESCOLTA
           </button>
         </div>
-
         <div class="card" id="escoltaActiva" style="display:none">
           <div class="escolta-activa">
-            <div style="font-size:52px;margin-bottom:12px;">&#128737;</div>
+            <div style="font-size:52px;margin-bottom:12px;">ðŸ›¡ï¸</div>
             <div style="font-size:20px;font-weight:900;letter-spacing:2px;color:var(--blue);margin-bottom:6px;">ESCOLTA ACTIVA</div>
             <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--text);margin-bottom:16px;" id="escContador">30:00</div>
             <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:20px;">Monitoreo de ruta en tiempo real</div>
-            <div style="display:flex;gap:10px;justify-content:center;">
-              <button onclick="mostrarCancelar()" style="padding:10px 20px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(255,184,0,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;">&#128274; CANCELAR CON PIN</button>
-              <button onclick="activarAntiRobo()" style="padding:10px 20px;background:rgba(255,34,0,0.15);color:var(--red);border:1px solid rgba(255,34,0,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;">&#128680; PANICO</button>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+              <button onclick="mostrarCancelar()" style="padding:10px 20px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(245,166,35,0.3);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;border-radius:6px;">ðŸ”’ CANCELAR CON PIN</button>
+              <button onclick="activarAntiRobo()" style="padding:10px 20px;background:rgba(232,40,26,0.12);color:var(--red);border:1px solid rgba(232,40,26,0.4);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;border-radius:6px;">ðŸš¨ PÃNICO</button>
             </div>
           </div>
         </div>
-
-        <!-- Cancelar con PIN -->
         <div class="card" id="panelCancelar" style="display:none">
-          <div class="card-title">CANCELAR ESCOLTA</div>
+          <div class="card-title">ðŸ”“ Cancelar escolta</div>
           <input type="password" id="pinCancelar" class="input-field" placeholder="Ingresa tu PIN" style="margin-bottom:12px;text-align:center;letter-spacing:4px;font-size:18px;"/>
-          <button onclick="cancelarEscolta()" style="width:100%;padding:12px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(255,184,0,0.3);cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:1px;">CANCELAR MODO ESCOLTA</button>
+          <button onclick="cancelarEscolta()" style="width:100%;padding:12px;background:var(--surface2);color:var(--yellow);border:1px solid rgba(245,166,35,0.3);cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:1px;border-radius:6px;">CANCELAR MODO ESCOLTA</button>
         </div>
       </div>
 
-      <!-- ï¿½"?ï¿½"? HISTORIAL ï¿½"?ï¿½"? -->
+      <!-- MODO NOCHE -->
       <div id="viewNoche" style="display:none">
-  <div class="card">
-    <h3 style="font-size:14px;font-weight:700;color:#6666FF;margin-bottom:12px">&#127769; Modo Noche</h3>
-    <p style="color:var(--text-sec);font-size:12px;margin-bottom:16px">
-      Arma el sistema aunque estÃ©s en casa. Ideal para dormir con seguridad.
-      Solo activa la alarma si detecta personas desconocidas.
-    </p>
-    <!-- Estado Modo Noche -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div>
-        <div style="font-size:14px;color:var(--text-pri);font-weight:700">Estado Modo Noche</div>
-        <div id="nocheEstadoText" style="font-size:12px;color:#6666FF">Cargando...</div>
-      </div>
-      <button id="btnToggleNoche" onclick="toggleModoNoche()"
-        style="padding:10px 20px;background:#6666FF;color:#fff;border:none;cursor:pointer;font-weight:700;font-size:13px">
-        Activar
-      </button>
-    </div>
-    <!-- Horario -->
-    <div style="border:1px solid var(--border);padding:14px;margin-bottom:12px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <span style="font-size:13px;color:var(--text-pri);font-weight:700">â° ActivaciÃ³n automÃ¡tica</span>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" id="nocheHorarioCheck" onchange="guardarConfigNoche()">
-          <span style="font-size:12px;color:var(--text-sec)">Por horario</span>
-        </label>
-      </div>
-      <div style="display:flex;gap:12px">
-        <div style="flex:1">
-          <label style="font-size:11px;color:var(--text-sec)">Inicio</label>
-          <input type="time" id="nocheHoraInicio" value="22:00"
-            onchange="guardarConfigNoche()"
-            style="width:100%;padding:8px;background:var(--bg);border:1px solid #6666FF;color:#6666FF;font-size:16px;font-weight:700">
-        </div>
-        <div style="flex:1">
-          <label style="font-size:11px;color:var(--text-sec)">Fin</label>
-          <input type="time" id="nocheHoraFin" value="06:00"
-            onchange="guardarConfigNoche()"
-            style="width:100%;padding:8px;background:var(--bg);border:1px solid #6666FF;color:#6666FF;font-size:16px;font-weight:700">
+        <div class="card">
+          <h3 style="font-size:14px;font-weight:700;color:#7C6FF7;margin-bottom:12px">ðŸŒ™ Modo Noche</h3>
+          <p style="color:var(--text-sec);font-size:12px;margin-bottom:16px">Arma el sistema aunque estÃ©s en casa. Ideal para dormir con seguridad. Solo activa la alarma si detecta personas desconocidas.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div>
+              <div style="font-size:14px;color:var(--text-pri);font-weight:700">Estado Modo Noche</div>
+              <div id="nocheEstadoText" style="font-size:12px;color:#7C6FF7">Cargando...</div>
+            </div>
+            <button id="btnToggleNoche" onclick="toggleModoNoche()"
+              style="padding:10px 20px;background:#7C6FF7;color:#fff;border:none;cursor:pointer;font-weight:700;font-size:13px;border-radius:6px;transition:all 0.18s;">
+              Activar
+            </button>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <span style="font-size:13px;color:var(--text-pri);font-weight:700">â° ActivaciÃ³n automÃ¡tica</span>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" id="nocheHorarioCheck" onchange="guardarConfigNoche()">
+                <span style="font-size:12px;color:var(--text-sec)">Por horario</span>
+              </label>
+            </div>
+            <div style="display:flex;gap:12px">
+              <div style="flex:1"><label style="font-size:11px;color:var(--text-sec)">Inicio</label>
+                <input type="time" id="nocheHoraInicio" value="22:00" onchange="guardarConfigNoche()" style="width:100%;padding:8px;background:var(--bg);border:1px solid #7C6FF7;color:#7C6FF7;font-size:16px;font-weight:700;border-radius:4px;"></div>
+              <div style="flex:1"><label style="font-size:11px;color:var(--text-sec)">Fin</label>
+                <input type="time" id="nocheHoraFin" value="06:00" onchange="guardarConfigNoche()" style="width:100%;padding:8px;background:var(--bg);border:1px solid #7C6FF7;color:#7C6FF7;font-size:16px;font-weight:700;border-radius:4px;"></div>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:6px;padding:14px">
+            <div style="font-size:13px;color:var(--text-pri);font-weight:700;margin-bottom:10px">ðŸ”” Nivel de alarma</div>
+            <div style="display:flex;gap:8px">
+              <button onclick="setNivelNoche('leve')" id="nocheLeve" class="noche-btn" style="background:rgba(34,197,94,0.12);color:var(--green);border:1px solid var(--green);">ðŸŸ¢ LEVE</button>
+              <button onclick="setNivelNoche('moderado')" id="nocheModera" class="noche-btn" style="background:rgba(245,166,35,0.12);color:var(--yellow);border:1px solid var(--yellow);">ðŸŸ¡ MODERADO</button>
+              <button onclick="setNivelNoche('severo')" id="nocheSevero" class="noche-btn" style="background:rgba(232,40,26,0.12);color:var(--red);border:1px solid var(--red);">ðŸ”´ SEVERO</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- Nivel alarma -->
-    <div style="border:1px solid var(--border);padding:14px">
-      <div style="font-size:13px;color:var(--text-pri);font-weight:700;margin-bottom:10px">&#128276; Nivel de alarma</div>
-      <div style="display:flex;gap:8px">
-        <button onclick="setNivelNoche('leve')" id="nocheLeve"
-          style="flex:1;padding:8px;background:#00FF8822;color:#00FF88;border:1px solid #00FF88;cursor:pointer;font-size:12px;font-weight:700">
-          &#128994; LEVE
-        </button>
-        <button onclick="setNivelNoche('moderado')" id="nocheModera"
-          style="flex:1;padding:8px;background:#FFAA0022;color:#FFAA00;border:1px solid #FFAA00;cursor:pointer;font-size:12px;font-weight:700">
-          &#128993; MODERADO
-        </button>
-        <button onclick="setNivelNoche('severo')" id="nocheSevero"
-          style="flex:1;padding:8px;background:#FF220022;color:#FF2200;border:1px solid #FF2200;cursor:pointer;font-size:12px;font-weight:700">
-          &#128308; SEVERO
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
-
+      <!-- ESP32 -->
       <div id="viewEsp32" style="display:none">
-        <div class="card" style="margin-bottom:16px;">
-          <div class="card-title">GUIA RAPIDA ESP32</div>
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-title">GuÃ­a rÃ¡pida ESP32</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px;">
-            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
-              <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Codigo para vincular</div>
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
+              <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">CÃ³digo para vincular</div>
               <div id="esp32Codigo" style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--blue)">--</div>
             </div>
-            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">OLED I2C</div>
-              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">SDA 21 ? SCL 22 ? 3.3V ? GND</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">SDA 21 Â· SCL 22 Â· 3.3V Â· GND</div>
             </div>
-            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Pines sugeridos</div>
-              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">PIR 14 ? Puerta 27 ? Rele 26 ? Buzzer 25</div>
+              <div style="font-family:var(--mono);font-size:12px;color:var(--text-pri)">PIR 14 Â· Puerta 27 Â· RelÃ© 26 Â· Buzzer 25</div>
             </div>
           </div>
-          <div style="padding:12px;background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.2);font-family:var(--mono);font-size:11px;line-height:1.8;color:#66aaff;">
-            1. Enciende el ESP32 y conectate a su WiFi de configuracion.<br>
-            2. Abre la IP que muestre la pantalla OLED.<br>
-            3. Ingresa tu red WiFi y el codigo de usuario mostrado arriba.<br>
-            4. Guarda y espera a que la OLED muestre la IP final de tu red.<br>
-            5. Regresa a "Mis Sensores" para validar que quedo en linea.
-          </div>
+          <div class="info-banner-blue">1. Enciende el ESP32 y conÃ©ctate a su WiFi de configuraciÃ³n.<br>2. Abre la IP que muestre la pantalla OLED.<br>3. Ingresa tu red WiFi y el cÃ³digo de usuario mostrado arriba.<br>4. Guarda y espera a que la OLED muestre la IP final de tu red.<br>5. Regresa a "Mis Sensores" para validar que quedÃ³ en lÃ­nea.</div>
         </div>
         <div class="card">
-          <div class="card-title">MAPA DE CONEXION RECOMENDADO</div>
+          <div class="card-title">Mapa de conexiÃ³n recomendado</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
-            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Entradas</div>
-              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">PIR: GPIO14<br>Puerta magnetica: GPIO27<br>Humo/Gas digital: GPIO33<br>Sensor analogico: GPIO34</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">PIR: GPIO14<br>Puerta magnÃ©tica: GPIO27<br>Humo/Gas digital: GPIO33<br>Sensor analÃ³gico: GPIO34</div>
             </div>
-            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Salidas</div>
-              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">Rele/Luz: GPIO26<br>Buzzer/Sirena: GPIO25<br>LED extra: GPIO32</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">RelÃ©/Luz: GPIO26<br>Buzzer/Sirena: GPIO25<br>LED extra: GPIO32</div>
             </div>
-            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2)">
+            <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);border-radius:6px">
               <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:8px">Consejos</div>
-              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">Usa fuente estable<br>Comparte GND en todos los modulos<br>No conectes 5V directo a pines de datos</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:1.8;">Usa fuente estable<br>Comparte GND en todos los mÃ³dulos<br>No conectes 5V directo a pines de datos</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div id="viewGooglehome" style="display:none">
-        <div class="card" style="margin-bottom:16px;">
-          <div class="card-title">ENLACES PARA GOOGLE HOME</div>
-          <div style="padding:12px;background:rgba(0,136,255,0.08);border:1px solid rgba(0,136,255,0.2);font-family:var(--mono);font-size:11px;line-height:1.8;color:#66aaff;margin-bottom:12px;">
-            1. Crea una rutina en Google Home.<br>
-            2. En la accion usa abrir pagina web o tu servicio intermedio.<br>
-            3. Copia uno de estos enlaces con tu usuario y pegalo en la rutina.<br>
-            4. Prueba primero con armar y desarmar.
-          </div>
-          <div id="googleHomeLinks"></div>
-        </div>
-      </div>
-
+      <!-- SONIDOS -->
       <div id="viewSonidos" style="display:none">
-        <div class="card" style="margin-bottom:16px;">
-          <div class="card-title">SONIDOS DE ALERTA</div>
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-title">ðŸ”Š Sonidos de alerta</div>
           <div style="display:grid;gap:12px;">
-            <div>
-              <div class="input-label">SONIDO LEVE</div>
-              <input type="text" id="sonidoLeveInput" class="input-field" placeholder="sounds/alarma_leve.wav"/>
-            </div>
-            <div>
-              <div class="input-label">SONIDO MODERADO</div>
-              <input type="text" id="sonidoModeradoInput" class="input-field" placeholder="sounds/alarma_moderada.wav"/>
-            </div>
-            <div>
-              <div class="input-label">SONIDO SEVERO</div>
-              <input type="text" id="sonidoSeveroInput" class="input-field" placeholder="sounds/alarma_severa.wav"/>
-            </div>
-            <button onclick="guardarSonidos()" style="padding:12px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;letter-spacing:1px;">GUARDAR SONIDOS</button>
+            <div><div class="input-label">SONIDO LEVE</div><input type="text" id="sonidoLeveInput" class="input-field" placeholder="sounds/alarma_leve.wav"/></div>
+            <div><div class="input-label">SONIDO MODERADO</div><input type="text" id="sonidoModeradoInput" class="input-field" placeholder="sounds/alarma_moderada.wav"/></div>
+            <div><div class="input-label">SONIDO SEVERO</div><input type="text" id="sonidoSeveroInput" class="input-field" placeholder="sounds/alarma_severa.wav"/></div>
+            <button onclick="guardarSonidos()" style="padding:12px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;letter-spacing:1px;border-radius:6px;transition:all 0.18s;">ðŸ’¾ GUARDAR SONIDOS</button>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">ARCHIVOS DISPONIBLES</div>
+          <div class="card-title">Archivos disponibles</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--text-sec);line-height:2;">
-            sounds/alarma_leve.wav<br>
-            sounds/alarma_moderada.wav<br>
-            sounds/alarma_severa.wav<br>
-            sounds/sonido1.mp3<br>
-            sounds/sonido2.mp3<br>
-            sounds/sonido3.mp3
+            sounds/alarma_leve.wav<br>sounds/alarma_moderada.wav<br>sounds/alarma_severa.wav<br>sounds/sonido1.mp3<br>sounds/sonido2.mp3<br>sounds/sonido3.mp3
           </div>
-          <div style="margin-top:12px;padding:10px;background:rgba(255,184,0,0.08);border:1px solid rgba(255,184,0,0.2);font-family:var(--mono);font-size:10px;color:var(--yellow);line-height:1.8;">
-            Si subes archivos manualmente al proyecto, escribe aqui exactamente el nombre y la ruta para que la app y la web usen el mismo sonido.
-          </div>
+          <div class="info-banner-yellow" style="margin-top:12px;">Si subes archivos manualmente al proyecto, escribe aquÃ­ exactamente el nombre y la ruta para que la app y la web usen el mismo sonido.</div>
         </div>
       </div>
 
-<div id="viewHistorial" style="display:none">
+      <!-- HISTORIAL -->
+      <div id="viewHistorial" style="display:none">
         <div class="card">
-          <div class="card-title">HISTORIAL DE ALARMAS</div>
+          <div class="card-title">Historial de alarmas</div>
           <div id="historialLista"><div class="empty-msg">Sin alarmas registradas.</div></div>
         </div>
       </div>
@@ -651,14 +785,14 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
     <!-- PANEL DERECHO -->
     <div class="right-panel">
       <div class="right-panel-header">
-        <span>ACTIVIDAD RECIENTE</span>
-        <span id="histCount" style="color:var(--text)">0</span>
+        <span>ðŸ“‹ ACTIVIDAD RECIENTE</span>
+        <span id="histCount" style="color:var(--text);font-weight:700">0</span>
       </div>
       <div class="history-list" id="actividadLista">
         <div class="empty-msg">Sin actividad reciente.</div>
       </div>
       <div class="log-panel">
-        <div class="log-header"><div class="dot dot-green"></div>SISTEMA</div>
+        <div class="log-header"><div class="dot dot-green"></div>SISTEMA LOG</div>
         <div class="log-body" id="logBody">
           <div class="log-line"><span class="log-t">--:--:--</span><span class="log-info">Esperando login...</span></div>
         </div>
@@ -668,230 +802,130 @@ textarea.input-field{resize:none;height:75px;line-height:1.6;}
 </div>
 
 <script>
-let sessionUser  = null;
-let sistemaArmado = false;
-let simuladorActivo = false;
-let nivelActual  = 'moderado';
-let codigosSelec = [];
-let escoltaTimer = null;
-let escoltaPin   = '';
-let statsHoy     = { alarmas:0, ok:0, err:0 };
-let latestSensors = [];
+let sessionUser=null, sistemaArmado=false, simuladorActivo=false, nivelActual='moderado';
+let codigosSelec=[], escoltaTimer=null, escoltaPin='';
+let statsHoy={alarmas:0,ok:0,err:0}, latestSensors=[], latestMiembros=[], latestHistorial=[], sistemaData={};
+let camaras=[], camaraActivaIdx=-1, dialogoCamaraEditar=null;
+let modoNocheActivo=false, nivelNocheActual='severo';
 
-function getThemeMode() {
-  return localStorage.getItem('homealert_user_theme') || 'system';
-}
-
-function getResolvedTheme(mode = getThemeMode()) {
-  return mode === 'system'
-    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-    : mode;
-}
-
-function updateThemeLabel(mode, resolved) {
-  const label = document.getElementById('themeModeLabel');
-  if (!label) return;
-  const modeText = mode === 'system'
-    ? `Sistema (${resolved === 'dark' ? 'Oscuro' : 'Claro'})`
-    : (resolved === 'dark' ? 'Oscuro' : 'Claro');
-  label.textContent = `Tema: ${modeText}`;
-}
-
-function applyTheme(mode = getThemeMode()) {
-  const resolved = getResolvedTheme(mode);
-  document.documentElement.setAttribute('data-theme', resolved);
-  document.documentElement.style.colorScheme = resolved;
-  const select = document.getElementById('themeSelect');
-  if (select && select.value !== mode) select.value = mode;
-  updateThemeLabel(mode, resolved);
-}
-
-function changeTheme(mode) {
-  localStorage.setItem('homealert_user_theme', mode);
-  applyTheme(mode);
-}
-
-const userThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
-if (typeof userThemeMedia.addEventListener === 'function') {
-  userThemeMedia.addEventListener('change', () => {
-    if (getThemeMode() === 'system') applyTheme('system');
-  });
-} else if (typeof userThemeMedia.addListener === 'function') {
-  userThemeMedia.addListener(() => {
-    if (getThemeMode() === 'system') applyTheme('system');
-  });
-}
-
+/* THEME */
+function getThemeMode(){return localStorage.getItem('homealert_user_theme')||'system';}
+function getResolvedTheme(mode=getThemeMode()){return mode==='system'?(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):mode;}
+function applyTheme(mode=getThemeMode()){const r=getResolvedTheme(mode);document.documentElement.setAttribute('data-theme',r);document.documentElement.style.colorScheme=r;const s=document.getElementById('themeSelect');if(s&&s.value!==mode)s.value=mode;}
+function changeTheme(mode){localStorage.setItem('homealert_user_theme',mode);applyTheme(mode);}
+const _mq=window.matchMedia('(prefers-color-scheme: dark)');
+(_mq.addEventListener?_mq.addEventListener('change',()=>{if(getThemeMode()==='system')applyTheme();}):_mq.addListener(()=>{if(getThemeMode()==='system')applyTheme();}));
 applyTheme();
 
-// ï¿½"?ï¿½"? Reloj ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-function updateClock() {
-  const t = new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  document.getElementById('clock').textContent = t;
-  document.getElementById('sidebarDate').textContent = new Date().toLocaleDateString('es');
-}
-setInterval(updateClock,1000); updateClock();
+/* RELOJ */
+function updateClock(){const t=new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});document.getElementById('clock').textContent=t;document.getElementById('sidebarDate').textContent=new Date().toLocaleDateString('es');}
+setInterval(updateClock,1000);updateClock();
 
-// ï¿½"?ï¿½"? Log ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* TOAST */
+function showToast(msg){const t=document.getElementById('toastMsg');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+/* LOG */
 function tiempo(){return new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
-function log(txt,tipo='info'){
-  const b=document.getElementById('logBody');
-  const d=document.createElement('div');
-  d.className='log-line';
-  d.innerHTML=`<span class="log-t">${tiempo()}</span><span class="log-${tipo}">${txt}</span>`;
-  b.appendChild(d); b.scrollTop=b.scrollHeight;
-}
+function log(txt,tipo='info'){const b=document.getElementById('logBody');const d=document.createElement('div');d.className='log-line';d.innerHTML=`<span class="log-t">${tiempo()}</span><span class="log-${tipo}">${txt}</span>`;b.appendChild(d);b.scrollTop=b.scrollHeight;}
 
+/* ACTIVIDAD */
 function addActividad(titulo,msg,nivel){
   const list=document.getElementById('actividadLista');
-  const empty=list.querySelector('.empty-msg');
-  if(empty) empty.remove();
+  const empty=list.querySelector('.empty-msg');if(empty)empty.remove();
   const color=nivel==='leve'?'var(--green)':nivel==='severo'?'var(--red)':'var(--yellow)';
-  const emoji=nivel==='leve'?'ï¿½YYï¿½':nivel==='severo'?'ï¿½Y"ï¿½':'ï¿½YYï¿½';
-  const div=document.createElement('div');
-  div.className=`hist-item ${nivel}`;
-  div.innerHTML=`
-    <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
-      <span style="font-family:var(--mono);font-size:9px;font-weight:700;color:${color};">${emoji} ${nivel.toUpperCase()}</span>
-      <span style="font-family:var(--mono);font-size:9px;color:var(--muted);">${tiempo()}</span>
-    </div>
-    <div style="font-size:12px;font-weight:700;color:var(--text);">${titulo}</div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${msg.substring(0,60)}</div>`;
+  const emoji=nivel==='leve'?'ðŸŸ¢':nivel==='severo'?'ðŸ”´':'ðŸŸ¡';
+  const div=document.createElement('div');div.className=`hist-item ${nivel}`;
+  div.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-family:var(--mono);font-size:9px;font-weight:700;color:${color};">${emoji} ${nivel.toUpperCase()}</span><span style="font-family:var(--mono);font-size:9px;color:var(--muted);">${tiempo()}</span></div><div style="font-size:12px;font-weight:700;color:var(--text);">${titulo}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${msg.substring(0,60)}</div>`;
   list.insertBefore(div,list.firstChild);
-  const total=list.querySelectorAll('.hist-item').length;
-  document.getElementById('histCount').textContent=total;
+  document.getElementById('histCount').textContent=list.querySelectorAll('.hist-item').length;
 }
 
-// ï¿½"?ï¿½"? LOGIN ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-async function doLogin() {
+/* LOGIN */
+async function doLogin(){
   const email=document.getElementById('userEmail').value.trim();
   const pass=document.getElementById('userPass').value.trim();
   const btn=document.getElementById('btnLogin');
   if(!email||!pass){showError('Completa todos los campos.');return;}
-  btn.textContent='VERIFICANDO...'; btn.disabled=true;
+  btn.textContent='ðŸ”„ VERIFICANDO...';btn.disabled=true;
   try {
     const res=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
     const data=await res.json();
     if(res.ok&&data.ok){
-      if(data.isAdmin){showError('Este panel es solo para usuarios. Usa el panel de administrador.');return;}
+      if(data.isAdmin){showError('Este panel es solo para usuarios. Usa el panel de administrador.');btn.textContent='ðŸ”‘ ENTRAR A MI PANEL';btn.disabled=false;return;}
       sessionUser=data;
       document.getElementById('loginPage').style.display='none';
       document.getElementById('mainApp').style.display='flex';
       document.getElementById('mainContent').style.display='flex';
       document.getElementById('topCodigo').textContent=data.codigo||'--';
       document.getElementById('sidebarEmail').textContent=email;
-      log(`ï¿½o. Bienvenido ${email}`,'ok');
+      log(`âœ… Bienvenido ${email}`,'ok');
       cargarTodo();
     } else showError(data.error||'Credenciales incorrectas.');
   } catch(e){showError('No se pudo conectar con el servidor.');}
-  btn.textContent='ENTRAR A MI PANEL'; btn.disabled=false;
+  btn.textContent='ðŸ”‘ ENTRAR A MI PANEL';btn.disabled=false;
 }
-function showError(msg){const el=document.getElementById('loginError');el.textContent='Aviso: '+msg;el.style.display='block';}
-function doLogout(){
-  sessionUser=null;
-  document.getElementById('loginPage').style.display='flex';
-  document.getElementById('mainApp').style.display='none';
-  document.getElementById('mainContent').style.display='none';
-}
+function showError(msg){const el=document.getElementById('loginError');el.textContent='âš ï¸ '+msg;el.style.display='block';}
+function doLogout(){sessionUser=null;document.getElementById('loginPage').style.display='flex';document.getElementById('mainApp').style.display='none';document.getElementById('mainContent').style.display='none';}
 document.getElementById('userPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-// ï¿½"?ï¿½"? CARGAR TODO ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-async function cargarTodo() {
-  await cargarSistema();
-  await cargarSensores();
-  await cargarMiembros();
-  await cargarCamara();
-  await cargarModoNoche();
-  await cargarSonidos();
-  renderGoogleHome();
-  renderEsp32Guide();
-}
+/* CARGAR TODO */
+async function cargarTodo(){await cargarSistema();await cargarSensores();await cargarMiembros();await cargarCamara();await cargarModoNoche();await cargarSonidos();renderEsp32Guide();refreshUserDashboard();}
 
-// ï¿½"?ï¿½"? SISTEMA ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-let sistemaData = {};
-
-async function cargarSistema() {
+/* SISTEMA */
+async function cargarSistema(){
   try {
-    const res=await fetch('/get-sistema?uid='+sessionUser.uid);
-    const data=await res.json();
-    sistemaData=data||{};
-    sistemaArmado=data.armado||false;
-    simuladorActivo=data.simuladorPresencia||false;
-    actualizarUISistema();
-    renderGoogleHome();
+    const res=await fetch('/get-sistema?uid='+sessionUser.uid);const data=await res.json();
+    sistemaData=data||{};sistemaArmado=data.armado||false;simuladorActivo=data.simuladorPresencia||false;
+    actualizarUISistema();refreshUserDashboard();
   } catch(e){log('Error cargando sistema','err');}
 }
-
-function actualizarUISistema() {
-  const pill=document.getElementById('sistemaPill');
-  const dot=document.getElementById('sistemaDot');
-  const label=document.getElementById('sistemaLabel');
-  const grande=document.getElementById('sistemaGrande');
-  const icono=document.getElementById('sistemaIcono');
-  const estado=document.getElementById('sistemaEstado');
-  const sub=document.getElementById('sistemaSub');
+function actualizarUISistema(){
+  const pill=document.getElementById('sistemaPill'),dot=document.getElementById('sistemaDot'),label=document.getElementById('sistemaLabel');
+  const grande=document.getElementById('sistemaGrande'),icono=document.getElementById('sistemaIcono'),estado=document.getElementById('sistemaEstado'),sub=document.getElementById('sistemaSub');
   const btnSim=document.getElementById('btnSimulador');
-
   if(sistemaArmado){
-    pill.className='sistema-pill armado'; dot.className='dot dot-red'; label.textContent='ARMADO';
-    grande.className='sistema-grande armado'; icono.textContent='🔴';
-    estado.textContent='SISTEMA ARMADO'; estado.style.color='var(--red)';
-    sub.textContent='Cualquier movimiento activarÃ¡ la alarma ï¿½?" Clic para desarmar';
+    pill.className='sistema-pill armado';dot.className='dot dot-red';label.textContent='ARMADO';
+    grande.className='sistema-grande armado';icono.textContent='ðŸ”´';estado.textContent='SISTEMA ARMADO';estado.style.color='var(--red)';
+    sub.textContent='Cualquier movimiento activarÃ¡ la alarma Â· Clic para desarmar';
   } else {
-    pill.className='sistema-pill desarmado'; dot.className='dot dot-green'; label.textContent='DESARMADO';
-    grande.className='sistema-grande desarmado'; icono.textContent='🛡';
-    estado.textContent='SISTEMA DESARMADO'; estado.style.color='var(--green)';
-    sub.textContent='Tu hogar no estÃ¡ protegido ï¿½?" Clic para armar';
+    pill.className='sistema-pill desarmado';dot.className='dot dot-green';label.textContent='DESARMADO';
+    grande.className='sistema-grande desarmado';icono.textContent='ðŸ›¡ï¸';estado.textContent='SISTEMA DESARMADO';estado.style.color='var(--green)';
+    sub.textContent='Tu hogar no estÃ¡ protegido Â· Clic para armar';
   }
-
-  if(simuladorActivo){
-    btnSim.textContent='DESACTIVAR'; btnSim.style.background='rgba(255,34,0,0.15)';
-    btnSim.style.color='var(--red)'; btnSim.style.borderColor='rgba(255,34,0,0.4)';
-  } else {
-    btnSim.textContent='ACTIVAR'; btnSim.style.background='rgba(0,255,136,0.15)';
-    btnSim.style.color='var(--green)'; btnSim.style.borderColor='rgba(0,255,136,0.4)';
-  }
+  if(simuladorActivo){btnSim.textContent='DESACTIVAR';btnSim.style.background='rgba(232,40,26,0.12)';btnSim.style.color='var(--red)';btnSim.style.borderColor='rgba(232,40,26,0.4)';}
+  else{btnSim.textContent='ACTIVAR';btnSim.style.background='rgba(34,197,94,0.12)';btnSim.style.color='var(--green)';btnSim.style.borderColor='rgba(34,197,94,0.4)';}
+  refreshUserDashboard();
 }
-
-async function toggleSistema() {
-  if(!sessionUser) return;
+async function toggleSistema(){
+  if(!sessionUser)return;
   try {
-    const res=await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:sessionUser.uid,armado:!sistemaArmado})});
-    if(res.ok){sistemaArmado=!sistemaArmado;actualizarUISistema();
-      log(`Sistema ${sistemaArmado?'ARMADO ï¿½Y"ï¿½':'DESARMADO ï¿½YYï¿½'}`,sistemaArmado?'warn':'ok');}
+    const res=await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,armado:!sistemaArmado})});
+    if(res.ok){sistemaArmado=!sistemaArmado;actualizarUISistema();log(`Sistema ${sistemaArmado?'ARMADO ðŸ”´':'DESARMADO ðŸŸ¢'}`,sistemaArmado?'warn':'ok');}
   } catch(e){log('Error: '+e.message,'err');}
 }
-
-async function toggleSimulador() {
-  if(!sessionUser) return;
-  simuladorActivo=!simuladorActivo;
+async function toggleSimulador(){
+  if(!sessionUser)return;simuladorActivo=!simuladorActivo;
   try {
-    await fetch('/toggle-simulador',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:sessionUser.uid,activo:simuladorActivo})});
-    actualizarUISistema();
-    log(`Simulador de presencia ${simuladorActivo?'activado':'desactivado'}`,simuladorActivo?'ok':'info');
+    await fetch('/toggle-simulador',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,activo:simuladorActivo})});
+    actualizarUISistema();log(`Simulador de presencia ${simuladorActivo?'activado':'desactivado'}`,simuladorActivo?'ok':'info');
   } catch(e){simuladorActivo=!simuladorActivo;log('Error: '+e.message,'err');}
 }
 
-// ï¿½"?ï¿½"? NIVEL Y PREVIEW ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-function setNivel(el) {
+/* NIVEL & PREVIEW */
+function setNivel(el){
   document.querySelectorAll('.nivel-btn').forEach(b=>b.classList.remove('selected'));
-  el.classList.add('selected'); nivelActual=el.dataset.nivel;
+  el.classList.add('selected');nivelActual=el.dataset.nivel;
   const color=nivelActual==='leve'?'var(--green)':nivelActual==='severo'?'var(--red)':'var(--yellow)';
-  const emoji=nivelActual==='leve'?'ï¿½YYï¿½':nivelActual==='severo'?'ï¿½Y"ï¿½':'ï¿½YYï¿½';
   document.getElementById('nivelDisplay').value=nivelActual.toUpperCase();
   document.getElementById('nivelDisplay').style.color=color;
   updatePreview();
 }
-
 const msgInput=document.getElementById('msgInput');
 const tituloInput=document.getElementById('tituloInput');
 msgInput.addEventListener('input',()=>{document.getElementById('charCount').textContent=msgInput.value.length;updatePreview();});
 tituloInput.addEventListener('input',updatePreview);
-
 function updatePreview(){
-  const emoji=nivelActual==='leve'?'ï¿½YYï¿½':nivelActual==='severo'?'ï¿½Y"ï¿½':'ï¿½YYï¿½';
+  const emoji=nivelActual==='leve'?'ðŸŸ¢':nivelActual==='severo'?'ðŸ”´':'ðŸŸ¡';
   const color=nivelActual==='leve'?'var(--green)':nivelActual==='severo'?'var(--red)':'var(--yellow)';
   document.getElementById('previewTitle').textContent=`${emoji} ${tituloInput.value||'Sin tÃ­tulo'}`;
   document.getElementById('previewTitle').style.color=color;
@@ -899,706 +933,404 @@ function updatePreview(){
   document.getElementById('previewNotif').style.borderLeftColor=color;
 }
 
-// ï¿½"?ï¿½"? ENVIAR ALARMA ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-async function enviarAlarma() {
-  const mensaje=msgInput.value.trim();
-  const titulo=tituloInput.value.trim()||'Alerta';
-  if(!mensaje){log('Escribe un mensaje.','warn');return;}
+/* ENVIAR ALARMA */
+async function enviarAlarma(){
+  const mensaje=msgInput.value.trim();const titulo=tituloInput.value.trim()||'Alerta';
+  if(!mensaje){log('âš ï¸ Escribe un mensaje.','warn');return;}
   const btn=document.getElementById('btnEnviar');
-  btn.classList.add('loading'); btn.textContent='ï¿½Yï¿½ ENVIANDO...';
-  statsHoy.alarmas++;
+  btn.classList.add('loading');btn.textContent='ðŸ”„ ENVIANDO...';statsHoy.alarmas++;
   try {
-    const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uid:sessionUser.uid})});
-    if(res.ok){
-      log(`ï¿½o. Alarma [${nivelActual.toUpperCase()}] activada en tu dispositivo.`,'ok');
-      statsHoy.ok++;
-      addActividad(titulo,mensaje,nivelActual);
-      actualizarStats();
-    } else {const e=await res.text();log(`ï¿½O Error: ${e}`,'err');statsHoy.err++;}
-  } catch(e){log(`ï¿½O ${e.message}`,'err');statsHoy.err++;}
-  btn.classList.remove('loading'); btn.textContent='ï¿½-ï¿½  ACTIVAR MI ALARMA';
+    const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uid:sessionUser.uid})});
+    if(res.ok){log(`âœ… Alarma [${nivelActual.toUpperCase()}] activada en tu dispositivo.`,'ok');statsHoy.ok++;addActividad(titulo,mensaje,nivelActual);actualizarStats();}
+    else{const e=await res.text();log(`âŒ Error: ${e}`,'err');statsHoy.err++;}
+  } catch(e){log(`âŒ ${e.message}`,'err');statsHoy.err++;}
+  btn.classList.remove('loading');btn.textContent='ðŸ”” ACTIVAR MI ALARMA';
 }
-
 async function cancelarAlarma(){
-  try {
-    await fetch('/cancel-alarm',{method:'POST'});
-    log('â¹ Alarma cancelada.','ok');
-  } catch(e){log('Error: '+e.message,'err');}
+  try{await fetch('/cancel-alarm',{method:'POST'});log('âœ• Alarma cancelada.','ok');}
+  catch(e){log('Error: '+e.message,'err');}
+}
+function enviarAOtros(){const p=document.getElementById('panelOtros');p.style.display=p.style.display==='none'?'block':'none';}
+function actualizarStats(){document.getElementById('statAlarmas').textContent=statsHoy.alarmas;refreshUserDashboard();}
+function goUserView(view){
+  const nav=document.querySelector(`.nav-item[onclick*="'${view}'"]`);
+  if(nav)setView(view,nav);
+}
+function ejecutarPruebaGuiada(tipo){
+  const acciones={
+    led:()=>{goUserView('sensores');showToast('Abri sensores para probar salidas y LED.');},
+    sensor:()=>{goUserView('sensores');showToast('Revisa el estado en tiempo real de tus sensores ESP32.');},
+    notificacion:()=>{goUserView('alarmas');showToast('Usa Enviar alarma para validar notificaciones.');},
+    camara:()=>{goUserView('camara');showToast('Abri camaras para validar video y URL.');},
+  };
+  if(acciones[tipo])acciones[tipo]();
+}
+function ejecutarChecklist(action){
+  const pasos={
+    cuenta:()=>{goUserView('perfil');showToast('Abri tu perfil para revisar datos de la cuenta.');},
+    codigo:()=>{goUserView('esp32');showToast('Abri la guia ESP32 para ver tu codigo y los datos tecnicos.');},
+    esp32:()=>{goUserView('esp32');showToast('Abri la guia del ESP32 para vinculacion y diagnostico.');},
+    sensores:()=>{goUserView('sensores');showToast('Abri sensores para agregar o revisar hardware.');},
+    camara:()=>{goUserView('camara');showToast('Abri camaras para agregar o probar tu stream.');},
+  };
+  if(pasos[action])pasos[action]();
 }
 
-function enviarAOtros(){
-  const panel=document.getElementById('panelOtros');
-  panel.style.display=panel.style.display==='none'?'block':'none';
+function refreshUserDashboard(){
+  const status=document.getElementById('userStatusHub');
+  const actions=document.getElementById('userQuickActions');
+  const summary=document.getElementById('userSmartSummary');
+  const attention=document.getElementById('userAttentionList');
+  const testing=document.getElementById('userTestingHub');
+  const checklist=document.getElementById('userSetupChecklist');
+  const context=document.getElementById('userContextActions');
+  const priority=document.getElementById('userPriorityBoard');
+  const daily=document.getElementById('userDailySummary');
+  if(!status||!actions||!summary||!attention||!testing||!checklist||!context||!priority||!daily)return;
+  const sensoresOnline=latestSensors.filter(s=>{
+    const hb=Number(s.ultimoHeartbeat||0);
+    if(!hb)return !!s.online;
+    return Math.floor(Date.now()/1000)-hb<15;
+  }).length;
+  const componentes=latestSensors.flatMap(s=>s.componentes?Object.values(s.componentes):[]);
+  const salidasActivas=componentes.filter(c=>!c.esEntrada&&c.activo).length;
+  const salidasDisponibles=componentes.filter(c=>!c.esEntrada).length;
+  const entradasDisponibles=componentes.filter(c=>c.esEntrada).length;
+  const miembrosCasa=latestMiembros.filter(m=>m.enCasa).length;
+  const ultimo=latestHistorial[0]||null;
+  const cards=[
+    {label:'Proteccion',value:sistemaArmado?'ARMADO':'DESARMADO',tone:sistemaArmado?'var(--red)':'var(--green)',meta:sistemaData.modoOperacion||'modo actual'},
+    {label:'ESP32',value:`${sensoresOnline}/${latestSensors.length}`,tone:latestSensors.length?'var(--blue)':'var(--muted)',meta:'sensores online'},
+    {label:'Camaras',value:String(camaras.length),tone:camaras.length?'var(--yellow)':'var(--muted)',meta:'configuradas'},
+    {label:'Salidas',value:String(salidasActivas),tone:salidasActivas?'var(--green)':'var(--muted)',meta:'activas ahora'},
+    {label:'Miembros',value:`${miembrosCasa}/${latestMiembros.length}`,tone:miembrosCasa?'var(--blue)':'var(--muted)',meta:'en casa'},
+    {label:'Modo noche',value:modoNocheActivo?'ACTIVO':'INACTIVO',tone:modoNocheActivo?'var(--yellow)':'var(--muted)',meta:nivelNocheActual||'severo'}
+  ];
+  status.innerHTML=cards.map(card=>`<div style="border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--surface);min-height:92px;display:flex;flex-direction:column;justify-content:space-between;"><div style="font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;">${card.label}</div><div style="font-size:20px;font-weight:800;color:${card.tone};margin:6px 0;">${card.value}</div><div style="font-size:11px;color:var(--text-sec);font-family:var(--mono);">${card.meta}</div></div>`).join('');
+  const actionButtons=[
+    {label:'Ver sensores',meta:'ESP32 y salidas',action:"goUserView('sensores')"},
+    {label:'Ver camaras',meta:'stream y URLs',action:"goUserView('camara')"},
+    {label:'Sonidos',meta:'niveles y tonos',action:"goUserView('sonidos')"},
+    {label:'Historial',meta:'eventos recientes',action:"goUserView('historial')"}
+  ];
+  actions.innerHTML=actionButtons.map(btn=>`<button onclick="${btn.action}" style="text-align:left;padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .18s;"><div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px;">${btn.label}</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono);">${btn.meta}</div></button>`).join('');
+  const pruebas=[
+    {title:'Probar LED o rele',state:salidasDisponibles?`${salidasDisponibles} salida(s) lista(s)`:'Sin salidas configuradas',tone:salidasDisponibles?'var(--green)':'var(--muted)',detail:salidasDisponibles?'Abre sensores para encender o apagar una salida manualmente.':'Primero agrega un LED, rele o salida IoT desde la app.',action:'led',label:salidasDisponibles?'Abrir control':'Como configurarlo'},
+    {title:'Probar sensor',state:entradasDisponibles?`${entradasDisponibles} entrada(s) detectada(s)`:'Sin sensores de entrada',tone:entradasDisponibles?'var(--blue)':'var(--muted)',detail:entradasDisponibles?'Revisa cambios en tiempo real desde la vista de sensores ESP32.':'Agrega sensores PIR, reed o similares para validar eventos.',action:'sensor',label:entradasDisponibles?'Ver sensores':'Guia de sensor'},
+    {title:'Probar notificacion',state:sessionUser?.codigo?'Cuenta lista para prueba':'Falta codigo visible',tone:sessionUser?.codigo?'var(--yellow)':'var(--muted)',detail:'Abre la vista de alarmas para enviarte una alerta y validar sonido, push y nivel.',action:'notificacion',label:'Abrir alarmas'},
+    {title:'Probar camara',state:camaras.length?`${camaras.length} camara(s) disponible(s)`:'Sin camaras',tone:camaras.length?'var(--yellow)':'var(--muted)',detail:camaras.length?'Verifica imagen, URL y recarga del stream desde la vista de camaras.':'Agrega una camara IP para habilitar monitoreo visual.',action:'camara',label:camaras.length?'Abrir camara':'Configurar camara'}
+  ];
+  testing.innerHTML=pruebas.map(item=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);display:flex;flex-direction:column;gap:10px;min-height:176px;"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;"><div style="font-size:12px;font-weight:800;color:var(--text);">${item.title}</div><div style="font-size:11px;font-family:var(--mono);color:${item.tone};">${item.state}</div></div><div style="font-size:12px;color:var(--text-sec);line-height:1.45;">${item.detail}</div><button onclick="ejecutarPruebaGuiada('${item.action}')" style="margin-top:auto;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--text);cursor:pointer;font-size:12px;font-weight:700;">${item.label}</button></div>`).join('');
+  const pasos=[
+    {title:'Cuenta creada',ok:!!sessionUser?.email,detail:sessionUser?.email||'Inicia sesion correctamente',action:'cuenta',label:'Ver perfil'},
+    {title:'Codigo visible',ok:!!sessionUser?.codigo,detail:sessionUser?.codigo||'Aun no aparece tu codigo',action:'codigo',label:'Ver integracion'},
+    {title:'ESP32 vinculado',ok:latestSensors.length>0,detail:latestSensors.length?`${latestSensors.length} sensor(es) detectado(s)`:'No hay ESP32 o sensores vinculados',action:'esp32',label:'Abrir guia ESP32'},
+    {title:'Sensores configurados',ok:entradasDisponibles>0||salidasDisponibles>0,detail:(entradasDisponibles||salidasDisponibles)?`${entradasDisponibles} entrada(s) y ${salidasDisponibles} salida(s)`:'Todavia no hay componentes IoT listos',action:'sensores',label:'Abrir sensores'},
+    {title:'Camara configurada',ok:camaras.length>0,detail:camaras.length?`${camaras.length} camara(s) activa(s)`:'Falta configurar monitoreo visual',action:'camara',label:'Abrir camara'},
+    {title:'Sonidos listos',ok:!!(sistemaData.sonidoLeve&&sistemaData.sonidoModerado&&sistemaData.sonidoSevero),detail:!!(sistemaData.sonidoLeve&&sistemaData.sonidoModerado&&sistemaData.sonidoSevero)?'Tus perfiles de audio ya estan configurados':'Revisa y ajusta los sonidos de alerta',action:'sonidos',label:'Abrir sonidos'}
+  ];
+  checklist.innerHTML=pasos.map(item=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);display:flex;flex-direction:column;gap:10px;min-height:168px;"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;"><div style="font-size:12px;font-weight:800;color:var(--text);">${item.title}</div><div style="padding:4px 8px;border-radius:999px;border:1px solid ${item.ok?'rgba(34,197,94,0.35)':'rgba(245,158,11,0.35)'};color:${item.ok?'var(--green)':'var(--yellow)'};font-size:10px;font-family:var(--mono);">${item.ok?'LISTO':'PENDIENTE'}</div></div><div style="font-size:12px;color:var(--text-sec);line-height:1.45;">${item.detail}</div><button onclick="ejecutarChecklist('${item.action}')" style="margin-top:auto;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--text);cursor:pointer;font-size:12px;font-weight:700;">${item.label}</button></div>`).join('');
+  const contextItems=[];
+  if(!sistemaArmado && salidasDisponibles>0)contextItems.push({title:'Armar y vigilar',detail:'Tu sistema esta desarmado y ya tienes salidas o hardware para monitorear.',action:"toggleSistema()",label:'Armar sistema',tone:'var(--yellow)'});
+  if(latestSensors.length && sensoresOnline===0)contextItems.push({title:'Revisar conectividad',detail:'Tus sensores existen pero no reportan conexion reciente.',action:"goUserView('sensores')",label:'Ver sensores',tone:'var(--red)'});
+  if(!camaras.length)contextItems.push({title:'Completar monitoreo visual',detail:'Agregar una camara mejora las pruebas y la cobertura del hogar.',action:"goUserView('camara')",label:'Agregar camara',tone:'var(--yellow)'});
+  if((salidasDisponibles>0||entradasDisponibles>0) && !simuladorActivo)contextItems.push({title:'Activar simulacion',detail:'Ya tienes componentes suficientes para empezar a simular presencia.',action:"toggleSimulador()",label:'Activar simulador',tone:'var(--green)'});
+  if(!contextItems.length)contextItems.push({title:'Panel en buen estado',detail:'No hay acciones prioritarias ahora mismo. Puedes revisar historial o sonidos.',action:"goUserView('historial')",label:'Ver historial',tone:'var(--blue)'});
+  context.innerHTML=contextItems.slice(0,4).map(item=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);display:flex;flex-direction:column;gap:10px;min-height:168px;"><div style="font-size:12px;font-weight:800;color:var(--text);">${item.title}</div><div style="font-size:12px;color:var(--text-sec);line-height:1.45;">${item.detail}</div><button onclick="${item.action}" style="margin-top:auto;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:${item.tone};cursor:pointer;font-size:12px;font-weight:700;">${item.label}</button></div>`).join('');
+  const prioridades=[];
+  if(!sistemaArmado)prioridades.push({title:'Armar sistema',value:'Importante',detail:'Tu hogar esta desarmado en este momento.',tone:'var(--yellow)'});
+  if(latestSensors.length && sensoresOnline===0)prioridades.push({title:'Recuperar sensores',value:'Urgente',detail:'No hay heartbeat reciente desde los sensores vinculados.',tone:'var(--red)'});
+  if(!camaras.length)prioridades.push({title:'Agregar camara',value:'Media',detail:'Falta monitoreo visual para completar la cobertura.',tone:'var(--yellow)'});
+  if(!latestMiembros.length)prioridades.push({title:'Registrar miembros',value:'Media',detail:'Esto mejora geofence y presencia en casa.',tone:'var(--blue)'});
+  if((salidasDisponibles>0||entradasDisponibles>0) && !simuladorActivo)prioridades.push({title:'Activar simulacion',value:'Oportunidad',detail:'Ya puedes usar simulador de presencia con tu hardware.',tone:'var(--green)'});
+  if(!prioridades.length)prioridades.push({title:'Hogar estable',value:'OK',detail:'No hay prioridades fuertes en este momento.',tone:'var(--green)'});
+  priority.innerHTML=prioridades.slice(0,4).map(item=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);min-height:158px;display:flex;flex-direction:column;gap:10px;"><div style="font-size:12px;font-weight:800;color:var(--text);">${item.title}</div><div style="font-size:24px;font-weight:900;color:${item.tone};line-height:1.1;">${item.value}</div><div style="font-size:12px;color:var(--text-sec);line-height:1.45;">${item.detail}</div></div>`).join('');
+  const dailyCards=[
+    {title:'Estado general',value:sistemaArmado?'Protegido':'Pendiente',detail:sistemaArmado?'El sistema esta armado ahora mismo.':'Conviene armarlo si saldras de casa.',tone:sistemaArmado?'var(--green)':'var(--yellow)'},
+    {title:'Actividad de hardware',value:latestSensors.length?`${sensoresOnline}/${latestSensors.length}`:'--',detail:latestSensors.length?'Sensores con conexion reciente frente al total visible.':'Aun no hay sensores vinculados.',tone:latestSensors.length?(sensoresOnline===latestSensors.length?'var(--green)':'var(--yellow)'):'var(--muted)'},
+    {title:'Cobertura del hogar',value:`${camaras.length} cam / ${latestMiembros.length} miembros`,detail:'Resumen rapido de vigilancia visual y presencia registrada.',tone:(camaras.length||latestMiembros.length)?'var(--blue)':'var(--muted)'},
+    {title:'Ultimo movimiento',value:ultimo?.titulo||'Sin eventos',detail:ultimo?`${ultimo.hora||'Reciente'} Â· ${ultimo.detalle||ultimo.nivel||'Evento detectado'}`:'Todavia no hay eventos recientes en historial.',tone:ultimo?'var(--yellow)':'var(--muted)'}
+  ];
+  daily.innerHTML=dailyCards.map(item=>`<div style="border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);min-height:158px;display:flex;flex-direction:column;gap:10px;"><div style="font-size:12px;font-weight:800;color:var(--text);">${item.title}</div><div style="font-size:24px;font-weight:900;color:${item.tone};line-height:1.1;">${item.value}</div><div style="font-size:12px;color:var(--text-sec);line-height:1.45;">${item.detail}</div></div>`).join('');
+  const resumen=[
+    `Sistema ${sistemaArmado?'armado':'desarmado'} con ${latestSensors.length} sensor(es) registrado(s).`,
+    `Hay ${salidasActivas} salida(s) activa(s) y ${camaras.length} camara(s) configurada(s).`,
+    `Miembros en casa: ${miembrosCasa} de ${latestMiembros.length}. Simulador ${simuladorActivo?'activo':'inactivo'}.`,
+    ultimo?`Ultimo evento: ${ultimo.titulo||'Alerta'} ${ultimo.hora?'- '+ultimo.hora:''}.`:'Todavia no hay eventos recientes en historial.'
+  ];
+  summary.innerHTML=resumen.map(item=>`<div style="padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:12px;color:var(--text);">${item}</div>`).join('');
+  const avisos=[];
+  if(!latestSensors.length)avisos.push({tone:'var(--red)',title:'Sin ESP32 vinculado',text:'Todavia no hay sensores cargados en este panel. Revisa la vinculacion del ESP32.'});
+  if(latestSensors.length && sensoresOnline===0)avisos.push({tone:'var(--yellow)',title:'Sensores sin conexion',text:'Tus sensores estan registrados pero ahora mismo no reportan heartbeat reciente.'});
+  if(!camaras.length)avisos.push({tone:'var(--yellow)',title:'Sin camaras configuradas',text:'Agrega una camara para tener monitoreo visual desde el panel.'});
+  if(!latestMiembros.length)avisos.push({tone:'var(--blue)',title:'Sin miembros registrados',text:'Registrar miembros mejora geofence y reconocimiento facial.'});
+  if(!simuladorActivo && salidasActivas===0)avisos.push({tone:'var(--muted)',title:'Automatizacion lista para usar',text:'Puedes activar el simulador o controlar salidas manuales desde sensores.'});
+  if(!avisos.length)avisos.push({tone:'var(--green)',title:'Todo en buen estado',text:'No se detectaron alertas importantes en este momento.'});
+  attention.innerHTML=avisos.map(item=>`<div style="padding:12px 14px;border:1px solid ${item.tone};border-radius:10px;background:var(--surface);"><div style="font-size:12px;font-weight:800;color:${item.tone};margin-bottom:4px;">${item.title}</div><div style="font-size:12px;color:var(--text);">${item.text}</div></div>`).join('');
 }
 
-function actualizarStats(){
-  document.getElementById('statAlarmas').textContent=statsHoy.alarmas;
-}
-
-// ï¿½"?ï¿½"? ENVIAR POR Cï¿½"DIGO ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* CÃ“DIGOS */
 function agregarCodigo(){
-  const input=document.getElementById('codigoInput');
-  const codigo=input.value.trim();
-  if(!codigo) return;
-  if(codigo===sessionUser?.codigo){log('ï¿½sï¿½ No puedes enviarte a ti mismo.','warn');return;}
-  if(codigosSelec.includes(codigo)){log('ï¿½sï¿½ CÃ³digo ya agregado.','warn');return;}
-  codigosSelec.push(codigo);
-  input.value='';
-  renderChips();
+  const input=document.getElementById('codigoInput');const codigo=input.value.trim();
+  if(!codigo)return;
+  if(codigo===sessionUser?.codigo){log('âš ï¸ No puedes enviarte a ti mismo.','warn');return;}
+  if(codigosSelec.includes(codigo)){log('âš ï¸ CÃ³digo ya agregado.','warn');return;}
+  codigosSelec.push(codigo);input.value='';renderChips();
 }
-
 function renderChips(){
   const cont=document.getElementById('codigosChips');
-  cont.innerHTML=codigosSelec.map(c=>`
-    <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(0,136,255,0.12);border:1px solid rgba(0,136,255,0.4);">
-      <span style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:700;">${c}</span>
-      <span style="cursor:pointer;color:var(--blue);" onclick="quitarCodigo('${c}')">ï¿½o.</span>
-    </div>`).join('');
+  cont.innerHTML=codigosSelec.map(c=>`<div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--blue-dim);border:1px solid rgba(59,130,246,0.4);border-radius:4px;"><span style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:700;">${c}</span><span style="cursor:pointer;color:var(--blue);font-size:14px;" onclick="quitarCodigo('${c}')">Ã—</span></div>`).join('');
 }
 function quitarCodigo(c){codigosSelec=codigosSelec.filter(x=>x!==c);renderChips();}
-
 async function enviarACodigos(){
-  if(!codigosSelec.length){log('Agrega al menos un codigo.','warn');return;}
-  const mensaje=msgInput.value.trim()||'ï¿½Ysï¿½ Â¡ALERTA!';
-  const titulo=tituloInput.value.trim()||'Alerta';
-  log(`Buscando ${codigosSelec.length} usuario(s)...`,'info');
-  const uids=[];
+  if(!codigosSelec.length){log('âš ï¸ Agrega al menos un cÃ³digo.','warn');return;}
+  const mensaje=msgInput.value.trim()||'ðŸš¨ Â¡ALERTA!';const titulo=tituloInput.value.trim()||'Alerta';
+  log(`Buscando ${codigosSelec.length} usuario(s)...`,'info');const uids=[];
   for(const codigo of codigosSelec){
-    try {
-      const res=await fetch('/find-by-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo})});
-      const data=await res.json();
-      if(data.found) uids.push(data.uid);
-      else log(`ï¿½sï¿½ CÃ³digo no encontrado: ${codigo}`,'warn');
-    } catch(e){}
+    try{const res=await fetch('/find-by-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo})});const data=await res.json();if(data.found)uids.push(data.uid);else log(`âš ï¸ CÃ³digo no encontrado: ${codigo}`,'warn');}catch(e){}
   }
-  if(!uids.length){log('ï¿½O NingÃºn cÃ³digo fue encontrado.','err');return;}
-  try {
-    const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uids})});
-    if(res.ok){log(`ï¿½o. Alarma enviada a ${uids.length} usuario(s).`,'ok');codigosSelec=[];renderChips();}
-    else log('ï¿½O Error enviando alarmas.','err');
-  } catch(e){log('ï¿½O Error: '+e.message,'err');}
+  if(!uids.length){log('âŒ NingÃºn cÃ³digo fue encontrado.','err');return;}
+  try{
+    const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uids})});
+    if(res.ok){log(`âœ… Alarma enviada a ${uids.length} usuario(s).`,'ok');codigosSelec=[];renderChips();}
+    else log('âŒ Error enviando alarmas.','err');
+  }catch(e){log('âŒ Error: '+e.message,'err');}
 }
 
-// ï¿½"?ï¿½"? CÃMARA ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-// ï¿½"?ï¿½"? MODO NOCHE ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-let modoNocheActivo = false;
-let nivelNocheActual = 'severo';
-
+/* MODO NOCHE */
 async function cargarModoNoche(){
-  if(!sessionUser?.uid) return;
-  try {
-    const res = await fetch('/get-sistema?uid='+sessionUser.uid);
-    const data = await res.json();
-    modoNocheActivo = data.modoNoche || false;
-    nivelNocheActual = data.modoNocheNivel || 'severo';
-    
-    const check = document.getElementById('nocheHorarioCheck');
-    const inicio = document.getElementById('nocheHoraInicio');
-    const fin    = document.getElementById('nocheHoraFin');
-    
-    if(check) check.checked = data.modoNocheHorario || false;
-    if(inicio && data.modoNocheInicio) inicio.value = data.modoNocheInicio;
-    if(fin && data.modoNocheFin) fin.value = data.modoNocheFin;
-    
-    actualizarUINocha();
-    setNivelNoche(nivelNocheActual);
-  } catch(e) { console.error('Error cargando modo noche:', e); }
+  if(!sessionUser?.uid)return;
+  try{
+    const res=await fetch('/get-sistema?uid='+sessionUser.uid);const data=await res.json();
+    modoNocheActivo=data.modoNoche||false;nivelNocheActual=data.modoNocheNivel||'severo';
+    const check=document.getElementById('nocheHorarioCheck'),inicio=document.getElementById('nocheHoraInicio'),fin=document.getElementById('nocheHoraFin');
+    if(check)check.checked=data.modoNocheHorario||false;
+    if(inicio&&data.modoNocheInicio)inicio.value=data.modoNocheInicio;
+    if(fin&&data.modoNocheFin)fin.value=data.modoNocheFin;
+    actualizarUINocha();setNivelNoche(nivelNocheActual);
+  }catch(e){}
 }
-
 function actualizarUINocha(){
-  const txt = document.getElementById('nocheEstadoText');
-  const btn = document.getElementById('btnToggleNoche');
-  if(txt) txt.textContent = modoNocheActivo ? 'Modo Noche activo - Sistema armado' : 'Inactivo';
-  if(btn) {
-    btn.textContent = modoNocheActivo ? 'Desactivar' : 'Activar';
-    btn.style.background = modoNocheActivo ? '#555577' : '#6666FF';
-  }
+  const txt=document.getElementById('nocheEstadoText'),btn=document.getElementById('btnToggleNoche');
+  if(txt)txt.textContent=modoNocheActivo?'Modo Noche activo - Sistema armado':'Inactivo';
+  if(btn){btn.textContent=modoNocheActivo?'Desactivar':'Activar';btn.style.background=modoNocheActivo?'#555577':'#7C6FF7';}
 }
-
 async function toggleModoNoche(){
-  if(!sessionUser?.uid) return;
-  modoNocheActivo = !modoNocheActivo;
-  await fetch('/toggle-sistema', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      uid: sessionUser.uid,
-      armado: modoNocheActivo,
-      modoNoche: modoNocheActivo,
-      ignorarGPS: modoNocheActivo
-    })
-  });
-  actualizarUINocha();
-  showToast(modoNocheActivo ? 'Modo Noche activado' : 'Modo Noche desactivado');
+  if(!sessionUser?.uid)return;modoNocheActivo=!modoNocheActivo;
+  await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,armado:modoNocheActivo,modoNoche:modoNocheActivo,ignorarGPS:modoNocheActivo})});
+  actualizarUINocha();showToast(modoNocheActivo?'ðŸŒ™ Modo Noche activado':'Modo Noche desactivado');
 }
-
 async function guardarConfigNoche(){
-  if(!sessionUser?.uid) return;
-  const horario = document.getElementById('nocheHorarioCheck')?.checked || false;
-  const inicio  = document.getElementById('nocheHoraInicio')?.value || '22:00';
-  const fin     = document.getElementById('nocheHoraFin')?.value || '06:00';
-  await fetch('/toggle-sistema', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      uid: sessionUser.uid,
-      modoNocheHorario: horario,
-      modoNocheInicio: inicio,
-      modoNocheFin: fin
-    })
-  });
-  showToast('ï¿½o. ConfiguraciÃ³n guardada');
+  if(!sessionUser?.uid)return;
+  const horario=document.getElementById('nocheHorarioCheck')?.checked||false;
+  const inicio=document.getElementById('nocheHoraInicio')?.value||'22:00';
+  const fin=document.getElementById('nocheHoraFin')?.value||'06:00';
+  await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,modoNocheHorario:horario,modoNocheInicio:inicio,modoNocheFin:fin})});
+  showToast('âœ… ConfiguraciÃ³n guardada');
 }
-
 function setNivelNoche(nivel){
-  nivelNocheActual = nivel;
-  ['leve','Modera','Severo'].forEach(n => {
-    const id = 'noche' + n.charAt(0).toUpperCase() + n.slice(1);
-    const btn = document.getElementById(id === 'nocheModera' ? 'nocheModera' : id);
-    if(btn) btn.style.opacity = '0.5';
-  });
-  const map = {leve:'nocheLeve', moderado:'nocheModera', severo:'nocheSevero'};
-  const btn = document.getElementById(map[nivel]);
-  if(btn) btn.style.opacity = '1';
-  // Guardar
-  if(sessionUser?.uid) fetch('/toggle-sistema', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({uid: sessionUser.uid, modoNocheNivel: nivel})
-  });
+  nivelNocheActual=nivel;
+  ['nocheLeve','nocheModera','nocheSevero'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.opacity='0.5';});
+  const map={leve:'nocheLeve',moderado:'nocheModera',severo:'nocheSevero'};
+  const btn=document.getElementById(map[nivel]);if(btn)btn.style.opacity='1';
+  if(sessionUser?.uid)fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,modoNocheNivel:nivel})});
 }
 
-// ï¿½"?ï¿½"? CÃMARAS Mï¿½sLTIPLES ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-let camaras = [];
-let camaraActivaIdx = -1;
-let dialogoCamaraEditar = null;
-
+/* CÃMARAS */
 async function cargarCamara(){
-  if(!sessionUser?.uid) return;
-  try {
-    const res = await fetch('/get-sistema?uid='+sessionUser.uid);
-    const data = await res.json();
-    
-    // Compatibilidad con versiÃ³n anterior
-    if(data.camaras && data.camaras.length > 0) {
-      camaras = data.camaras;
-    } else if(data.camaraUrl) {
-      camaras = [{ id:'cam_01', nombre:'CÃ¡mara Principal', url:data.camaraUrl }];
-    } else {
-      camaras = [];
-    }
-    
-    renderizarTabsCamaras();
-    if(camaras.length > 0) seleccionarCamara(0);
-  } catch(e) { console.error('Error cÃ¡maras:', e); }
+  if(!sessionUser?.uid)return;
+  try{
+    const res=await fetch('/get-sistema?uid='+sessionUser.uid);const data=await res.json();
+    if(data.camaras&&data.camaras.length>0){camaras=data.camaras;}
+    else if(data.camaraUrl){camaras=[{id:'cam_01',nombre:'CÃ¡mara Principal',url:data.camaraUrl}];}
+    else{camaras=[];}
+    renderizarTabsCamaras();if(camaras.length>0)seleccionarCamara(0);refreshUserDashboard();
+  }catch(e){}
 }
-
 function renderizarTabsCamaras(){
-  const tabs = document.getElementById('camarasTabs');
-  if(!tabs) return;
-  tabs.innerHTML = camaras.map((cam, i) => `
-    <div onclick="seleccionarCamara(${i})" id="tab_cam_${i}" style="
-      padding:6px 14px;cursor:pointer;font-size:12px;font-weight:600;
-      background:${camaraActivaIdx===i ? 'var(--blue)' : 'var(--surface2)'};
-      color:${camaraActivaIdx===i ? '#fff' : 'var(--text-sec)'};
-      border:1px solid ${camaraActivaIdx===i ? 'var(--blue)' : 'var(--border)'};
-      white-space:nowrap;flex-shrink:0">
-      ï¿½Y"ï¿½ ${cam.nombre}
-    </div>
-  `).join('' ) + (camaras.length === 0 ? '<span style="color:var(--text-sec);font-size:12px">Sin cÃ¡maras ï¿½?" toca + Agregar</span>' : '');
+  const tabs=document.getElementById('camarasTabs');if(!tabs)return;
+  tabs.innerHTML=camaras.map((cam,i)=>`<div onclick="seleccionarCamara(${i})" id="tab_cam_${i}" style="padding:6px 14px;cursor:pointer;font-size:12px;font-weight:600;background:${camaraActivaIdx===i?'var(--blue)':'var(--surface2)'};color:${camaraActivaIdx===i?'#fff':'var(--text-sec)'};border:1px solid ${camaraActivaIdx===i?'var(--blue)':'var(--border)'};white-space:nowrap;flex-shrink:0;border-radius:5px;">ðŸ“· ${cam.nombre}</div>`).join('')+(camaras.length===0?'<span style="color:var(--text-sec);font-size:12px;font-family:var(--mono);">Sin cÃ¡maras Â· toca + Agregar</span>':'');
 }
-
 function seleccionarCamara(idx){
-  camaraActivaIdx = idx;
-  renderizarTabsCamaras();
-  const cam = camaras[idx];
-  if(!cam) return;
+  camaraActivaIdx=idx;renderizarTabsCamaras();const cam=camaras[idx];if(!cam)return;
   mostrarStream(cam.url);
-  const info = document.getElementById('camaraInfo');
-  const nombre = document.getElementById('camaraActivaNombre');
-  if(info) info.style.display = 'flex';
-  if(nombre) nombre.textContent = `${cam.nombre}  ï¿½?ï¿½  ${cam.url}`;
+  const info=document.getElementById('camaraInfo'),nombre=document.getElementById('camaraActivaNombre');
+  if(info)info.style.display='flex';if(nombre)nombre.textContent=`${cam.nombre}  Â·  ${cam.url}`;
 }
-
 function mostrarStream(url){
-  const c = document.getElementById('camaraContainer');
-  if(!c) return;
-  c.innerHTML = `<iframe src="${url}" style="width:100%;height:100%;min-height:320px;border:none;object-fit:contain" allowfullscreen></iframe>`;
+  const c=document.getElementById('camaraContainer');if(!c)return;
+  c.innerHTML=`<iframe src="${url}" style="width:100%;height:100%;min-height:320px;border:none;" allowfullscreen></iframe>`;
 }
-
-function recargarCamaraActiva(){
-  if(camaraActivaIdx >= 0 && camaras[camaraActivaIdx]) {
-    mostrarStream(camaras[camaraActivaIdx].url);
-  }
-}
-
-function editarCamaraActiva(){
-  if(camaraActivaIdx >= 0) mostrarDialogoCamara(camaraActivaIdx);
-}
-
+function recargarCamaraActiva(){if(camaraActivaIdx>=0&&camaras[camaraActivaIdx])mostrarStream(camaras[camaraActivaIdx].url);}
+function editarCamaraActiva(){if(camaraActivaIdx>=0)mostrarDialogoCamara(camaraActivaIdx);}
 async function eliminarCamaraActiva(){
-  if(camaraActivaIdx < 0) return;
-  const cam = camaras[camaraActivaIdx];
-  if(!confirm(`Â¿Eliminar cÃ¡mara "${cam.nombre}"?`)) return;
-  camaras.splice(camaraActivaIdx, 1);
-  camaraActivaIdx = camaras.length > 0 ? 0 : -1;
-  await guardarCamaras();
-  renderizarTabsCamaras();
-  if(camaraActivaIdx >= 0) seleccionarCamara(0);
-  else {
-    document.getElementById('camaraContainer').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:320px;color:#666;font-size:13px">Sin cÃ¡mara seleccionada</div>';
-    const info = document.getElementById('camaraInfo');
-    if(info) info.style.display = 'none';
-  }
-  showToast('ï¿½o. CÃ¡mara eliminada.');
+  if(camaraActivaIdx<0)return;const cam=camaras[camaraActivaIdx];
+  if(!confirm(`Â¿Eliminar cÃ¡mara "${cam.nombre}"?`))return;
+  camaras.splice(camaraActivaIdx,1);camaraActivaIdx=camaras.length>0?0:-1;
+  await guardarCamaras();renderizarTabsCamaras();
+  if(camaraActivaIdx>=0)seleccionarCamara(0);
+  else{document.getElementById('camaraContainer').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:320px;color:var(--muted);font-size:13px;font-family:var(--mono);">ðŸ“· Sin cÃ¡mara seleccionada</div>';const info=document.getElementById('camaraInfo');if(info)info.style.display='none';}
+  showToast('âœ… CÃ¡mara eliminada.');
 }
-
-function mostrarDialogoCamara(editarIdx = null){
-  dialogoCamaraEditar = editarIdx;
-  const cam = editarIdx !== null ? camaras[editarIdx] : null;
-  
-  const overlay = document.createElement('div');
-  overlay.id = 'dialogoCamara';
-  overlay.style.cssText = 'position:fixed;inset:0;background:#0008;z-index:1000;display:flex;align-items:center;justify-content:center';
-  overlay.innerHTML = `
-    <div style="background:var(--surface);padding:24px;width:340px;max-width:90vw">
-      <h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam ? 'ï¿½oï¿½ï¸ Editar CÃ¡mara' : 'ï¿½Y"ï¿½ Agregar CÃ¡mara'}</h3>
-      <div style="margin-bottom:10px">
-        <label style="font-size:12px;color:var(--text-sec)">Nombre</label>
-        <input id="dlg_cam_nombre" type="text" class="input-field" value="${cam?.nombre || ''}" placeholder="Sala, Garaje, Entrada..." style="margin-top:4px">
-      </div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:12px;color:var(--text-sec)">URL del stream</label>
-        <input id="dlg_cam_url" type="url" class="input-field" value="${cam?.url || ''}" placeholder="http://192.168.1.x:8080/video" style="margin-top:4px">
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button onclick="cerrarDialogoCamara()" style="padding:8px 16px;background:var(--surface2);color:var(--text-sec);border:none;cursor:pointer">Cancelar</button>
-        <button onclick="guardarDialogoCamara()" style="padding:8px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700">Guardar</button>
-      </div>
-    </div>`;
-  document.body.appendChild(overlay);
-  setTimeout(() => document.getElementById('dlg_cam_nombre').focus(), 100);
+function mostrarDialogoCamara(editarIdx=null){
+  dialogoCamaraEditar=editarIdx;const cam=editarIdx!==null?camaras[editarIdx]:null;
+  const overlay=document.createElement('div');overlay.id='dialogoCamara';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  overlay.innerHTML=`<div style="background:var(--surface);padding:24px;width:340px;max-width:90vw;border:1px solid var(--border2);border-radius:var(--radius);position:relative"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);border-radius:var(--radius) var(--radius) 0 0;"></div><h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam?'âœï¸ Editar CÃ¡mara':'ðŸ“· Agregar CÃ¡mara'}</h3><div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-sec)">Nombre</label><input id="dlg_cam_nombre" type="text" class="input-field" value="${cam?.nombre||''}" placeholder="Sala, Garaje, Entrada..." style="margin-top:4px"></div><div style="margin-bottom:16px"><label style="font-size:12px;color:var(--text-sec)">URL del stream</label><input id="dlg_cam_url" type="url" class="input-field" value="${cam?.url||''}" placeholder="http://192.168.1.x:8080/video" style="margin-top:4px"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="cerrarDialogoCamara()" style="padding:8px 16px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;border-radius:6px;">Cancelar</button><button onclick="guardarDialogoCamara()" style="padding:8px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;border-radius:6px;">Guardar</button></div></div>`;
+  document.body.appendChild(overlay);setTimeout(()=>document.getElementById('dlg_cam_nombre').focus(),100);
 }
-
-function cerrarDialogoCamara(){
-  const d = document.getElementById('dialogoCamara');
-  if(d) d.remove();
-}
-
+function cerrarDialogoCamara(){const d=document.getElementById('dialogoCamara');if(d)d.remove();}
 async function guardarDialogoCamara(){
-  const nombre = document.getElementById('dlg_cam_nombre').value.trim();
-  const url = document.getElementById('dlg_cam_url').value.trim();
-  if(!nombre || !url) { alert('Completa todos los campos.'); return; }
-  
-  if(dialogoCamaraEditar !== null) {
-    camaras[dialogoCamaraEditar] = { ...camaras[dialogoCamaraEditar], nombre, url };
-  } else {
-    camaras.push({ id: 'cam_' + Date.now(), nombre, url });
-  }
-  
-  cerrarDialogoCamara();
-  await guardarCamaras();
-  renderizarTabsCamaras();
-  const newIdx = dialogoCamaraEditar !== null ? dialogoCamaraEditar : camaras.length - 1;
-  seleccionarCamara(newIdx);
-  showToast('ï¿½o. CÃ¡mara guardada.');
+  const nombre=document.getElementById('dlg_cam_nombre').value.trim();const url=document.getElementById('dlg_cam_url').value.trim();
+  if(!nombre||!url){alert('Completa todos los campos.');return;}
+  if(dialogoCamaraEditar!==null){camaras[dialogoCamaraEditar]={...camaras[dialogoCamaraEditar],nombre,url};}
+  else{camaras.push({id:'cam_'+Date.now(),nombre,url});}
+  cerrarDialogoCamara();await guardarCamaras();renderizarTabsCamaras();
+  const newIdx=dialogoCamaraEditar!==null?dialogoCamaraEditar:camaras.length-1;seleccionarCamara(newIdx);showToast('âœ… CÃ¡mara guardada.');
 }
-
 async function guardarCamaras(){
-  if(!sessionUser?.uid) { showToast('ï¿½O No hay sesiÃ³n activa'); return; }
-  try {
-    const res = await fetch('/save-camera-url', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        uid: sessionUser.uid,
-        camaraUrl: camaras.length > 0 ? camaras[0].url : '',
-        camaras: camaras
-      })
-    });
-    const data = await res.json();
-    if(data.ok) {
-      showToast('ï¿½o. CÃ¡mara guardada');
-    } else {
-      showToast('ï¿½O Error guardando cÃ¡mara');
-      console.error('Error:', data);
-    }
-  } catch(e) {
-    console.error('Error guardando cÃ¡mara:', e);
-    showToast('ï¿½O Error de conexiÃ³n al servidor');
-  }
+  if(!sessionUser?.uid){showToast('âŒ No hay sesiÃ³n activa');return;}
+  try{
+    const res=await fetch('/save-camera-url',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,camaraUrl:camaras.length>0?camaras[0].url:'',camaras})});
+    const data=await res.json();if(data.ok)showToast('âœ… CÃ¡mara guardada');else showToast('âŒ Error guardando cÃ¡mara');
+  }catch(e){showToast('âŒ Error de conexiÃ³n al servidor');}
 }
 
-
-// ï¿½"?ï¿½"? SENSORES ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* SENSORES */
 async function cargarSensores(){
-  if(!sessionUser?.uid) return;
-  try {
-    // Cargar sensores del usuario especÃ­fico desde RTDB
-    const res = await fetch('/get-sensors-user?uid=' + sessionUser.uid);
-    const data = await res.json();
-    const lista = data.sensores || [];
-    latestSensors = lista;
-    
-    const statEl = document.getElementById('statSensores');
-    if(statEl) statEl.textContent = lista.length;
-    
-    const cont = document.getElementById('sensoresLista');
-    if(!lista.length){
-      cont.innerHTML='<div class="empty-msg">Sin sensores conectados.<br>Conecta tu ESP32 e ingresa tu cÃ³digo en la pantalla web del sensor.</div>';
-      return;
-    }
-    
-    cont.innerHTML = lista.map(s => {
-      const ahora = Math.floor(Date.now()/1000);
-      const diff  = ahora - (s.ultimoHeartbeat || 0);
-      const online = diff < 15;
-      const comps  = s.componentes ? Object.values(s.componentes) : [];
-      
-      return `<div style="border:1px solid ${online?'#00FF8844':'#FF220044'};padding:14px;margin-bottom:10px;background:var(--surface)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <div style="width:10px;height:10px;border-radius:50%;background:${online?'#00FF88':'#FF2200'}"></div>
-          <div style="flex:1">
-            <div style="font-size:14px;font-weight:700;color:var(--text-pri)">${s.nombre||'ESP32'}</div>
-            <div style="font-size:11px;color:var(--text-sec)">IP: ${s.ip||'?'} Â· ID: ${s.sensorId||s.id}</div>
-          </div>
-          <span style="font-size:11px;font-weight:700;color:${online?'#00FF88':'#FF2200'};border:1px solid ${online?'#00FF8844':'#FF220044'};padding:3px 8px">
-            ${online?'ONLINE':'OFFLINE'}
-          </span>
-        </div>
-        ${comps.length > 0 ? `
-          <div style="font-size:11px;color:var(--text-sec);margin-bottom:6px">Componentes:</div>
-          ${comps.map(c => `
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border)">
-              <span style="font-size:16px">${emojiTipo(c.tipoId)}</span>
-              <span style="flex:1;font-size:12px;color:var(--text-pri)">${c.nombre} ï¿½?" GPIO ${c.pin}</span>
-              ${!c.esEntrada ? `
-                <button onclick="controlarComponente('${s.id}','${c.id}',${!c.activo})"
-                  style="padding:4px 12px;background:${c.activo?'#107C10':'var(--surface2)'};color:${c.activo?'#fff':'var(--text-sec)'};border:none;cursor:pointer;font-size:11px;font-weight:700">
-                  ${c.activo ? 'APAGAR' : 'ENCENDER'}
-                </button>
-              ` : `<span style="font-size:10px;color:var(--text-sec)">ENTRADA</span>`}
-            </div>
-          `).join('')}
-        ` : '<div style="font-size:11px;color:var(--text-sec)">Sin componentes registrados</div>'}
-      </div>`;
+  if(!sessionUser?.uid)return;
+  try{
+    const res=await fetch('/get-sensors-user?uid='+sessionUser.uid);const data=await res.json();
+    const lista=data.sensores||[];latestSensors=lista;refreshUserDashboard();
+    const statEl=document.getElementById('statSensores');if(statEl)statEl.textContent=lista.length;
+    const cont=document.getElementById('sensoresLista');
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin sensores conectados.<br>Conecta tu ESP32 e ingresa tu cÃ³digo en la pantalla web del sensor.</div>';return;}
+    cont.innerHTML=lista.map(s=>{
+      const ahora=Math.floor(Date.now()/1000),diff=ahora-(s.ultimoHeartbeat||0),online=diff<15;
+      const comps=s.componentes?Object.values(s.componentes):[];
+      return `<div style="border:1px solid ${online?'rgba(34,197,94,0.3)':'rgba(232,40,26,0.25)'};padding:14px;margin-bottom:10px;background:var(--surface);border-radius:6px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:10px;height:10px;border-radius:50%;background:${online?'var(--green)':'var(--red)'};flex-shrink:0;"></div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text-pri)">${s.nombre||'ESP32'}</div><div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">IP: ${s.ip||'?'} Â· ID: ${s.sensorId||s.id}</div></div><span style="font-size:11px;font-weight:700;color:${online?'var(--green)':'var(--red)'};border:1px solid ${online?'rgba(34,197,94,0.4)':'rgba(232,40,26,0.4)'};padding:3px 8px;border-radius:4px;font-family:var(--mono)">${online?'ONLINE':'OFFLINE'}</span></div>${comps.length>0?`<div style="font-size:11px;color:var(--text-sec);margin-bottom:6px;font-family:var(--mono)">Componentes:</div>${comps.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border)"><span style="font-size:16px">${emojiTipo(c.tipoId)}</span><span style="flex:1;font-size:12px;color:var(--text-pri)">${c.nombre} Â· GPIO ${c.pin}</span>${!c.esEntrada?`<button onclick="controlarComponente('${s.id}','${c.id}',${!c.activo})" style="padding:4px 12px;background:${c.activo?'var(--green)':'var(--surface2)'};color:${c.activo?'#000':'var(--text-sec)'};border:none;cursor:pointer;font-size:11px;font-weight:700;border-radius:4px">${c.activo?'APAGAR':'ENCENDER'}</button>`:'<span style="font-size:10px;color:var(--text-sec);font-family:var(--mono)">ENTRADA</span>'}</div>`).join('')}`:'<div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">Sin componentes registrados</div>'}</div>`;
     }).join('');
-    
-    // Control manual de salidas
-    renderizarControlesManual(lista);
-    
-  } catch(e){ console.error('Error cargando sensores:', e); }
+    renderizarControlesManual(lista);refreshUserDashboard();
+  }catch(e){console.error('Error cargando sensores:',e);}
 }
-
-function emojiTipo(tipoId){
-  const m={pir:'\uD83D\uDCE1',led:'\uD83D\uDCA1',relay:'\uD83D\uDD0C',buzzer:'\uD83D\uDD14',door:'\uD83D\uDEAA',smoke:'\uD83D\uDCA8',temp:'\uD83C\uDF21\uFE0F'};
-  return m[tipoId]||'\u2753';
+function emojiTipo(tipoId){const m={pir:'ðŸ“¡',led:'ðŸ’¡',relay:'ðŸ”Œ',buzzer:'ðŸ””',door:'ðŸšª',smoke:'ðŸ’¨',temp:'ðŸŒ¡ï¸'};return m[tipoId]||'â“';}
+async function controlarComponente(sensorId,compId,estado){
+  if(!sessionUser?.uid)return;
+  try{await fetch('/toggle-componente',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,sensorId,compId,estado})});showToast(estado?'ðŸ’¡ Componente encendido':'Componente apagado');setTimeout(cargarSensores,500);}
+  catch(e){showToast('âŒ Error controlando componente');}
 }
-
-async function controlarComponente(sensorId, compId, estado){
-  if(!sessionUser?.uid) return;
-  try {
-    await fetch('/toggle-componente', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({uid: sessionUser.uid, sensorId, compId, estado})
-    });
-    showToast(estado ? 'Componente encendido' : 'Componente apagado');
-    setTimeout(cargarSensores, 500);
-  } catch(e){ showToast('Error controlando componente'); }
-}
-
 function renderizarControlesManual(sensores){
-  const cont = document.getElementById('controlesManual');
-  if(!cont) return;
-  const salidas = [];
-  sensores.forEach(s => {
-    const comps = s.componentes ? Object.values(s.componentes) : [];
-    comps.filter(c => !c.esEntrada).forEach(c => {
-      salidas.push({...c, sensorId: s.id, sensorNombre: s.nombre});
-    });
-  });
-  if(!salidas.length){
-    cont.innerHTML = '<div class="empty-msg">Sin componentes de salida (LED, RelÃ©, Buzzer)</div>';
-    return;
-  }
-  cont.innerHTML = salidas.map(c => `
-    <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);margin-bottom:8px;background:var(--surface)">
-      <span style="font-size:24px">${emojiTipo(c.tipoId)}</span>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:700;color:var(--text-pri)">${c.nombre}</div>
-        <div style="font-size:11px;color:var(--text-sec)">${c.sensorNombre} Â· GPIO ${c.pin}</div>
-      </div>
-      <button onclick="controlarComponente('${c.sensorId}','${c.id}',${!c.activo})"
-        style="padding:8px 20px;background:${c.activo?'#107C10':'var(--surface2)'};color:${c.activo?'#fff':'var(--text-sec)'};border:1px solid ${c.activo?'#107C10':'var(--border)'};cursor:pointer;font-size:13px;font-weight:700">
-        ${c.activo ? 'APAGAR' : 'ENCENDER'}
-      </button>
-    </div>
-  `).join('');
+  const cont=document.getElementById('controlesManual');if(!cont)return;
+  const salidas=[];sensores.forEach(s=>{const comps=s.componentes?Object.values(s.componentes):[];comps.filter(c=>!c.esEntrada).forEach(c=>salidas.push({...c,sensorId:s.id,sensorNombre:s.nombre}));});
+  if(!salidas.length){cont.innerHTML='<div class="empty-msg">Sin componentes de salida (LED, RelÃ©, Buzzer)</div>';return;}
+  cont.innerHTML=salidas.map(c=>`<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);margin-bottom:8px;background:var(--surface);border-radius:6px"><span style="font-size:24px">${emojiTipo(c.tipoId)}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text-pri)">${c.nombre}</div><div style="font-size:11px;color:var(--text-sec);font-family:var(--mono)">${c.sensorNombre} Â· GPIO ${c.pin}</div></div><button onclick="controlarComponente('${c.sensorId}','${c.id}',${!c.activo})" style="padding:8px 20px;background:${c.activo?'var(--green)':'var(--surface2)'};color:${c.activo?'#000':'var(--text-sec)'};border:1px solid ${c.activo?'var(--green)':'var(--border)'};cursor:pointer;font-size:13px;font-weight:700;border-radius:6px">${c.activo?'APAGAR':'ENCENDER'}</button></div>`).join('');
 }
 
-// ï¿½"?ï¿½"? MIEMBROS ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* MIEMBROS */
 async function cargarMiembros(){
-  try {
-    const res=await fetch('/get-miembros?uid='+sessionUser.uid);
-    const data=await res.json();
-    const lista=data.miembros||[];
+  try{
+    const res=await fetch('/get-miembros?uid='+sessionUser.uid);const data=await res.json();const lista=data.miembros||[];latestMiembros=lista;
     document.getElementById('statMiembros').textContent=lista.length;
     const cont=document.getElementById('miembrosLista');
-    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin miembros.<br>RegÃ­stralos en la app mÃ³vil.</div>';return;}
-    cont.innerHTML=lista.map(m=>`
-      <div class="lista-item ${m.enCasa?'encasa':''}">
-        <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,34,0,0.12);border:2px solid rgba(255,34,0,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--red);">
-          ${m.nombre?m.nombre[0].toUpperCase():'?'}
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:13px;font-weight:700;color:var(--text);">${m.nombre||'Miembro'}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${m.cantFotos||0} fotos Â· Reconocimiento facial</div>
-        </div>
-        <span class="status-badge" style="color:${m.enCasa?'var(--green)':'var(--muted)'};border-color:${m.enCasa?'rgba(0,255,136,0.4)':'rgba(68,68,90,0.4)'};">
-          ${m.enCasa?'EN CASA':'FUERA'}
-        </span>
-      </div>`).join('');
-  } catch(e){log('Error cargando miembros','err');}
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin miembros.<br>RegÃ­stralos en la app mÃ³vil.</div>';refreshUserDashboard();return;}
+    cont.innerHTML=lista.map(m=>`<div class="lista-item ${m.enCasa?'encasa':''}"><div style="width:40px;height:40px;border-radius:50%;background:var(--red-dim);border:2px solid rgba(232,40,26,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--red);">${m.nombre?m.nombre[0].toUpperCase():'?'}</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">${m.nombre||'Miembro'}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${m.cantFotos||0} fotos Â· Reconocimiento facial</div></div><span class="status-badge" style="color:${m.enCasa?'var(--green)':'var(--muted)'};border-color:${m.enCasa?'rgba(34,197,94,0.4)':'rgba(90,90,122,0.4)'};">${m.enCasa?'EN CASA':'FUERA'}</span></div>`).join('');refreshUserDashboard();
+  }catch(e){log('Error cargando miembros','err');}
 }
 
-// ï¿½"?ï¿½"? ESCOLTA ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* ESCOLTA */
 function activarEscolta(){
   const lat=parseFloat(document.getElementById('escDestLat').value);
   const lng=parseFloat(document.getElementById('escDestLng').value);
   const min=parseInt(document.getElementById('escMinutos').value)||30;
   const pin=document.getElementById('escPin').value.trim();
-  if(isNaN(lat)||isNaN(lng)){log('Ingresa las coordenadas del destino.','warn');return;}
-  if(pin.length<4){log('El PIN debe tener al menos 4 digitos.','warn');return;}
-
+  if(isNaN(lat)||isNaN(lng)){log('âš ï¸ Ingresa las coordenadas del destino.','warn');return;}
+  if(pin.length<4){log('âš ï¸ El PIN debe tener al menos 4 dÃ­gitos.','warn');return;}
   escoltaPin=pin;
   document.getElementById('escoltaForm').style.display='none';
   document.getElementById('escoltaActiva').style.display='block';
   document.getElementById('panelCancelar').style.display='none';
-
   let secs=min*60;
-  escoltaTimer=setInterval(()=>{
-    secs--;
-    const m=String(Math.floor(secs/60)).padLeft2();
-    const s=String(secs%60).padLeft2();
-    document.getElementById('escContador').textContent=`${m}:${s}`;
-    if(secs<=0){clearInterval(escoltaTimer);enviarAlertaEscolta();}
-  },1000);
-
-  log(`ï¿½Y>ï¿½ï¸ Modo Escolta activado ï¿½?" ${min} minutos.`,'ok');
+  escoltaTimer=setInterval(()=>{secs--;const m=String(Math.floor(secs/60)).padStart(2,'0');const s=String(secs%60).padStart(2,'0');document.getElementById('escContador').textContent=`${m}:${s}`;if(secs<=0){clearInterval(escoltaTimer);enviarAlertaEscolta();}},1000);
+  log(`ðŸ›¡ï¸ Modo Escolta activado Â· ${min} minutos.`,'ok');
 }
-
-String.prototype.padLeft2=function(){return this.padStart(2,'0');}
-
 async function enviarAlertaEscolta(){
-  log('ï¿½sï¿½ï¸ Tiempo expirado ï¿½?" Enviando alerta de escolta.','warn');
-  try {
-    await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:sessionUser.uid,message:'ï¿½sï¿½ï¸ '+sessionUser.email+' no llegÃ³ a su destino a tiempo.',lat:0,lng:0})});
-    log('ï¿½Ysï¿½ Alerta de escolta enviada a contactos.','err');
-    document.getElementById('escContador').textContent='Â¡ALERTA!';
-    document.getElementById('escContador').style.color='var(--red)';
-  } catch(e){log('Error enviando alerta','err');}
+  log('âš ï¸ Tiempo expirado Â· Enviando alerta de escolta.','warn');
+  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,message:'âš ï¸ '+sessionUser.email+' no llegÃ³ a su destino a tiempo.',lat:0,lng:0})});log('ðŸš¨ Alerta de escolta enviada a contactos.','err');document.getElementById('escContador').textContent='Â¡ALERTA!';document.getElementById('escContador').style.color='var(--red)';}
+  catch(e){log('Error enviando alerta','err');}
 }
-
-function mostrarCancelar(){
-  document.getElementById('panelCancelar').style.display=
-    document.getElementById('panelCancelar').style.display==='none'?'block':'none';
-}
-
+function mostrarCancelar(){const p=document.getElementById('panelCancelar');p.style.display=p.style.display==='none'?'block':'none';}
 function cancelarEscolta(){
   const pin=document.getElementById('pinCancelar').value.trim();
   if(pin===escoltaPin){
     clearInterval(escoltaTimer);
-    document.getElementById('escoltaForm').style.display='block';
-    document.getElementById('escoltaActiva').style.display='none';
-    document.getElementById('panelCancelar').style.display='none';
-    document.getElementById('pinCancelar').value='';
-    log('ï¿½o. Modo Escolta cancelado.','ok');
+    document.getElementById('escoltaForm').style.display='block';document.getElementById('escoltaActiva').style.display='none';document.getElementById('panelCancelar').style.display='none';document.getElementById('pinCancelar').value='';
+    log('âœ… Modo Escolta cancelado.','ok');
   } else if(pin===escoltaPin+'0'){
-    // PIN coacciÃ³n
-    clearInterval(escoltaTimer);
-    enviarAlertaEscolta();
-    document.getElementById('escoltaForm').style.display='block';
-    document.getElementById('escoltaActiva').style.display='none';
-    document.getElementById('panelCancelar').style.display='none';
-    log('ï¿½sï¿½ PIN de coacciÃ³n usado ï¿½?" Alerta enviada silenciosamente.','warn');
-  } else {
-    log('ï¿½O PIN incorrecto.','err');
-  }
+    clearInterval(escoltaTimer);enviarAlertaEscolta();
+    document.getElementById('escoltaForm').style.display='block';document.getElementById('escoltaActiva').style.display='none';document.getElementById('panelCancelar').style.display='none';
+    log('âš ï¸ PIN de coacciÃ³n usado Â· Alerta enviada silenciosamente.','warn');
+  } else log('âŒ PIN incorrecto.','err');
 }
-
 async function activarAntiRobo(){
-  if(!confirm('Â¿Activar botÃ³n de pÃ¡nico?')) return;
-  try {
-    await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:sessionUser.uid,message:'ï¿½Ysï¿½ ALERTA ANTI-ROBO: '+sessionUser.email,lat:0,lng:0})});
-    log('ï¿½Ysï¿½ Alerta de robo enviada.','err');
-  } catch(e){log('Error: '+e.message,'err');}
+  if(!confirm('Â¿Activar botÃ³n de pÃ¡nico?'))return;
+  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,message:'ðŸš¨ ALERTA ANTI-ROBO: '+sessionUser.email,lat:0,lng:0})});log('ðŸš¨ Alerta de robo enviada.','err');}
+  catch(e){log('Error: '+e.message,'err');}
 }
 
-// ï¿½"?ï¿½"? HISTORIAL ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
+/* HISTORIAL */
 async function cargarHistorial(){
-  try {
-    const res=await fetch('/get-historial?uid='+sessionUser.uid);
-    const data=await res.json();
-    const lista=data.historial||[];
+  try{
+    const res=await fetch('/get-historial?uid='+sessionUser.uid);const data=await res.json();const lista=data.historial||[];latestHistorial=lista;
     const cont=document.getElementById('historialLista');
-    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin alarmas registradas.</div>';return;}
-    cont.innerHTML=lista.map(h=>`
-      <div class="hist-item ${h.nivel||'moderado'}">
-        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
-          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:${h.nivel==='leve'?'var(--green)':h.nivel==='severo'?'var(--red)':'var(--yellow)'};">
-            ${h.nivel?.toUpperCase()||'MODERADO'}
-          </span>
-          <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">${h.hora||''}</span>
-        </div>
-        <div style="font-size:12px;font-weight:700;color:var(--text);">${h.titulo||'Alerta'}</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${h.message||''}</div>
-      </div>`).join('');
-  } catch(e){}
+    if(!lista.length){cont.innerHTML='<div class="empty-msg">Sin alarmas registradas.</div>';refreshUserDashboard();return;}
+    cont.innerHTML=lista.map(h=>`<div class="hist-item ${h.nivel||'moderado'}"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-family:var(--mono);font-size:10px;font-weight:700;color:${h.nivel==='leve'?'var(--green)':h.nivel==='severo'?'var(--red)':'var(--yellow)'};">${h.nivel?.toUpperCase()||'MODERADO'}</span><span style="font-family:var(--mono);font-size:10px;color:var(--muted);">${h.hora||''}</span></div><div style="font-size:12px;font-weight:700;color:var(--text);">${h.titulo||'Alerta'}</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);">${h.message||''}</div></div>`).join('');refreshUserDashboard();
+  }catch(e){}
 }
 
-// ï¿½"?ï¿½"? NAVEGACIï¿½"N ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?ï¿½"?
-const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Noche','Esp32','Googlehome','Sonidos','Historial'];
-function setView(view,el){
-  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
-  el.classList.add('active');
-  vistas.forEach(v=>{const el2=document.getElementById('view'+v);if(el2)el2.style.display=v.toLowerCase()===view?'block':'none';});
-  if(view==='sensores') cargarSensores();
-  if(view==='miembros') cargarMiembros();
-  if(view==='historial') cargarHistorial();
-  if(view==='googlehome') renderGoogleHome();
-  if(view==='sonidos') cargarSonidos();
-  if(view==='esp32') renderEsp32Guide();
+function renderEsp32Guide(){const c=document.getElementById('esp32Codigo');if(c)c.textContent=sessionUser?.codigo||'--';}
+
+/* SONIDOS */
+async function cargarSonidos(){
+  if(!sessionUser?.uid)return;
+  try{const res=await fetch('/get-sistema?uid='+sessionUser.uid);const data=await res.json();sistemaData={...sistemaData,...data};const l=document.getElementById('sonidoLeveInput'),m=document.getElementById('sonidoModeradoInput'),s=document.getElementById('sonidoSeveroInput');if(l)l.value=data.sonidoLeve||'sounds/alarma_leve.wav';if(m)m.value=data.sonidoModerado||'sounds/alarma_moderada.wav';if(s)s.value=data.sonidoSevero||'sounds/alarma_severa.wav';}
+  catch(e){}
+}
+async function guardarSonidos(){
+  if(!sessionUser?.uid)return;
+  const sonidoLeve=document.getElementById('sonidoLeveInput')?.value.trim()||'sounds/alarma_leve.wav';
+  const sonidoModerado=document.getElementById('sonidoModeradoInput')?.value.trim()||'sounds/alarma_moderada.wav';
+  const sonidoSevero=document.getElementById('sonidoSeveroInput')?.value.trim()||'sounds/alarma_severa.wav';
+  await fetch('/toggle-sistema',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,sonidoLeve,sonidoModerado,sonidoSevero})});
+  showToast('ðŸ”Š Sonidos guardados');
 }
 
-async function copiarTexto(texto, etiqueta='Enlace copiado') {
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(texto);
-    } else {
-      const input = document.createElement('textarea');
-      input.value = texto;
-      input.setAttribute('readonly', '');
-      input.style.position = 'fixed';
-      input.style.opacity = '0';
-      input.style.pointerEvents = 'none';
-      document.body.appendChild(input);
-      input.focus();
-      input.select();
-      input.setSelectionRange(0, texto.length);
-      const copiado = document.execCommand('copy');
-      document.body.removeChild(input);
-      if (!copiado) throw new Error('copy-fallback-failed');
-    }
+/* COPIAR / PROBAR */
+async function copiarTexto(texto,etiqueta='Enlace copiado'){
+  try{
+    if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(texto);
+    else{const input=document.createElement('textarea');input.value=texto;input.setAttribute('readonly','');input.style.position='fixed';input.style.opacity='0';input.style.pointerEvents='none';document.body.appendChild(input);input.focus();input.select();input.setSelectionRange(0,texto.length);const copiado=document.execCommand('copy');document.body.removeChild(input);if(!copiado)throw new Error('copy-fallback-failed');}
     showToast(etiqueta);
-  } catch (error) {
-    console.error('No se pudo copiar el enlace', error);
-    showToast('No se pudo copiar. Copialo manualmente desde el enlace mostrado.');
-  }
+  }catch(error){showToast('âŒ No se pudo copiar. CÃ³pialo manualmente desde el enlace mostrado.');}
+}
+function probarEnlace(url){try{const n=window.open(url,'_blank','noopener,noreferrer');if(!n)window.location.href=url;showToast('Abriendo enlace de prueba...');}catch(error){window.location.href=url;}}
+
+/* NAVEGACIÃ“N */
+const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Noche','Esp32','Sonidos','Historial'];
+function setView(view,el){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');
+  vistas.forEach(v=>{const el2=document.getElementById('view'+v);if(el2)el2.style.display=v.toLowerCase()===view?'block':'none';});
+  if(view==='sensores')cargarSensores();if(view==='miembros')cargarMiembros();if(view==='historial')cargarHistorial();if(view==='sonidos')cargarSonidos();if(view==='esp32')renderEsp32Guide();
 }
 
-function probarEnlace(url) {
-  try {
-    const nuevaVentana = window.open(url, '_blank', 'noopener,noreferrer');
-    if (!nuevaVentana) {
-      window.location.href = url;
-    }
-    showToast('Abriendo enlace de prueba...');
-  } catch (error) {
-    console.error('No se pudo abrir el enlace de prueba', error);
-    window.location.href = url;
-  }
-}
-
-function renderGoogleHome() {
-  const cont = document.getElementById('googleHomeLinks');
-  if (!cont || !sessionUser?.uid) return;
-  const base = window.location.origin.replace(/\/$/, '') + '/cmd';
-  const uid = sessionUser.uid;
-  const key = 'HOMEALERT2025';
-  const links = [
-    ['Armar sistema', `${base}/armar?uid=${uid}&key=${key}`],
-    ['Desarmar sistema', `${base}/desarmar?uid=${uid}&key=${key}`],
-    ['Alarma moderada', `${base}/alarma?uid=${uid}&key=${key}&nivel=moderado`],
-    ['Alarma severa', `${base}/alarma?uid=${uid}&key=${key}&nivel=severo`],
-    ['Simulador ON', `${base}/simulador/on?uid=${uid}&key=${key}`],
-    ['Simulador OFF', `${base}/simulador/off?uid=${uid}&key=${key}`],
-    ['Modo noche ON', `${base}/noche/on?uid=${uid}&key=${key}`],
-    ['Modo noche OFF', `${base}/noche/off?uid=${uid}&key=${key}`],
-  ];
-
-  const salidas = [];
-  latestSensors.forEach(s => {
-    const comps = Array.isArray(s.componentes) ? s.componentes : Object.values(s.componentes || {});
-    comps.filter(c => !c.esEntrada).forEach(c => {
-      salidas.push({ ...c, sensorId: s.id || s.sensorId || 'esp32_01' });
-    });
-  });
-
-  salidas.forEach(c => {
-    links.push([
-      `Encender ${c.nombre}`,
-      `${base}/componente/on?uid=${uid}&sensorId=${c.sensorId}&compId=${c.id}&key=${key}`,
-    ]);
-    links.push([
-      `Apagar ${c.nombre}`,
-      `${base}/componente/off?uid=${uid}&sensorId=${c.sensorId}&compId=${c.id}&key=${key}`,
-    ]);
-  });
-
-  cont.innerHTML = links.map(([label, url]) => `
-    <div style="padding:12px;border:1px solid var(--border);background:var(--surface2);margin-bottom:10px;">
-      <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:6px;">${label}</div>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--text-sec);word-break:break-all;margin-bottom:8px;">${url}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button type="button" onclick="copiarTexto(${JSON.stringify(url)}, 'Enlace copiado: ' + ${JSON.stringify(label)})" style="padding:8px 12px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:11px;font-weight:700;">COPIAR</button>
-        <button type="button" onclick="probarEnlace(${JSON.stringify(url)})" style="padding:8px 12px;background:var(--surface);color:var(--text-pri);border:1px solid var(--border);cursor:pointer;font-size:11px;font-weight:700;">PROBAR</button>
-        <a href="${url}" target="_blank" rel="noopener noreferrer" style="padding:8px 12px;background:transparent;color:var(--text-sec);border:1px dashed var(--border);font-size:11px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;">ABRIR DIRECTO</a>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderEsp32Guide() {
-  const codigo = document.getElementById('esp32Codigo');
-  if (codigo) codigo.textContent = sessionUser?.codigo || '--';
-}
-
-async function cargarSonidos() {
-  if (!sessionUser?.uid) return;
-  try {
-    const res = await fetch('/get-sistema?uid=' + sessionUser.uid);
-    const data = await res.json();
-    sistemaData = { ...sistemaData, ...data };
-    const leve = document.getElementById('sonidoLeveInput');
-    const moderado = document.getElementById('sonidoModeradoInput');
-    const severo = document.getElementById('sonidoSeveroInput');
-    if (leve) leve.value = data.sonidoLeve || 'sounds/alarma_leve.wav';
-    if (moderado) moderado.value = data.sonidoModerado || 'sounds/alarma_moderada.wav';
-    if (severo) severo.value = data.sonidoSevero || 'sounds/alarma_severa.wav';
-  } catch(e) {
-    console.error('Error cargando sonidos:', e);
-  }
-}
-
-async function guardarSonidos() {
-  if (!sessionUser?.uid) return;
-  const sonidoLeve = document.getElementById('sonidoLeveInput')?.value.trim() || 'sounds/alarma_leve.wav';
-  const sonidoModerado = document.getElementById('sonidoModeradoInput')?.value.trim() || 'sounds/alarma_moderada.wav';
-  const sonidoSevero = document.getElementById('sonidoSeveroInput')?.value.trim() || 'sounds/alarma_severa.wav';
-  await fetch('/toggle-sistema', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ uid: sessionUser.uid, sonidoLeve, sonidoModerado, sonidoSevero })
-  });
-  showToast('? Sonidos guardados');
-}
-
-// Auto-refresh cada 15 segundos
+/* AUTO REFRESH */
 setInterval(()=>{if(sessionUser){cargarSistema();cargarSensores();}},15000);
 </script>
 </body>
 </html>
+
+
+
+
 
 
 
