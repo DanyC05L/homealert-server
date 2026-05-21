@@ -514,7 +514,7 @@ body {
 
 /* Smooth page transitions */
 #viewPanel, #viewAlarmas, #viewCamara, #viewSensores, 
-#viewMiembros, #viewEscolta, #viewNoche, #viewEsp32,
+#viewMiembros, #viewUsuarios, #viewEscolta, #viewNoche, #viewEsp32,
 #viewSonidos, #viewHistorial {
   animation: fadeSlide 0.25s ease both;
 }
@@ -558,7 +558,7 @@ body {
         </div>
         <div class="field-label">CONTRASEÑA</div>
         <div class="field"><span class="field-icon">🔒</span>
-          <input type="password" id="userPass" placeholder="�€��€��€��€��€��€��€��€�" autocomplete="current-password"/>
+          <input type="password" id="userPass" placeholder="••••••••" autocomplete="current-password"/>
         </div>
         <button class="btn-login" id="btnLogin" onclick="doLogin()">🔑 ENTRAR A MI PANEL</button>
       </div>
@@ -606,12 +606,13 @@ body {
       <div class="nav-item" onclick="setView('camara',this)"><span class="nav-icon">📷</span>Cámaras</div>
       <div class="nav-item" onclick="setView('sensores',this)"><span class="nav-icon">📡</span>Sensores y salidas</div>
       <div class="nav-item" onclick="setView('miembros',this)"><span class="nav-icon">👥</span>Miembros</div>
+      <div class="nav-item" onclick="setView('usuarios',this)"><span class="nav-icon">👤</span>Usuarios</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">Proteccion</div>
-      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">🛡️</span>Modo escolta</div>
+      <div class="nav-item" onclick="setView('escolta',this)"><span class="nav-icon">🛡🏠</span>Modo escolta</div>
       <div class="nav-item" onclick="setView('noche',this)"><span class="nav-icon">🌙</span>Modo noche</div>
-      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">�‹</span>Historial</div>
+      <div class="nav-item" onclick="setView('historial',this)"><span class="nav-icon">📋</span>Historial</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">Integraciones</div>
@@ -669,7 +670,7 @@ body {
         </div>
         <div class="panel-cluster">
           <div class="card">
-            <div class="card-title">🖥️ Centro de estado</div>
+            <div class="card-title">🖥🏠 Centro de estado</div>
             <div id="userStatusHub" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;"></div>
           </div>
           <div class="card" style="padding:0;overflow:hidden;">
@@ -743,7 +744,7 @@ body {
           </div>
         </div>
         <div class="card">
-          <div class="card-title">✉️ Componer mensaje</div>
+          <div class="card-title">✉🏠 Componer mensaje</div>
           <div class="input-row">
             <div>
               <div class="input-label">TÍTULO</div>
@@ -799,9 +800,9 @@ body {
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
               <span id="camaraActivaNombre" style="font-size:12px;color:var(--text-sec);font-family:var(--mono);"></span>
               <div style="display:flex;gap:6px">
-                <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">✏️ Editar</button>
+                <button onclick="editarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">🏠 Editar</button>
                 <button onclick="eliminarCamaraActiva()" style="padding:5px 10px;background:rgba(232,40,26,0.1);color:var(--red);border:1px solid rgba(232,40,26,0.3);cursor:pointer;font-size:11px;border-radius:4px;">🗑️ Eliminar</button>
-                <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">�„ Recargar</button>
+                <button onclick="recargarCamaraActiva()" style="padding:5px 10px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;font-size:11px;border-radius:4px;">⏳ Recargar</button>
               </div>
             </div>
           </div>
@@ -812,7 +813,7 @@ body {
       <div id="viewSensores" style="display:none">
         <div class="card">
           <div class="card-title">📡 Mis sensores ESP32
-            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">�„</button>
+            <button onclick="cargarSensores()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;">⏳</button>
           </div>
           <div id="sensoresLista"><div class="empty-msg">Cargando sensores...</div></div>
         </div>
@@ -828,24 +829,39 @@ body {
           <div class="card-title">👥 Miembros del hogar</div>
           <div id="miembrosLista"><div class="empty-msg">Cargando miembros...</div></div>
           <div class="info-banner-blue" style="margin-top:12px;">
-            📱 Para registrar miembros con reconocimiento facial, usa la app móvil HomeAlert �€� Seguridad �€� Miembros del Hogar
+            📱 Para registrar miembros con reconocimiento facial, usa la app móvil HomeAlert → Seguridad → Miembros del Hogar
           </div>
+        </div>
+      </div>
+
+      <!-- USUARIOS / PERFILES -->
+      <div id="viewUsuarios" style="display:none">
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-title">Usuarios del hogar</div>
+          <div class="info-banner-blue">Administra los perfiles familiares reales del hogar. Aqui puedes cambiar el perfil activo y ajustar su escenario personal: tipo, check-in, tiempo de escolta, confirmacion simple y zonas seguras.</div>
+          <div id="usuariosLista"><div class="empty-msg">Cargando usuarios del hogar...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Editor del usuario seleccionado</div>
+          <div id="usuarioEditor"><div class="empty-msg">Selecciona un usuario para editar su escenario.</div></div>
         </div>
       </div>
 
       <!-- MODO ESCOLTA -->
       <div id="viewEscolta" style="display:none">
         <div class="card" id="escoltaForm">
-          <div class="card-title">🛡️ Activar modo escolta</div>
-          <div class="info-banner-blue">🛡️ Define tu destino y tiempo estimado. Si no llegas, tus contactos recibirán una alerta con tu ubicación.</div>
+          <div class="card-title">Activar modo escolta por usuario</div>
+          <div class="info-banner-blue">Activa la escolta usando un perfil familiar real. Define el tiempo estimado, el check-in, la zona segura esperada y un PIN para cancelar o usar coaccion silenciosa.</div>
           <div class="input-row">
             <div>
-              <div class="input-label">LATITUD DESTINO</div>
-              <input type="text" id="escDestLat" class="input-field" placeholder="14.6349"/>
+              <div class="input-label">USUARIO / PERFIL</div>
+              <select id="escPerfil" class="input-field"></select>
             </div>
             <div>
-              <div class="input-label">LONGITUD DESTINO</div>
-              <input type="text" id="escDestLng" class="input-field" placeholder="-90.5069"/>
+              <div class="input-label">ZONA SEGURA ESPERADA</div>
+              <select id="escZonaSegura" class="input-field">
+                <option value="Casa">Casa</option>
+              </select>
             </div>
           </div>
           <div class="input-row">
@@ -854,14 +870,25 @@ body {
               <input type="number" id="escMinutos" class="input-field" value="30" min="1" max="480"/>
             </div>
             <div>
-              <div class="input-label">PIN DE CANCELACIÓN</div>
-              <input type="password" id="escPin" class="input-field" placeholder="Mínimo 4 dígitos"/>
+              <div class="input-label">CHECK-IN (minutos)</div>
+              <input type="number" id="escCheckIn" class="input-field" value="15" min="1" max="180"/>
             </div>
           </div>
-          <div class="info-banner-yellow">⚠️ PIN de coacción = PIN + "0" → Cancela silenciosamente y envía alerta de robo</div>
+          <div class="input-row">
+            <div>
+              <div class="input-label">TIPO DE PERFIL</div>
+              <input type="text" id="escTipoPerfil" class="input-field" value="general" readonly/>
+            </div>
+            <div>
+              <div class="input-label">PIN DE CANCELACION</div>
+              <input type="password" id="escPin" class="input-field" placeholder="Minimo 4 digitos"/>
+            </div>
+          </div>
+          <div class="info-banner-yellow">PIN de coaccion = PIN + 0. Cancela aparentemente la escolta, pero envia alerta silenciosa de robo a la red de apoyo del perfil.</div>
+          <div class="info-banner-blue" id="escPerfilResumen">Selecciona un usuario para ver su escenario, sus zonas seguras y la configuracion sugerida.</div>
           <button onclick="activarEscolta()"
             style="width:100%;padding:14px;background:linear-gradient(90deg,#1A3A5C,#2563EB);color:#fff;border:none;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 20px var(--blue-glow);border-radius:6px;transition:all 0.18s;">
-            🛡️ ACTIVAR MODO ESCOLTA
+            ACTIVAR MODO ESCOLTA
           </button>
         </div>
         <div class="card" id="escoltaActiva" style="display:none">
@@ -996,7 +1023,7 @@ body {
     <!-- PANEL DERECHO -->
     <div class="right-panel">
       <div class="right-panel-header">
-        <span>�‹ ACTIVIDAD RECIENTE</span>
+        <span>📋 ACTIVIDAD RECIENTE</span>
         <span id="histCount" style="color:var(--text);font-weight:700">0</span>
       </div>
       <div class="history-list" id="actividadLista">
@@ -1015,7 +1042,8 @@ body {
 <script>
 let sessionUser=null, sistemaArmado=false, simuladorActivo=false, nivelActual='moderado';
 let codigosSelec=[], escoltaTimer=null, escoltaPin='';
-let statsHoy={alarmas:0,ok:0,err:0}, latestSensors=[], latestMiembros=[], latestHistorial=[], sistemaData={};
+let statsHoy={alarmas:0,ok:0,err:0}, latestSensors=[], latestMiembros=[], latestHistorial=[], latestPerfiles=[], sistemaData={};
+let perfilActivoId='', perfilSeleccionadoEscolta='';
 let camaras=[], camaraActivaIdx=-1, dialogoCamaraEditar=null;
 let modoNocheActivo=false, nivelNocheActual='severo';
 
@@ -1057,7 +1085,7 @@ async function doLogin(){
   const pass=document.getElementById('userPass').value.trim();
   const btn=document.getElementById('btnLogin');
   if(!email||!pass){showError('Completa todos los campos.');return;}
-  btn.textContent='�„ VERIFICANDO...';btn.disabled=true;
+  btn.textContent='⏳ VERIFICANDO...';btn.disabled=true;
   try {
     const res=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
     const data=await res.json();
@@ -1078,9 +1106,42 @@ async function doLogin(){
 function showError(msg){const el=document.getElementById('loginError');el.textContent='⚠️ '+msg;el.style.display='block';}
 function doLogout(){sessionUser=null;document.getElementById('loginPage').style.display='flex';document.getElementById('mainApp').style.display='none';document.getElementById('mainContent').style.display='none';}
 document.getElementById('userPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.addEventListener('change',e=>{
+  if(e.target?.id==='escPerfil'){
+    perfilSeleccionadoEscolta = e.target.value;
+    const checkIn = document.getElementById('escCheckIn');
+    const minutos = document.getElementById('escMinutos');
+    if(checkIn) delete checkIn.dataset.userEdited;
+    if(minutos) delete minutos.dataset.userEdited;
+    syncEscortProfileUI();
+    renderUsuarios();
+  }
+  if(e.target?.id==='escZonaSegura'){
+    const resumen = document.getElementById('escPerfilResumen');
+    const profile = latestPerfiles.find(p => p.id === perfilSeleccionadoEscolta);
+    if(resumen && profile){
+      resumen.textContent = `${profile.nombre} · ${profile.rol || 'Familiar'} · zona esperada ${e.target.value} · check-in ${document.getElementById('escCheckIn')?.value || profile.checkInPreferidoMin || 30} min.`;
+    }
+  }
+});
+document.addEventListener('input',e=>{
+  if(e.target?.id==='escCheckIn' || e.target?.id==='escMinutos'){
+    e.target.dataset.userEdited='true';
+  }
+});
 
 /* CARGAR TODO */
-async function cargarTodo(){await cargarSistema();await cargarSensores();await cargarMiembros();await cargarCamara();await cargarModoNoche();await cargarSonidos();renderEsp32Guide();refreshUserDashboard();}
+async function cargarTodo(){
+  await cargarSistema();
+  await cargarSensores();
+  await cargarMiembros();
+  await cargarPerfiles();
+  await cargarCamara();
+  await cargarModoNoche();
+  await cargarSonidos();
+  renderEsp32Guide();
+  refreshUserDashboard();
+}
 
 /* SISTEMA */
 async function cargarSistema(){
@@ -1149,12 +1210,12 @@ async function enviarAlarma(){
   const mensaje=msgInput.value.trim();const titulo=tituloInput.value.trim()||'Alerta';
   if(!mensaje){log('⚠️ Escribe un mensaje.','warn');return;}
   const btn=document.getElementById('btnEnviar');
-  btn.classList.add('loading');btn.textContent='�„ ENVIANDO...';statsHoy.alarmas++;
+  btn.classList.add('loading');btn.textContent='⏳ ENVIANDO...';statsHoy.alarmas++;
   try {
     const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uid:sessionUser.uid})});
     if(res.ok){log(`✅ Alarma [${nivelActual.toUpperCase()}] activada en tu dispositivo.`,'ok');statsHoy.ok++;addActividad(titulo,mensaje,nivelActual);actualizarStats();}
-    else{const e=await res.text();log(`❌ Error: ${e}`,'err');statsHoy.err++;}
-  } catch(e){log(`❌ ${e.message}`,'err');statsHoy.err++;}
+    else{const e=await res.text();log(`🚫 Error: ${e}`,'err');statsHoy.err++;}
+  } catch(e){log(`🚫 ${e.message}`,'err');statsHoy.err++;}
   btn.classList.remove('loading');btn.textContent='🔔 ACTIVAR MI ALARMA';
 }
 async function cancelarAlarma(){
@@ -1300,12 +1361,12 @@ async function enviarACodigos(){
   for(const codigo of codigosSelec){
     try{const res=await fetch('/find-by-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo})});const data=await res.json();if(data.found)uids.push(data.uid);else log(`⚠️ Código no encontrado: ${codigo}`,'warn');}catch(e){}
   }
-  if(!uids.length){log('❌ Ningún código fue encontrado.','err');return;}
+  if(!uids.length){log('🚫 Ningún código fue encontrado.','err');return;}
   try{
     const res=await fetch('/send-alarm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:mensaje,nivel:nivelActual,titulo,uids})});
     if(res.ok){log(`✅ Alarma enviada a ${uids.length} usuario(s).`,'ok');codigosSelec=[];renderChips();}
-    else log('❌ Error enviando alarmas.','err');
-  }catch(e){log('❌ Error: '+e.message,'err');}
+    else log('🚫 Error enviando alarmas.','err');
+  }catch(e){log('🚫 Error: '+e.message,'err');}
 }
 
 /* MODO NOCHE */
@@ -1387,7 +1448,7 @@ function mostrarDialogoCamara(editarIdx=null){
   dialogoCamaraEditar=editarIdx;const cam=editarIdx!==null?camaras[editarIdx]:null;
   const overlay=document.createElement('div');overlay.id='dialogoCamara';
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
-  overlay.innerHTML=`<div style="background:var(--surface);padding:24px;width:340px;max-width:90vw;border:1px solid var(--border2);border-radius:var(--radius);position:relative"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);border-radius:var(--radius) var(--radius) 0 0;"></div><h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam?'✏️ Editar Cámara':'📷 Agregar Cámara'}</h3><div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-sec)">Nombre</label><input id="dlg_cam_nombre" type="text" class="input-field" value="${cam?.nombre||''}" placeholder="Sala, Garaje, Entrada..." style="margin-top:4px"></div><div style="margin-bottom:16px"><label style="font-size:12px;color:var(--text-sec)">URL del stream</label><input id="dlg_cam_url" type="url" class="input-field" value="${cam?.url||''}" placeholder="http://192.168.1.x:8080/video" style="margin-top:4px"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="cerrarDialogoCamara()" style="padding:8px 16px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;border-radius:6px;">Cancelar</button><button onclick="guardarDialogoCamara()" style="padding:8px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;border-radius:6px;">Guardar</button></div></div>`;
+  overlay.innerHTML=`<div style="background:var(--surface);padding:24px;width:340px;max-width:90vw;border:1px solid var(--border2);border-radius:var(--radius);position:relative"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);border-radius:var(--radius) var(--radius) 0 0;"></div><h3 style="margin:0 0 16px;font-size:15px;color:var(--text-pri)">${cam?'🏠 Editar Cámara':'📷 Agregar Cámara'}</h3><div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-sec)">Nombre</label><input id="dlg_cam_nombre" type="text" class="input-field" value="${cam?.nombre||''}" placeholder="Sala, Garaje, Entrada..." style="margin-top:4px"></div><div style="margin-bottom:16px"><label style="font-size:12px;color:var(--text-sec)">URL del stream</label><input id="dlg_cam_url" type="url" class="input-field" value="${cam?.url||''}" placeholder="http://192.168.1.x:8080/video" style="margin-top:4px"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="cerrarDialogoCamara()" style="padding:8px 16px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);cursor:pointer;border-radius:6px;">Cancelar</button><button onclick="guardarDialogoCamara()" style="padding:8px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700;border-radius:6px;">Guardar</button></div></div>`;
   document.body.appendChild(overlay);setTimeout(()=>document.getElementById('dlg_cam_nombre').focus(),100);
 }
 function cerrarDialogoCamara(){const d=document.getElementById('dialogoCamara');if(d)d.remove();}
@@ -1400,11 +1461,11 @@ async function guardarDialogoCamara(){
   const newIdx=dialogoCamaraEditar!==null?dialogoCamaraEditar:camaras.length-1;seleccionarCamara(newIdx);showToast('✅ Cámara guardada.');
 }
 async function guardarCamaras(){
-  if(!sessionUser?.uid){showToast('❌ No hay sesión activa');return;}
+  if(!sessionUser?.uid){showToast('🚫 No hay sesión activa');return;}
   try{
     const res=await fetch('/save-camera-url',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,camaraUrl:camaras.length>0?camaras[0].url:'',camaras})});
-    const data=await res.json();if(data.ok)showToast('✅ Cámara guardada');else showToast('❌ Error guardando cámara');
-  }catch(e){showToast('❌ Error de conexión al servidor');}
+    const data=await res.json();if(data.ok)showToast('✅ Cámara guardada');else showToast('🚫 Error guardando cámara');
+  }catch(e){showToast('🚫 Error de conexión al servidor');}
 }
 
 /* SENSORES */
@@ -1428,7 +1489,7 @@ function emojiTipo(tipoId){const m={pir:'📡',led:'💡',relay:'🔌',buzzer:'�
 async function controlarComponente(sensorId,compId,estado){
   if(!sessionUser?.uid)return;
   try{await fetch('/toggle-componente',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,sensorId,compId,estado})});showToast(estado?'💡 Componente encendido':'Componente apagado');setTimeout(cargarSensores,500);}
-  catch(e){showToast('❌ Error controlando componente');}
+  catch(e){showToast('🚫 Error controlando componente');}
 }
 function renderizarControlesManual(sensores){
   const cont=document.getElementById('controlesManual');if(!cont)return;
@@ -1448,43 +1509,304 @@ async function cargarMiembros(){
   }catch(e){log('Error cargando miembros','err');}
 }
 
+/* PERFILES / USUARIOS */
+async function cargarPerfiles(){
+  if(!sessionUser?.uid)return;
+  try{
+    const res = await fetch('/get-perfiles?uid='+sessionUser.uid);
+    const data = await res.json();
+    latestPerfiles = Array.isArray(data.perfiles) ? data.perfiles : [];
+    perfilActivoId = data.perfilActivoId || '';
+    if(!perfilSeleccionadoEscolta){
+      perfilSeleccionadoEscolta = perfilActivoId || latestPerfiles[0]?.id || '';
+    }
+    renderUsuarios();
+    syncEscortProfileUI();
+  }catch(e){
+    log('Error cargando usuarios del hogar','err');
+  }
+}
+
+function renderUsuarios(){
+  const lista = document.getElementById('usuariosLista');
+  const editor = document.getElementById('usuarioEditor');
+  const escPerfil = document.getElementById('escPerfil');
+  if(!lista || !editor || !escPerfil)return;
+  if(!latestPerfiles.length){
+    lista.innerHTML = '<div class="empty-msg">No hay perfiles familiares todavia.</div>';
+    editor.innerHTML = '<div class="empty-msg">Crea perfiles desde la app movil o registra miembros del hogar.</div>';
+    escPerfil.innerHTML = '<option value="">Sin perfiles</option>';
+    return;
+  }
+
+  lista.innerHTML = latestPerfiles.map(profile => {
+    const activo = profile.id === perfilActivoId;
+    const selected = profile.id === perfilSeleccionadoEscolta;
+    const zonas = Array.isArray(profile.zonasSeguras) ? profile.zonasSeguras.join(', ') : 'Casa';
+    return `<div class="lista-item ${activo?'encasa':''}" style="align-items:flex-start;">
+      <div style="width:42px;height:42px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(59,130,246,0.35);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--blue);">${(profile.nombre||'U').charAt(0).toUpperCase()}</div>
+      <div style="flex:1;">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${profile.nombre || 'Perfil'}</div>
+          <span class="status-badge" style="color:${activo?'var(--green)':'var(--muted)'};border-color:${activo?'rgba(34,197,94,0.4)':'rgba(90,90,122,0.35)'};">${activo?'ACTIVO EN EL HOGAR':'DISPONIBLE'}</span>
+          <span class="status-badge" style="color:${selected?'var(--blue)':'var(--muted)'};border-color:${selected?'rgba(59,130,246,0.35)':'rgba(90,90,122,0.35)'};">${selected?'SELECCIONADO':'PERFIL'}</span>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px;">${profile.rol || 'Familiar'} · ${profile.tipoPerfil || 'general'} · ${profile.contactosCount || 0} contacto(s)</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text-sec);margin-top:4px;">Check-in ${profile.checkInPreferidoMin || 30} min · Escolta ${profile.tiempoEscoltaPreferidoMin || 30} min · Zonas: ${zonas}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:128px;">
+        <button onclick="activarPerfilHogar('${profile.id}')" style="padding:8px 10px;background:${activo?'rgba(34,197,94,0.12)':'var(--surface2)'};color:${activo?'var(--green)':'var(--text-sec)'};border:1px solid ${activo?'rgba(34,197,94,0.35)':'var(--border)'};cursor:pointer;font-size:11px;font-weight:700;border-radius:6px;">${activo?'Perfil activo':'Hacer activo'}</button>
+        <button onclick="seleccionarUsuarioEditor('${profile.id}')" style="padding:8px 10px;background:${selected?'rgba(59,130,246,0.12)':'var(--surface2)'};color:${selected?'var(--blue)':'var(--text-sec)'};border:1px solid ${selected?'rgba(59,130,246,0.35)':'var(--border)'};cursor:pointer;font-size:11px;font-weight:700;border-radius:6px;">Editar y usar</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  escPerfil.innerHTML = latestPerfiles.map(profile => `<option value="${profile.id}" ${profile.id===perfilSeleccionadoEscolta?'selected':''}>${profile.nombre}</option>`).join('');
+  renderUsuarioEditor(perfilSeleccionadoEscolta || perfilActivoId || latestPerfiles[0].id);
+}
+
+function seleccionarUsuarioEditor(profileId){
+  perfilSeleccionadoEscolta = profileId;
+  renderUsuarios();
+  syncEscortProfileUI();
+}
+
+function renderUsuarioEditor(profileId){
+  const editor = document.getElementById('usuarioEditor');
+  if(!editor)return;
+  const profile = latestPerfiles.find(p => p.id === profileId) || latestPerfiles[0];
+  if(!profile){
+    editor.innerHTML = '<div class="empty-msg">Selecciona un usuario para editar su escenario.</div>';
+    return;
+  }
+  const zonas = Array.isArray(profile.zonasSeguras) && profile.zonasSeguras.length
+    ? profile.zonasSeguras.join(', ')
+    : 'Casa';
+  editor.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+      <div>
+        <div class="input-label">NOMBRE VISIBLE</div>
+        <input id="usr_nombre_${profile.id}" class="input-field" value="${profile.nombre || ''}" readonly />
+      </div>
+      <div>
+        <div class="input-label">TIPO DE PERFIL</div>
+        <select id="usr_tipo_${profile.id}" class="input-field">
+          <option value="general" ${profile.tipoPerfil==='general'?'selected':''}>General</option>
+          <option value="nino" ${profile.tipoPerfil==='nino'?'selected':''}>Nino</option>
+          <option value="adulto_mayor" ${profile.tipoPerfil==='adulto_mayor'?'selected':''}>Adulto mayor</option>
+        </select>
+      </div>
+      <div>
+        <div class="input-label">CHECK-IN PREFERIDO</div>
+        <input id="usr_checkin_${profile.id}" type="number" class="input-field" min="1" max="180" value="${profile.checkInPreferidoMin || 30}" />
+      </div>
+      <div>
+        <div class="input-label">TIEMPO ESCOLTA PREFERIDO</div>
+        <input id="usr_tiempo_${profile.id}" type="number" class="input-field" min="1" max="480" value="${profile.tiempoEscoltaPreferidoMin || 30}" />
+      </div>
+      <div>
+        <div class="input-label">CONFIRMACION SIMPLE</div>
+        <select id="usr_confirmacion_${profile.id}" class="input-field">
+          <option value="false" ${profile.confirmacionSimple!==true?'selected':''}>No</option>
+          <option value="true" ${profile.confirmacionSimple===true?'selected':''}>Si</option>
+        </select>
+      </div>
+      <div>
+        <div class="input-label">ZONAS SEGURAS</div>
+        <input id="usr_zonas_${profile.id}" class="input-field" value="${zonas}" placeholder="Casa, Trabajo, Universidad" />
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="btn btn-send" onclick="guardarEscenarioPerfil('${profile.id}')">GUARDAR ESCENARIO</button>
+      <button class="btn btn-cancel" onclick="activarPerfilHogar('${profile.id}')">DEJAR COMO PERFIL ACTIVO</button>
+    </div>
+  `;
+}
+
+async function activarPerfilHogar(profileId){
+  if(!sessionUser?.uid || !profileId)return;
+  try{
+    const res = await fetch('/set-perfil-activo',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({uid:sessionUser.uid,profileId})
+    });
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || 'No se pudo activar el perfil');
+    perfilActivoId = profileId;
+    perfilSeleccionadoEscolta = profileId;
+    latestPerfiles = latestPerfiles.map(p => ({...p, activo:p.id===profileId}));
+    renderUsuarios();
+    syncEscortProfileUI();
+    log('Perfil activo del hogar actualizado.','ok');
+  }catch(e){
+    log('Error activando perfil: '+e.message,'err');
+  }
+}
+
+async function guardarEscenarioPerfil(profileId){
+  if(!sessionUser?.uid || !profileId)return;
+  const tipoPerfil = document.getElementById(`usr_tipo_${profileId}`)?.value || 'general';
+  const checkInPreferidoMin = parseInt(document.getElementById(`usr_checkin_${profileId}`)?.value || '30',10);
+  const tiempoEscoltaPreferidoMin = parseInt(document.getElementById(`usr_tiempo_${profileId}`)?.value || '30',10);
+  const confirmacionSimple = document.getElementById(`usr_confirmacion_${profileId}`)?.value === 'true';
+  const zonasSeguras = (document.getElementById(`usr_zonas_${profileId}`)?.value || 'Casa')
+    .split(',')
+    .map(v => v.trim())
+    .filter(Boolean);
+  try{
+    const res = await fetch('/update-perfil-escenario',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        uid:sessionUser.uid,
+        profileId,
+        tipoPerfil,
+        checkInPreferidoMin,
+        tiempoEscoltaPreferidoMin,
+        confirmacionSimple,
+        zonasSeguras
+      })
+    });
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || 'No se pudo guardar el escenario');
+    latestPerfiles = latestPerfiles.map(p => p.id === profileId ? ({
+      ...p,
+      tipoPerfil,
+      checkInPreferidoMin,
+      tiempoEscoltaPreferidoMin,
+      confirmacionSimple,
+      zonasSeguras
+    }) : p);
+    renderUsuarios();
+    syncEscortProfileUI();
+    log('Escenario del usuario guardado correctamente.','ok');
+  }catch(e){
+    log('Error guardando escenario: '+e.message,'err');
+  }
+}
+
+function syncEscortProfileUI(){
+  const select = document.getElementById('escPerfil');
+  const zona = document.getElementById('escZonaSegura');
+  const checkIn = document.getElementById('escCheckIn');
+  const tiempo = document.getElementById('escMinutos');
+  const tipo = document.getElementById('escTipoPerfil');
+  const resumen = document.getElementById('escPerfilResumen');
+  if(!select || !zona || !checkIn || !tiempo || !tipo || !resumen)return;
+  const selectedId = select.value || perfilSeleccionadoEscolta || perfilActivoId || latestPerfiles[0]?.id || '';
+  if(selectedId) perfilSeleccionadoEscolta = selectedId;
+  const profile = latestPerfiles.find(p => p.id === perfilSeleccionadoEscolta) || latestPerfiles[0];
+  if(!profile){
+    zona.innerHTML = '<option value=\"Casa\">Casa</option>';
+    tipo.value = 'general';
+    resumen.textContent = 'No hay perfiles familiares disponibles todavia.';
+    return;
+  }
+  select.value = profile.id;
+  tipo.value = profile.tipoPerfil || 'general';
+  if(!checkIn.dataset.userEdited) checkIn.value = profile.checkInPreferidoMin || 30;
+  if(!tiempo.dataset.userEdited) tiempo.value = profile.tiempoEscoltaPreferidoMin || 30;
+  const zonas = Array.isArray(profile.zonasSeguras) && profile.zonasSeguras.length ? profile.zonasSeguras : ['Casa'];
+  zona.innerHTML = zonas.map(item => `<option value="${item}">${item}</option>`).join('');
+  resumen.textContent = `${profile.nombre} · ${profile.rol || 'Familiar'} · tipo ${profile.tipoPerfil || 'general'} · check-in sugerido ${profile.checkInPreferidoMin || 30} min · escolta sugerida ${profile.tiempoEscoltaPreferidoMin || 30} min.`;
+}
+
 /* ESCOLTA */
-function activarEscolta(){
-  const lat=parseFloat(document.getElementById('escDestLat').value);
-  const lng=parseFloat(document.getElementById('escDestLng').value);
-  const min=parseInt(document.getElementById('escMinutos').value)||30;
-  const pin=document.getElementById('escPin').value.trim();
-  if(isNaN(lat)||isNaN(lng)){log('⚠️ Ingresa las coordenadas del destino.','warn');return;}
-  if(pin.length<4){log('⚠️ El PIN debe tener al menos 4 dígitos.','warn');return;}
-  escoltaPin=pin;
-  document.getElementById('escoltaForm').style.display='none';
-  document.getElementById('escoltaActiva').style.display='block';
-  document.getElementById('panelCancelar').style.display='none';
-  let secs=min*60;
-  escoltaTimer=setInterval(()=>{secs--;const m=String(Math.floor(secs/60)).padStart(2,'0');const s=String(secs%60).padStart(2,'0');document.getElementById('escContador').textContent=`${m}:${s}`;if(secs<=0){clearInterval(escoltaTimer);enviarAlertaEscolta();}},1000);
-  log(`🛡️ Modo Escolta activado · ${min} minutos.`,'ok');
+async function activarEscolta(){
+  const profileId = document.getElementById('escPerfil')?.value || perfilSeleccionadoEscolta;
+  const min = parseInt(document.getElementById('escMinutos').value || '30', 10) || 30;
+  const checkInMinutos = parseInt(document.getElementById('escCheckIn').value || '15', 10) || 15;
+  const pin = document.getElementById('escPin').value.trim();
+  const destinoSeguro = document.getElementById('escZonaSegura')?.value || 'Casa';
+  const profile = latestPerfiles.find(p => p.id === profileId);
+  if(!profileId || !profile){log('Selecciona un usuario valido para la escolta.','warn');return;}
+  if((profile.contactosCount || 0) < 1){log('Este usuario aun no tiene red de apoyo configurada.','warn');return;}
+  if(pin.length < 4){log('El PIN debe tener al menos 4 digitos.','warn');return;}
+  escoltaPin = pin;
+  perfilSeleccionadoEscolta = profileId;
+  try{
+    const res = await fetch('/activar-escolta-web',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        uid:sessionUser.uid,
+        profileId,
+        minutos:min,
+        checkInMinutos,
+        pin,
+        destinoSeguro
+      })
+    });
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || 'No se pudo activar la escolta');
+    document.getElementById('escoltaForm').style.display='none';
+    document.getElementById('escoltaActiva').style.display='block';
+    document.getElementById('panelCancelar').style.display='none';
+    document.getElementById('escContador').style.color='var(--text)';
+    let secs = min * 60;
+    if(escoltaTimer) clearInterval(escoltaTimer);
+    escoltaTimer = setInterval(()=>{
+      secs--;
+      const m = String(Math.floor(secs/60)).padStart(2,'0');
+      const s = String(secs%60).padStart(2,'0');
+      document.getElementById('escContador').textContent = `${m}:${s}`;
+      if(secs <= 0){
+        clearInterval(escoltaTimer);
+        enviarAlertaEscolta();
+      }
+    },1000);
+    log(`Modo escolta activo para ${profile.nombre} · ${min} min · zona ${destinoSeguro}.`,'ok');
+  }catch(e){
+    log('Error activando escolta: '+e.message,'err');
+  }
 }
 async function enviarAlertaEscolta(){
-  log('⚠️ Tiempo expirado · Enviando alerta de escolta.','warn');
-  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,message:'⚠️ '+sessionUser.email+' no llegó a su destino a tiempo.',lat:0,lng:0})});log('🚨 Alerta de escolta enviada a contactos.','err');document.getElementById('escContador').textContent='¡ALERTA!';document.getElementById('escContador').style.color='var(--red)';}
-  catch(e){log('Error enviando alerta','err');}
+  const profile = latestPerfiles.find(p => p.id === perfilSeleccionadoEscolta) || latestPerfiles.find(p => p.id === perfilActivoId);
+  const perfilNombre = profile?.nombre || sessionUser?.email || 'Usuario';
+  const destinoSeguro = document.getElementById('escZonaSegura')?.value || 'Casa';
+  log('Tiempo expirado · Enviando alerta de escolta.','warn');
+  try{
+    await fetch('/escort-alert',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        uid:sessionUser.uid,
+        perfilNombre,
+        destinoSeguro,
+        message:`${perfilNombre} no confirmo llegada segura a ${destinoSeguro}.`,
+        lat:0,
+        lng:0
+      })
+    });
+    log('Alerta de escolta enviada a contactos.','err');
+    document.getElementById('escContador').textContent='ALERTA';
+    document.getElementById('escContador').style.color='var(--red)';
+  } catch(e){
+    log('Error enviando alerta: '+e.message,'err');
+  }
 }
 function mostrarCancelar(){const p=document.getElementById('panelCancelar');p.style.display=p.style.display==='none'?'block':'none';}
-function cancelarEscolta(){
+async function cancelarEscolta(){
   const pin=document.getElementById('pinCancelar').value.trim();
   if(pin===escoltaPin){
-    clearInterval(escoltaTimer);
+    if(escoltaTimer) clearInterval(escoltaTimer);
+    await fetch('/cancelar-escolta-web',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid})});
     document.getElementById('escoltaForm').style.display='block';document.getElementById('escoltaActiva').style.display='none';document.getElementById('panelCancelar').style.display='none';document.getElementById('pinCancelar').value='';
-    log('✅ Modo Escolta cancelado.','ok');
+    log('Modo escolta cancelado.','ok');
   } else if(pin===escoltaPin+'0'){
-    clearInterval(escoltaTimer);enviarAlertaEscolta();
+    if(escoltaTimer) clearInterval(escoltaTimer);
+    await fetch('/cancelar-escolta-web',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid})});
+    enviarAlertaEscolta();
     document.getElementById('escoltaForm').style.display='block';document.getElementById('escoltaActiva').style.display='none';document.getElementById('panelCancelar').style.display='none';
-    log('⚠️ PIN de coacción usado · Alerta enviada silenciosamente.','warn');
-  } else log('❌ PIN incorrecto.','err');
+    log('PIN de coaccion usado · alerta enviada silenciosamente.','warn');
+  } else log('PIN incorrecto.','err');
 }
 async function activarAntiRobo(){
   if(!confirm('¿Activar botón de pánico?'))return;
-  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,message:'🚨 ALERTA ANTI-ROBO: '+sessionUser.email,lat:0,lng:0})});log('🚨 Alerta de robo enviada.','err');}
+  const profile = latestPerfiles.find(p => p.id === perfilSeleccionadoEscolta) || latestPerfiles.find(p => p.id === perfilActivoId);
+  const perfilNombre = profile?.nombre || sessionUser?.email || 'Usuario';
+  try{await fetch('/escort-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:sessionUser.uid,perfilNombre,message:'ALERTA ANTI-ROBO: '+perfilNombre,lat:0,lng:0})});log('Alerta de robo enviada.','err');}
   catch(e){log('Error: '+e.message,'err');}
 }
 
@@ -1521,16 +1843,22 @@ async function copiarTexto(texto,etiqueta='Enlace copiado'){
     if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(texto);
     else{const input=document.createElement('textarea');input.value=texto;input.setAttribute('readonly','');input.style.position='fixed';input.style.opacity='0';input.style.pointerEvents='none';document.body.appendChild(input);input.focus();input.select();input.setSelectionRange(0,texto.length);const copiado=document.execCommand('copy');document.body.removeChild(input);if(!copiado)throw new Error('copy-fallback-failed');}
     showToast(etiqueta);
-  }catch(error){showToast('❌ No se pudo copiar. Cópialo manualmente desde el enlace mostrado.');}
+  }catch(error){showToast('🚫 No se pudo copiar. Cópialo manualmente desde el enlace mostrado.');}
 }
 function probarEnlace(url){try{const n=window.open(url,'_blank','noopener,noreferrer');if(!n)window.location.href=url;showToast('Abriendo enlace de prueba...');}catch(error){window.location.href=url;}}
 
 /* NAVEGACIÓN */
-const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Escolta','Noche','Esp32','Sonidos','Historial'];
+const vistas=['Panel','Alarmas','Camara','Sensores','Miembros','Usuarios','Escolta','Noche','Esp32','Sonidos','Historial'];
 function setView(view,el){
   document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');
   vistas.forEach(v=>{const el2=document.getElementById('view'+v);if(el2)el2.style.display=v.toLowerCase()===view?'block':'none';});
-  if(view==='sensores')cargarSensores();if(view==='miembros')cargarMiembros();if(view==='historial')cargarHistorial();if(view==='sonidos')cargarSonidos();if(view==='esp32')renderEsp32Guide();
+  if(view==='sensores')cargarSensores();
+  if(view==='miembros')cargarMiembros();
+  if(view==='usuarios')cargarPerfiles();
+  if(view==='escolta')syncEscortProfileUI();
+  if(view==='historial')cargarHistorial();
+  if(view==='sonidos')cargarSonidos();
+  if(view==='esp32')renderEsp32Guide();
 }
 
 /* AUTO REFRESH */
@@ -1538,7 +1866,6 @@ setInterval(()=>{if(sessionUser){cargarSistema();cargarSensores();}},15000);
 </script>
 </body>
 </html>
-
 
 
 
