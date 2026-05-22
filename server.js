@@ -686,12 +686,10 @@ const server = http.createServer(async (req, res) => {
       try {
         firebaseUser = await auth.getUserByEmail(email);
       } catch (e) {
-        if (e.code !== 'auth/user-not-found') throw e;
-        firebaseUser = await auth.createUser({
-          email,
-          emailVerified: true,
-          displayName: nombre || undefined,
-        });
+        if (e.code === 'auth/user-not-found') {
+          return json({ ok:false, error:'Esta cuenta no existe en HomeAlert. Primero debes crearla desde la app movil.' }, 404);
+        }
+        throw e;
       }
 
       const payload = await construirSesionUsuario({
@@ -1239,5 +1237,4 @@ server.listen(PORT, () => {
   iniciarMonitorHeartbeat();
   iniciarMonitorEventosEsp32();
 });
-
 
