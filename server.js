@@ -24,6 +24,7 @@ const auth = admin.auth();
 
 const ADMIN_EMAIL      = 'administrador@homealert.com';
 const FIREBASE_API_KEY = 'AIzaSyCODauFIh1T0shlPCmRVszZKpOj6tJyFsk';
+const GOOGLE_WEB_CLIENT_ID = '354930817838-5jo3jkem1pib51qdq16rmq44ps29biu9.apps.googleusercontent.com';
 const HEARTBEAT_TIMEOUT = 10; // segundos sin heartbeat = sabotaje
 const ADMIN_SOUND_MAP = {
   admin_sound_01: 'sounds/admin_sound_01.wav',
@@ -359,6 +360,173 @@ function parseBody(req) {
   });
 }
 
+function generarCodigoUsuario() {
+  const now = Date.now();
+  const bloque1 = String(10000 + (now % 90000));
+  const bloque2 = String(1000 + (Math.floor(now / 1000) % 9000)).padStart(4, '0');
+  const bloque3 = String((new Date().getSeconds() % 99) + 1).padStart(2, '0');
+  return `${bloque1}-${bloque2}-${bloque3}`;
+}
+
+async function generarCodigoUnico() {
+  for (let i = 0; i < 25; i += 1) {
+    const codigo = generarCodigoUsuario();
+    const codigoDoc = await db.collection('codigoUsuarios').doc(codigo).get();
+    if (!codigoDoc.exists) return codigo;
+  }
+  throw new Error('No se pudo generar un codigo unico.');
+}
+
+async function asegurarUsuarioBase({
+  uid,
+  email,
+  nombre = '',
+  proveedor = 'password',
+  emailVerificado = false,
+}) {
+  const usersRef = db.collection('users').doc(uid);
+  const userDoc = await usersRef.get();
+  const userData = userDoc.data() || {};
+
+  let codigo = String(userData.codigo || '').trim();
+  if (!codigo) {
+    const codigoSnap = await db.collection('codigoUsuarios')
+      .where('uid', '==', uid)
+      .limit(1)
+      .get();
+    if (!codigoSnap.empty) {
+      codigo = String(codigoSnap.docs[0].id || '').trim();
+    }
+  }
+  if (!codigo) {
+    codigo = await generarCodigoUnico();
+  }
+
+  await usersRef.set({
+    email,
+    codigo,
+    nombre: nombre || userData.nombre || email.split('@')[0],
+    emailVerificado: emailVerificado === true,
+    proveedor,
+    rol: userData.rol || 'usuario',
+    activo: userData.activo !== false,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    ...(userDoc.exists ? {} : { createdAt: admin.firestore.FieldValue.serverTimestamp() }),
+  }, { merge: true });
+
+  await db.collection('codigoUsuarios').doc(codigo).set({
+    uid,
+    email,
+    nombre: nombre || userData.nombre || email.split('@')[0],
+    activo: true,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  }, { merge: true });
+
+  const sistemaRef = db.collection('sistema').doc(uid);
+  const sistemaDoc = await sistemaRef.get();
+  const perfilActivoId = String(sistemaDoc.data()?.perfilActivoId || '').trim() || 'perfil_principal';
+  await sistemaRef.set({
+    ownerUid: uid,
+    ownerEmail: email,
+    ownerNombre: nombre || userData.nombre || email.split('@')[0],
+    perfilActivoId,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  }, { merge: true });
+
+  const perfilRef = sistemaRef.collection('perfiles').doc(perfilActivoId);
+  const perfilDoc = await perfilRef.get();
+  if (!perfilDoc.exists) {
+    await perfilRef.set({
+      nombre: nombre || email.split('@')[0],
+      rol: 'Familiar',
+      tipoPerfil: 'general',
+      checkInPreferidoMin: 30,
+      tiempoEscoltaPreferidoMin: 30,
+      confirmacionSimple: false,
+      zonasSeguras: ['Casa'],
+      activo: true,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+  }
+
+  return { codigo };
+}
+
+async function construirSesionUsuario({
+  uid,
+  email,
+  isAdmin = false,
+  nombre = '',
+  proveedor = 'password',
+  emailVerificado = false,
+}) {
+  if (isAdmin) {
+    return {
+      ok: true,
+      uid,
+      isAdmin: true,
+      email,
+      codigo: '',
+      nombre: nombre || email.split('@')[0],
+    };
+  }
+
+  const { codigo } = await asegurarUsuarioBase({
+    uid,
+    email,
+    nombre,
+    proveedor,
+    emailVerificado,
+  });
+
+  const userDoc = await db.collection('users').doc(uid).get();
+  const userData = userDoc.data() || {};
+  if (userData.activo === false) {
+    return { ok: false, error: 'Cuenta desactivada.', code: 403 };
+  }
+
+  return {
+    ok: true,
+    uid,
+    isAdmin: false,
+    email,
+    codigo,
+    nombre: String(userData.nombre || nombre || email.split('@')[0]),
+  };
+}
+
+function verificarGoogleCredential(credential) {
+  return new Promise((resolve, reject) => {
+    const token = encodeURIComponent(String(credential || '').trim());
+    const options = {
+      hostname: 'oauth2.googleapis.com',
+      path: `/tokeninfo?id_token=${token}`,
+      method: 'GET',
+    };
+    const req = https.request(options, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error_description || parsed.error) {
+            return reject(new Error(parsed.error_description || parsed.error));
+          }
+          if (parsed.aud !== GOOGLE_WEB_CLIENT_ID) {
+            return reject(new Error('GOOGLE_AUDIENCE_MISMATCH'));
+          }
+          resolve(parsed);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+    req.on('error', reject);
+    req.end();
+  });
+}
+
 // ── Servidor HTTP ───────────────────────────────────────────────
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -482,14 +650,17 @@ const server = http.createServer(async (req, res) => {
     try {
       const result  = await firebaseSignIn(email, password);
       const isAdmin = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
-      let codigo = '';
-      if (!isAdmin) {
-        const doc = await db.collection('users').doc(result.localId).get();
-        codigo = doc.data()?.codigo || '';
-        if (doc.data()?.activo === false) return json({ ok:false, error:'Cuenta desactivada.' }, 403);
+      const payload = await construirSesionUsuario({
+        uid: result.localId,
+        email,
+        isAdmin,
+        proveedor: 'password',
+      });
+      if (!payload.ok) {
+        return json({ ok:false, error: payload.error || 'No se pudo iniciar sesion.' }, payload.code || 403);
       }
       console.log(`✅ Login: ${email} (${isAdmin ? 'ADMIN' : 'usuario'})`);
-      return json({ ok:true, uid: result.localId, isAdmin, email, codigo });
+      return json(payload);
     } catch(e) {
       const msg = e.message.includes('INVALID_PASSWORD') || e.message.includes('EMAIL_NOT_FOUND')
         ? 'Email o contraseña incorrectos.' : 'Error al iniciar sesión.';
@@ -498,6 +669,51 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── Usuarios (solo desde localhost) ──
+  if (req.method === 'POST' && req.url === '/login-google') {
+    const { credential } = await parseBody(req);
+    if (!credential) return json({ ok:false, error:'Falta credencial de Google.' }, 400);
+    try {
+      const googleData = await verificarGoogleCredential(credential);
+      const email = String(googleData.email || '').trim().toLowerCase();
+      const nombre = String(googleData.name || googleData.given_name || email.split('@')[0] || '').trim();
+      const emailVerificado = String(googleData.email_verified || '').toLowerCase() === 'true';
+      if (!email || !emailVerificado) {
+        return json({ ok:false, error:'La cuenta de Google no pudo verificarse.' }, 401);
+      }
+
+      const isAdmin = email === ADMIN_EMAIL.toLowerCase();
+      let firebaseUser;
+      try {
+        firebaseUser = await auth.getUserByEmail(email);
+      } catch (e) {
+        if (e.code !== 'auth/user-not-found') throw e;
+        firebaseUser = await auth.createUser({
+          email,
+          emailVerified: true,
+          displayName: nombre || undefined,
+        });
+      }
+
+      const payload = await construirSesionUsuario({
+        uid: firebaseUser.uid,
+        email,
+        isAdmin,
+        nombre,
+        proveedor: 'google',
+        emailVerificado: true,
+      });
+      if (!payload.ok) {
+        return json({ ok:false, error: payload.error || 'No se pudo iniciar sesion con Google.' }, payload.code || 403);
+      }
+
+      console.log(`âœ… Login Google: ${email} (${isAdmin ? 'ADMIN' : 'usuario'})`);
+      return json(payload);
+    } catch (e) {
+      console.error('Error login Google:', e.message);
+      return json({ ok:false, error:'No se pudo iniciar sesion con Google.' }, 401);
+    }
+  }
+
   if (req.method === 'GET' && req.url === '/get-users') {
     try {
       const snap  = await db.collection('users').get();
@@ -1023,8 +1239,5 @@ server.listen(PORT, () => {
   iniciarMonitorHeartbeat();
   iniciarMonitorEventosEsp32();
 });
-
-
-
 
 

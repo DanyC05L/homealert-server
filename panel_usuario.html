@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>HomeAlert - Mi Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root {
   --red:#E8281A; --red-dim:rgba(232,40,26,0.10); --red-glow:rgba(232,40,26,0.28);
@@ -50,6 +51,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .field:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-dim);}
 .btn-login{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 24px var(--blue-glow);transition:all var(--transition);}
 .btn-login:hover{background:#2563EB;transform:translateY(-1px);box-shadow:0 8px 32px var(--blue-glow);}
+.login-divider{display:flex;align-items:center;gap:10px;margin:16px 0 12px;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.login-divider span{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1.6px;text-transform:uppercase;}
+.google-login-wrap{display:flex;justify-content:center;min-height:44px;}
 
 /* TOPBAR */
 .topbar{position:relative;z-index:10;display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;transition:background var(--transition);}
@@ -1040,12 +1045,14 @@ body {
 </div>
 
 <script>
+const GOOGLE_WEB_CLIENT_ID='354930817838-5jo3jkem1pib51qdq16rmq44ps29biu9.apps.googleusercontent.com';
 let sessionUser=null, sistemaArmado=false, simuladorActivo=false, nivelActual='moderado';
 let codigosSelec=[], escoltaTimer=null, escoltaPin='';
 let statsHoy={alarmas:0,ok:0,err:0}, latestSensors=[], latestMiembros=[], latestHistorial=[], latestPerfiles=[], sistemaData={};
 let perfilActivoId='', perfilSeleccionadoEscolta='';
 let camaras=[], camaraActivaIdx=-1, dialogoCamaraEditar=null;
 let modoNocheActivo=false, nivelNocheActual='severo';
+let googleLoginReady=false;
 
 /* THEME */
 function getThemeMode(){return localStorage.getItem('homealert_user_theme')||'system';}
@@ -1080,6 +1087,60 @@ function addActividad(titulo,msg,nivel){
 }
 
 /* LOGIN */
+function hideError(){const el=document.getElementById('loginError');el.textContent='';el.style.display='none';}
+function completeLogin(data,emailOverride=''){
+  if(data.isAdmin){
+    showError('Este panel es solo para usuarios. Usa el panel de administrador.');
+    return false;
+  }
+  sessionUser=data;
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('mainApp').style.display='flex';
+  document.getElementById('mainContent').style.display='flex';
+  document.getElementById('topCodigo').textContent=data.codigo||'--';
+  document.getElementById('sidebarEmail').textContent=emailOverride||data.email||'--';
+  log(`âœ… Bienvenido ${emailOverride||data.email||'usuario'}`,'ok');
+  cargarTodo();
+  return true;
+}
+function ensureGoogleLoginMount(){
+  const btn=document.getElementById('btnLogin');
+  if(!btn||document.getElementById('googleLoginMount'))return;
+  const divider=document.createElement('div');
+  divider.className='login-divider';
+  divider.innerHTML='<span>o entra con Google</span>';
+  const wrap=document.createElement('div');
+  wrap.className='google-login-wrap';
+  const mount=document.createElement('div');
+  mount.id='googleLoginMount';
+  wrap.appendChild(mount);
+  btn.insertAdjacentElement('afterend',wrap);
+  btn.insertAdjacentElement('afterend',divider);
+}
+async function doGoogleLogin(credential){
+  try{
+    const res=await fetch('/login-google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential})});
+    const data=await res.json();
+    if(res.ok&&data.ok){
+      hideError();
+      completeLogin(data,data.email||'');
+    } else showError(data.error||'No se pudo iniciar con Google.');
+  } catch(e){showError('No se pudo conectar con el servidor.');}
+}
+function initGoogleLogin(){
+  ensureGoogleLoginMount();
+  const mount=document.getElementById('googleLoginMount');
+  if(!mount||googleLoginReady||!window.google?.accounts?.id)return;
+  google.accounts.id.initialize({
+    client_id:GOOGLE_WEB_CLIENT_ID,
+    callback:(response)=>{if(response?.credential)doGoogleLogin(response.credential);},
+    auto_select:false,
+    cancel_on_tap_outside:true
+  });
+  mount.innerHTML='';
+  google.accounts.id.renderButton(mount,{theme:'outline',size:'large',shape:'rectangular',text:'signin_with',logo_alignment:'left',width:330});
+  googleLoginReady=true;
+}
 async function doLogin(){
   const email=document.getElementById('userEmail').value.trim();
   const pass=document.getElementById('userPass').value.trim();
@@ -1106,6 +1167,18 @@ async function doLogin(){
 function showError(msg){const el=document.getElementById('loginError');el.textContent='⚠️ '+msg;el.style.display='block';}
 function doLogout(){sessionUser=null;document.getElementById('loginPage').style.display='flex';document.getElementById('mainApp').style.display='none';document.getElementById('mainContent').style.display='none';}
 document.getElementById('userPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.addEventListener('DOMContentLoaded',()=>{
+  ensureGoogleLoginMount();
+  if(window.google?.accounts?.id)initGoogleLogin();
+  else{
+    let tries=0;
+    const timer=setInterval(()=>{
+      tries+=1;
+      if(window.google?.accounts?.id){clearInterval(timer);initGoogleLogin();}
+      if(tries>=20)clearInterval(timer);
+    },500);
+  }
+});
 document.addEventListener('change',e=>{
   if(e.target?.id==='escPerfil'){
     perfilSeleccionadoEscolta = e.target.value;
@@ -1866,10 +1939,6 @@ setInterval(()=>{if(sessionUser){cargarSistema();cargarSensores();}},15000);
 </script>
 </body>
 </html>
-
-
-
-
 
 
 
